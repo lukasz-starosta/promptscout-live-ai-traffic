@@ -1,0 +1,12 @@
+{
+  "name": "@promptscout/live-ai-traffic-example-node-express",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@promptscout/live-ai-traffic-node-express": "workspace:*"
+  },
+  "scripts": {
+    "typecheck": "tsc -b"
+  }
+}

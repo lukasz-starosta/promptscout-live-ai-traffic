@@ -1,0 +1,12 @@
+{
+  "name": "@promptscout/live-ai-traffic-example-fastly",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@promptscout/live-ai-traffic-fastly": "workspace:*"
+  },
+  "scripts": {
+    "typecheck": "tsc -b"
+  }
+}

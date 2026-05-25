@@ -1,0 +1,56 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./packages/core"
+    },
+    {
+      "path": "./packages/vercel"
+    },
+    {
+      "path": "./packages/cloudflare"
+    },
+    {
+      "path": "./packages/netlify"
+    },
+    {
+      "path": "./packages/nginx-log-forwarder"
+    },
+    {
+      "path": "./packages/wordpress"
+    },
+    {
+      "path": "./packages/node-express"
+    },
+    {
+      "path": "./packages/cloudfront-aws"
+    },
+    {
+      "path": "./packages/fastly"
+    },
+    {
+      "path": "./examples/vercel"
+    },
+    {
+      "path": "./examples/cloudflare"
+    },
+    {
+      "path": "./examples/netlify"
+    },
+    {
+      "path": "./examples/nginx-log-forwarder"
+    },
+    {
+      "path": "./examples/wordpress"
+    },
+    {
+      "path": "./examples/node-express"
+    },
+    {
+      "path": "./examples/cloudfront-aws"
+    },
+    {
+      "path": "./examples/fastly"
+    }
+  ]
+}

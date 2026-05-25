@@ -50,7 +50,7 @@ is_text_file() {
     return 0
   fi
 
-  LC_ALL=C grep -Iq . "$file"
+  LC_ALL=C grep -Iq '$' "$file"
 }
 
 is_shell_script() {

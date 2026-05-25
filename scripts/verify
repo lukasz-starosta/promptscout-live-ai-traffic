@@ -1,0 +1,113 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<'USAGE'
+Usage: ./scripts/verify [--help]
+
+Run deterministic local verification for promptscout-live-ai-traffic.
+
+Checks:
+  - text files have no trailing whitespace and end with a newline
+  - shell scripts parse with bash -n
+  - focused shell tests in tests/*.sh pass
+USAGE
+}
+
+if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
+  usage
+  exit 0
+fi
+
+if [[ $# -gt 0 ]]; then
+  usage >&2
+  exit 2
+fi
+
+if ! command -v git >/dev/null 2>&1; then
+  echo "git is required to run verification" >&2
+  exit 127
+fi
+
+if ! command -v bash >/dev/null 2>&1; then
+  echo "bash is required to run verification" >&2
+  exit 127
+fi
+
+if ! ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"; then
+  echo "scripts/verify must be run inside a git checkout" >&2
+  exit 1
+fi
+cd "$ROOT"
+
+TEXT_FAILURES=0
+SHELL_FAILURES=0
+
+is_text_file() {
+  local file="$1"
+
+  if [[ ! -s "$file" ]]; then
+    return 0
+  fi
+
+  LC_ALL=C grep -Iq . "$file"
+}
+
+is_shell_script() {
+  local file="$1"
+  local first_line
+
+  case "$file" in
+    *.sh) return 0 ;;
+  esac
+
+  IFS= read -r first_line <"$file" || first_line=""
+  [[ "$first_line" =~ ^#!.*(bash|sh|zsh|ksh)$ || "$first_line" =~ ^#!/usr/bin/env[[:space:]]+(bash|sh|zsh|ksh)$ ]]
+}
+
+echo "==> Checking text formatting"
+while IFS= read -r -d '' file; do
+  [[ -f "$file" ]] || continue
+  is_text_file "$file" || continue
+
+  if LC_ALL=C grep -nH --binary-files=without-match '[[:blank:]]$' "$file" >&2; then
+    TEXT_FAILURES=1
+  fi
+
+  if [[ -s "$file" ]]; then
+    last_byte="$(tail -c 1 "$file" | od -An -t x1 | tr -d '[:space:]')"
+    if [[ "$last_byte" != "0a" ]]; then
+      echo "$file: missing final newline" >&2
+      TEXT_FAILURES=1
+    fi
+  fi
+done < <(git ls-files -z --cached --others --exclude-standard -- . ':(exclude).symphony/**')
+
+if [[ "$TEXT_FAILURES" -ne 0 ]]; then
+  echo "Text formatting check failed" >&2
+  exit 1
+fi
+
+echo "==> Checking shell syntax"
+while IFS= read -r -d '' file; do
+  [[ -f "$file" ]] || continue
+  is_shell_script "$file" || continue
+
+  if ! bash -n "$file"; then
+    SHELL_FAILURES=1
+  fi
+done < <(git ls-files -z --cached --others --exclude-standard -- . ':(exclude).symphony/**')
+
+if [[ "$SHELL_FAILURES" -ne 0 ]]; then
+  echo "Shell syntax check failed" >&2
+  exit 1
+fi
+
+if compgen -G "tests/*.sh" >/dev/null; then
+  echo "==> Running shell tests"
+  for test_script in tests/*.sh; do
+    bash "$test_script"
+  done
+fi
+
+echo "Verification passed"

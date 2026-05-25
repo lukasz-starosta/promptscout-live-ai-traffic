@@ -9,7 +9,9 @@ Run deterministic local verification for promptscout-live-ai-traffic.
 
 Checks:
   - text files have no trailing whitespace and end with one newline
+  - monorepo package, example, and docs scaffold is present
   - shell scripts parse with bash -n
+  - focused Node tests in tests/*.test.mjs pass
   - focused shell tests in tests/*.sh pass
 USAGE
 }
@@ -42,6 +44,18 @@ cd "$ROOT"
 
 TEXT_FAILURES=0
 SHELL_FAILURES=0
+SCAFFOLD_FAILURES=0
+
+PROVIDERS=(
+  vercel
+  cloudflare
+  netlify
+  nginx-log-forwarder
+  wordpress
+  node-express
+  cloudfront-aws
+  fastly
+)
 
 is_text_file() {
   local file="$1"
@@ -97,6 +111,62 @@ if [[ "$TEXT_FAILURES" -ne 0 ]]; then
   exit 1
 fi
 
+require_path() {
+  local path="$1"
+
+  if [[ ! -e "$path" ]]; then
+    echo "Missing required path: $path" >&2
+    SCAFFOLD_FAILURES=1
+  fi
+}
+
+require_file_contains() {
+  local file="$1"
+  local expected="$2"
+
+  if [[ ! -f "$file" ]]; then
+    echo "Missing required path: $file" >&2
+    SCAFFOLD_FAILURES=1
+    return
+  fi
+
+  if ! grep -qF "$expected" "$file"; then
+    echo "$file: missing expected content: $expected" >&2
+    SCAFFOLD_FAILURES=1
+  fi
+}
+
+echo "==> Checking monorepo scaffold"
+require_path package.json
+require_path biome.json
+require_path tsconfig.json
+require_path tsconfig.base.json
+require_path docs/getting-started.md
+require_path docs/integrations
+require_path packages/core/package.json
+require_path packages/core/tsconfig.json
+require_path packages/core/src/index.ts
+
+for provider in "${PROVIDERS[@]}"; do
+  require_path "packages/$provider/package.json"
+  require_path "packages/$provider/tsconfig.json"
+  require_file_contains "packages/$provider/src/index.ts" "@promptscout/live-ai-traffic-core"
+  require_file_contains "packages/$provider/package.json" "\"@promptscout/live-ai-traffic-core\": \"workspace:*\""
+
+  require_path "examples/$provider/package.json"
+  require_path "examples/$provider/tsconfig.json"
+  require_file_contains "examples/$provider/src/index.ts" "@promptscout/live-ai-traffic-$provider"
+  require_file_contains "examples/$provider/package.json" "\"@promptscout/live-ai-traffic-$provider\": \"workspace:*\""
+  require_path "examples/$provider/README.md"
+
+  require_path "docs/integrations/$provider.md"
+done
+
+if [[ "$SCAFFOLD_FAILURES" -ne 0 ]]; then
+  echo "Monorepo scaffold check failed" >&2
+  exit 1
+fi
+
 echo "==> Checking shell syntax"
 while IFS= read -r -d '' file; do
   [[ -f "$file" ]] || continue
@@ -110,6 +180,16 @@ done < <(git ls-files -z --cached --others --exclude-standard -- . ':(exclude).s
 if [[ "$SHELL_FAILURES" -ne 0 ]]; then
   echo "Shell syntax check failed" >&2
   exit 1
+fi
+
+if compgen -G "tests/*.test.mjs" >/dev/null; then
+  if ! command -v node >/dev/null 2>&1; then
+    echo "node is required to run Node tests" >&2
+    exit 127
+  fi
+
+  echo "==> Running Node tests"
+  node --test tests/*.test.mjs
 fi
 
 if compgen -G "tests/*.sh" >/dev/null; then

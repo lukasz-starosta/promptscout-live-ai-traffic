@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
-import { describe, it } from "node:test";
 import { readFile } from "node:fs/promises";
+import { describe, it } from "node:test";
 
 const providers = [
   "vercel",
@@ -10,7 +10,7 @@ const providers = [
   "wordpress",
   "node-express",
   "cloudfront-aws",
-  "fastly"
+  "fastly",
 ];
 
 async function readJson(path) {
@@ -20,22 +20,24 @@ async function readJson(path) {
 describe("monorepo scaffold", () => {
   it("uses Yarn workspaces for packages and examples", async () => {
     const rootPackage = await readJson("package.json");
+    const lockfile = await readFile("yarn.lock", "utf8");
 
     assert.equal(rootPackage.packageManager, "yarn@4.9.2");
-    assert.deepEqual(rootPackage.workspaces, [
-      "packages/*",
-      "examples/*"
-    ]);
+    assert.deepEqual(rootPackage.workspaces, ["packages/*", "examples/*"]);
+    assert.match(lockfile, /promptscout-live-ai-traffic@workspace:\./);
   });
 
   it("lets every provider package import the shared core package", async () => {
     for (const provider of providers) {
       const packageJson = await readJson(`packages/${provider}/package.json`);
-      const source = await readFile(`packages/${provider}/src/index.ts`, "utf8");
+      const source = await readFile(
+        `packages/${provider}/src/index.ts`,
+        "utf8",
+      );
 
       assert.equal(
         packageJson.dependencies["@promptscout/live-ai-traffic-core"],
-        "workspace:*"
+        "workspace:*",
       );
       assert.match(source, /@promptscout\/live-ai-traffic-core/);
     }
@@ -43,15 +45,26 @@ describe("monorepo scaffold", () => {
 
   it("keeps one workspace example and docs placeholder per provider", async () => {
     for (const provider of providers) {
-      const examplePackage = await readJson(`examples/${provider}/package.json`);
-      const source = await readFile(`examples/${provider}/src/index.ts`, "utf8");
-      const integrationDoc = await readFile(`docs/integrations/${provider}.md`, "utf8");
+      const examplePackage = await readJson(
+        `examples/${provider}/package.json`,
+      );
+      const source = await readFile(
+        `examples/${provider}/src/index.ts`,
+        "utf8",
+      );
+      const integrationDoc = await readFile(
+        `docs/integrations/${provider}.md`,
+        "utf8",
+      );
 
       assert.equal(
         examplePackage.dependencies[`@promptscout/live-ai-traffic-${provider}`],
-        "workspace:*"
+        "workspace:*",
       );
-      assert.match(source, new RegExp(`@promptscout/live-ai-traffic-${provider}`));
+      assert.match(
+        source,
+        new RegExp(`@promptscout/live-ai-traffic-${provider}`),
+      );
       assert.match(integrationDoc, /intentionally deferred/i);
     }
   });

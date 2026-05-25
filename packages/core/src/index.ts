@@ -4,10 +4,12 @@ export type PlaceholderIntegration = {
   notes: string;
 };
 
-export function createPlaceholderIntegration(provider: string): PlaceholderIntegration {
+export function createPlaceholderIntegration(
+  provider: string,
+): PlaceholderIntegration {
   return {
     provider,
     status: "placeholder",
-    notes: "Scaffold only. Runtime implementation is intentionally deferred."
+    notes: "Scaffold only. Runtime implementation is intentionally deferred.",
   };
 }

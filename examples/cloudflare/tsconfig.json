@@ -9,7 +9,5 @@
       "path": "../../packages/cloudflare"
     }
   ],
-  "include": [
-    "src/**/*.ts"
-  ]
+  "include": ["src/**/*.ts"]
 }

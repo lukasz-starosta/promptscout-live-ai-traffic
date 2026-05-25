@@ -9,7 +9,5 @@
       "path": "../../packages/cloudfront-aws"
     }
   ],
-  "include": [
-    "src/**/*.ts"
-  ]
+  "include": ["src/**/*.ts"]
 }

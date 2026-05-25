@@ -9,7 +9,5 @@
       "path": "../core"
     }
   ],
-  "include": [
-    "src/**/*.ts"
-  ]
+  "include": ["src/**/*.ts"]
 }

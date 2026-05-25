@@ -9,7 +9,5 @@
       "path": "../../packages/nginx-log-forwarder"
     }
   ],
-  "include": [
-    "src/**/*.ts"
-  ]
+  "include": ["src/**/*.ts"]
 }

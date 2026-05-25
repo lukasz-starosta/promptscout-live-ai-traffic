@@ -9,7 +9,5 @@
       "path": "../../packages/netlify"
     }
   ],
-  "include": [
-    "src/**/*.ts"
-  ]
+  "include": ["src/**/*.ts"]
 }

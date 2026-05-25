@@ -9,7 +9,5 @@
       "path": "../../packages/node-express"
     }
   ],
-  "include": [
-    "src/**/*.ts"
-  ]
+  "include": ["src/**/*.ts"]
 }

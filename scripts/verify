@@ -8,7 +8,7 @@ Usage: ./scripts/verify [--help]
 Run deterministic local verification for promptscout-live-ai-traffic.
 
 Checks:
-  - text files have no trailing whitespace and end with a newline
+  - text files have no trailing whitespace and end with one newline
   - shell scripts parse with bash -n
   - focused shell tests in tests/*.sh pass
 USAGE
@@ -79,6 +79,15 @@ while IFS= read -r -d '' file; do
     if [[ "$last_byte" != "0a" ]]; then
       echo "$file: missing final newline" >&2
       TEXT_FAILURES=1
+    fi
+
+    byte_count="$(wc -c <"$file" | tr -d '[:space:]')"
+    if [[ "$byte_count" -gt 1 ]]; then
+      last_two_bytes="$(tail -c 2 "$file" | od -An -t x1 | tr -d '[:space:]')"
+      if [[ "$last_two_bytes" == "0a0a" ]]; then
+        echo "$file: extra blank line at EOF" >&2
+        TEXT_FAILURES=1
+      fi
     fi
   fi
 done < <(git ls-files -z --cached --others --exclude-standard -- . ':(exclude).symphony/**')

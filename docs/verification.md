@@ -12,8 +12,8 @@ surface:
 The first version is dependency-free and designed for clean checkouts and
 short-lived Symphony worktrees. It currently runs:
 
-- repository text formatting checks for trailing whitespace and missing final
-  newlines;
+- repository text formatting checks for trailing whitespace and exactly one
+  final newline;
 - Bash syntax checks for shell scripts;
 - focused shell tests under `tests/*.sh`.
 
@@ -32,4 +32,3 @@ entry point when the relevant stack lands in later issues.
 Symphony can use `./scripts/verify` as the repo-owned pre-PR and final preflight
 command. The command is cheap, deterministic, and does not require network
 access or external services.
-

@@ -35,6 +35,13 @@ chmod +x "$TMP_DIR/repo/scripts/verify"
   fi
   grep -q "trailing whitespace" "$TMP_DIR/verify.err"
 
+  printf 'extra blank eof\n\n' > README.md
+  if ./scripts/verify >"$TMP_DIR/verify.out" 2>"$TMP_DIR/verify.err"; then
+    echo "Expected scripts/verify to fail on extra blank line at EOF" >&2
+    exit 1
+  fi
+  grep -q "extra blank line at EOF" "$TMP_DIR/verify.err"
+
   printf 'clean\n' > README.md
   ./scripts/verify
 )

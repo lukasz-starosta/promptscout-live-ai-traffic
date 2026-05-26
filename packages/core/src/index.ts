@@ -4,6 +4,9 @@ export type PlaceholderIntegration = {
   notes: string;
 };
 
+export * from "./ingest.js";
+export * from "./privacy.js";
+
 export function createPlaceholderIntegration(
   provider: string,
 ): PlaceholderIntegration {

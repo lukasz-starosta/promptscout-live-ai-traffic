@@ -6,8 +6,8 @@ Repository for the PromptScout live AI traffic packages and examples.
 
 This repository uses Yarn workspaces:
 
-- `packages/core` contains shared placeholder code and the canonical live AI
-  traffic event contract for all integrations.
+- `packages/core` contains shared event contracts, classification helpers,
+  privacy normalization helpers, and the PromptScout ingest client.
 - `packages/*` contains one provider package per integration.
 - `examples/*` contains one minimal workspace example per provider.
 - `docs/getting-started.md` and `docs/integrations/*` hold the initial docs shell.

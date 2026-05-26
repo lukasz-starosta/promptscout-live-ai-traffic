@@ -77,6 +77,20 @@ describe("WordPress plugin collector", () => {
     assert.doesNotMatch(eventBuilder, /brand[_-]?id|team[_-]?site[_-]?id/i);
   });
 
+  it("omits WordPress request query strings by default", async () => {
+    const eventBuilder = await readFile(
+      "packages/wordpress-plugin/includes/class-promptscout-live-ai-traffic-event-builder.php",
+      "utf8",
+    );
+    const requestUrl = "/pricing?plan=pro&token=secret";
+
+    assert.match(eventBuilder, /REQUEST_URI/);
+    assert.doesNotMatch(eventBuilder, /PHP_URL_QUERY/);
+    assert.doesNotMatch(eventBuilder, /'search'\s*=>/);
+    assert.equal(requestUrl.includes("token=secret"), true);
+    assert.equal(eventBuilder.includes("token=secret"), false);
+  });
+
   it("keeps bundled PHP classifier rules aligned with the core export and fixtures", async () => {
     const coreRules = await readJson(
       "packages/core/fixtures/classifier/php-rules-export.json",

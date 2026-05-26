@@ -18,7 +18,6 @@ class PromptScout_Live_AI_Traffic_Event_Builder {
 	public function build( array $server, array $classification, string $privacy_mode ): array {
 		$request_uri = $this->server_value( $server, 'REQUEST_URI' ) ?? '/';
 		$path        = wp_parse_url( $request_uri, PHP_URL_PATH );
-		$query       = wp_parse_url( $request_uri, PHP_URL_QUERY );
 		$user_agent  = $this->server_value( $server, 'HTTP_USER_AGENT' );
 		$referer     = $this->server_value( $server, 'HTTP_REFERER' );
 
@@ -31,7 +30,6 @@ class PromptScout_Live_AI_Traffic_Event_Builder {
 				[
 					'host'      => $this->host( $server ),
 					'path'      => $this->path( $path ),
-					'search'    => is_string( $query ) && '' !== $query ? '?' . $query : null,
 					'method'    => $this->method( $this->server_value( $server, 'REQUEST_METHOD' ) ),
 					'userAgent' => $user_agent,
 					'referer'   => $referer,

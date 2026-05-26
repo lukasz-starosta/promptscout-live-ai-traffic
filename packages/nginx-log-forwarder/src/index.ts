@@ -52,6 +52,10 @@ export type NginxAccessLogParseOptions = {
 export type NginxEventOptions = {
   defaultHost?: string;
   includeUnclassified?: boolean;
+  query?:
+    | { mode: "omit" }
+    | { mode: "keep" }
+    | { mode: "allowlist"; allow?: readonly string[] };
   now?: () => Date;
 };
 
@@ -151,7 +155,7 @@ export function createNginxLogEvent(
     host: entry.host ?? options.defaultHost ?? "unknown.local",
     path: entry.path,
     method: entry.method,
-    ...(entry.search === undefined ? {} : { search: entry.search }),
+    ...optionalSearch(entry.search, options.query),
     ...(entry.userAgent === undefined ? {} : { userAgent: entry.userAgent }),
     ...(entry.referer === undefined ? {} : { referer: entry.referer }),
   };
@@ -168,6 +172,49 @@ export function createNginxLogEvent(
       name: "nginx-log-forwarder",
     },
   };
+}
+
+function optionalSearch(
+  search: string | undefined,
+  options: NonNullable<NginxEventOptions["query"]> = { mode: "omit" },
+): { search: string } | Record<string, never> {
+  if (search === undefined || options.mode === "omit") {
+    return {};
+  }
+
+  if (options.mode === "keep") {
+    return { search };
+  }
+
+  const filtered = filterSearchParams(search, options.allow ?? []);
+  return filtered === undefined ? {} : { search: filtered };
+}
+
+function filterSearchParams(
+  search: string,
+  allowlist: readonly string[],
+): string | undefined {
+  if (search.length === 0 || allowlist.length === 0) {
+    return undefined;
+  }
+
+  const allowed = new Set(allowlist);
+  const filtered = [];
+
+  for (const part of (search.startsWith("?") ? search.slice(1) : search).split(
+    "&",
+  )) {
+    if (part.length === 0) {
+      continue;
+    }
+
+    const name = part.split("=", 1)[0];
+    if (allowed.has(name)) {
+      filtered.push(part);
+    }
+  }
+
+  return filtered.length === 0 ? undefined : `?${filtered.join("&")}`;
 }
 
 export function shouldForwardNginxLogEvent(

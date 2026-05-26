@@ -87,8 +87,31 @@ describe("nginx access log parser", () => {
       ],
     );
     assert.equal(events[1].request.path, "/claude");
-    assert.equal(events[1].request.search, "?from=assistant");
+    assert.equal(events[1].request.search, undefined);
     assert.equal(events[1].request.host, "example.com");
+  });
+
+  it("omits nginx query strings by default and keeps them only when configured", async () => {
+    const { createNginxLogEvent, parseNginxAccessLogLine } =
+      await nginxModule();
+    const parsed = parseNginxAccessLogLine(
+      '203.0.113.10 - - [26/May/2026:12:00:00 +0000] "GET /docs?source=openai&token=secret HTTP/1.1" 200 512 "-" "OAI-SearchBot/1.0; +https://openai.com/searchbot"',
+      { format: "common", defaultHost: "example.com" },
+    );
+    assert.equal(parsed.ok, true);
+
+    assert.equal(createNginxLogEvent(parsed.entry).request.search, undefined);
+    assert.equal(
+      createNginxLogEvent(parsed.entry, { query: { mode: "keep" } }).request
+        .search,
+      "?source=openai&token=secret",
+    );
+    assert.equal(
+      createNginxLogEvent(parsed.entry, {
+        query: { mode: "allowlist", allow: ["source"] },
+      }).request.search,
+      "?source=openai",
+    );
   });
 
   it("reports malformed lines and unsupported formats without throwing", async () => {

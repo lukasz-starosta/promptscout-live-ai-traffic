@@ -11,7 +11,6 @@ const endpoint =
   process.env.PROMPTSCOUT_INGEST_ENDPOINT ??
   "http://localhost:8787/ingest/live-ai-traffic";
 const ingestToken = process.env.PROMPTSCOUT_INGEST_TOKEN ?? "local-dev-token";
-const siteId = process.env.PROMPTSCOUT_SITE_ID ?? "local-nginx";
 const logPath =
   process.env.NGINX_ACCESS_LOG_PATH ?? "/var/log/nginx/access.log";
 const checkpointPath =
@@ -29,7 +28,6 @@ const intervalMs = Number.parseInt(
 const client = createLiveAiTrafficIngestClient({
   endpoint,
   ingestToken,
-  siteId,
 });
 
 const checkpointStore = {

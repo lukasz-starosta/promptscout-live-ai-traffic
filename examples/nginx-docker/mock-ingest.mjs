@@ -35,7 +35,6 @@ const server = createServer(async (request, response) => {
       {
         path: request.url,
         authorization: request.headers.authorization,
-        siteId: request.headers["x-promptscout-site-id"],
         events: payload.events?.map((event) => ({
           provider: event.providerClassification.provider,
           path: event.request.path,

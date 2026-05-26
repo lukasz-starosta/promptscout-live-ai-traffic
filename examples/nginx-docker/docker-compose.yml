@@ -28,7 +28,6 @@ services:
     environment:
       PROMPTSCOUT_INGEST_ENDPOINT: http://mock-ingest:8787/ingest/live-ai-traffic
       PROMPTSCOUT_INGEST_TOKEN: local-dev-token
-      PROMPTSCOUT_SITE_ID: local-nginx
       NGINX_ACCESS_LOG_PATH: /var/log/nginx/access.log
       NGINX_CHECKPOINT_PATH: /state/nginx-log-forwarder.checkpoint.json
       NGINX_FORWARDER_BATCH_SIZE: "2"

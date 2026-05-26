@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Monorepo for PromptScout live AI traffic packages, provider integrations, examples, and docs.",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "type": "module",
   "packageManager": "yarn@4.9.2",
   "workspaces": [

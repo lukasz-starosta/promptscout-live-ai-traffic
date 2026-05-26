@@ -8,12 +8,16 @@ This repository uses Yarn workspaces:
 
 - `packages/core` contains shared event contracts, classification helpers,
   privacy normalization helpers, and the PromptScout ingest client.
-- `packages/*` contains one provider package per integration.
-- `examples/*` contains one minimal workspace example per provider.
+- `packages/*` contains one provider package per integration plus shared
+  runtime adapters such as `packages/node-middleware`.
+- `examples/*` contains minimal workspace examples, including the Express
+  middleware example under `examples/express`.
 - `docs/getting-started.md` and `docs/integrations/*` hold the initial docs shell.
 
-Provider and example packages are intentionally private placeholders until
-runtime implementation work lands in later issues.
+Most provider and example packages remain private placeholders until their
+runtime implementation work lands. `packages/node-middleware` is the first
+server-side runtime adapter and reuses the shared core classifier, privacy
+normalization helpers, and ingest client.
 
 ## Verification
 

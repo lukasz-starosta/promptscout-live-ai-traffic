@@ -23,6 +23,9 @@
       "path": "./packages/node-express"
     },
     {
+      "path": "./packages/node-middleware"
+    },
+    {
       "path": "./packages/cloudfront-aws"
     },
     {
@@ -45,6 +48,9 @@
     },
     {
       "path": "./examples/node-express"
+    },
+    {
+      "path": "./examples/express"
     },
     {
       "path": "./examples/cloudfront-aws"

@@ -25,6 +25,10 @@ async function readJson(path) {
   return JSON.parse(await readFile(path, "utf8"));
 }
 
+function cloneJson(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
 async function fixturePaths(directory) {
   return (await readdir(directory))
     .filter((name) => name.endsWith(".json"))
@@ -109,6 +113,46 @@ describe("live AI traffic event contract", () => {
     assert.equal(
       parsed.providerClassification.provider,
       fixture.providerClassification.provider,
+    );
+  });
+
+  it("rejects unknown fields inside closed nested objects", async () => {
+    const { parseLiveAiTrafficEvent } = await coreModule();
+    const fixture = await readJson(
+      `${acceptedFixtureDirectory}/openai-search-bot.json`,
+    );
+    const nestedObjects = [
+      "request",
+      "providerClassification",
+      "location",
+      "ipHash",
+      "integration",
+    ];
+
+    for (const field of nestedObjects) {
+      const event = cloneJson(fixture);
+      event[field].unexpectedField = true;
+
+      assert.throws(
+        () => parseLiveAiTrafficEvent(event),
+        /Invalid live AI traffic event/,
+      );
+    }
+  });
+
+  it("rejects date-only observedAt values", async () => {
+    const { parseLiveAiTrafficEvent } = await coreModule();
+    const fixture = await readJson(
+      `${acceptedFixtureDirectory}/openai-search-bot.json`,
+    );
+
+    assert.throws(
+      () =>
+        parseLiveAiTrafficEvent({
+          ...fixture,
+          observedAt: "2026-05-26",
+        }),
+      /Invalid live AI traffic event/,
     );
   });
 });

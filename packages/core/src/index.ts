@@ -296,6 +296,12 @@ function validateRequest(input: unknown, issues: string[]): void {
     return;
   }
 
+  rejectUnknownProperties(
+    input,
+    "request",
+    ["host", "path", "search", "method", "userAgent", "referer"],
+    issues,
+  );
   requireString(input, "host", issues);
   requireString(input, "path", issues);
   if (typeof input.path === "string" && !input.path.startsWith("/")) {
@@ -325,6 +331,12 @@ function validateProviderClassification(
     return;
   }
 
+  rejectUnknownProperties(
+    input,
+    "providerClassification",
+    ["provider", "agentType", "confidence", "matchedBy"],
+    issues,
+  );
   requireEnum(input, "provider", liveAiTrafficClassifiedProviders, issues);
   requireEnum(input, "agentType", liveAiTrafficAgentTypes, issues);
   requireNumber(input, "confidence", issues);
@@ -352,6 +364,7 @@ function validateLocation(input: unknown, issues: string[]): void {
     return;
   }
 
+  rejectUnknownProperties(input, "location", ["country", "region"], issues);
   requireOptionalString(input, "country", issues);
   if (typeof input.country === "string" && !/^[A-Z]{2}$/.test(input.country)) {
     issues.push("location.country must be an ISO 3166-1 alpha-2 code");
@@ -365,6 +378,12 @@ function validateIpHash(input: unknown, issues: string[]): void {
     return;
   }
 
+  rejectUnknownProperties(
+    input,
+    "ipHash",
+    ["algorithm", "value", "keyId", "truncatedBits", "originalIpRetention"],
+    issues,
+  );
   requireEnum(input, "algorithm", liveAiTrafficIpHashAlgorithms, issues);
   requireOptionalString(input, "value", issues);
   requireOptionalString(input, "keyId", issues);
@@ -389,6 +408,7 @@ function validateIntegration(input: unknown, issues: string[]): void {
     return;
   }
 
+  rejectUnknownProperties(input, "integration", ["name", "requestId"], issues);
   requireString(input, "name", issues);
   requireOptionalString(input, "requestId", issues);
 }
@@ -465,9 +485,31 @@ function requireIsoDateTime(
     return;
   }
 
+  if (
+    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(
+      input[field],
+    )
+  ) {
+    issues.push(`${field} must be an ISO date-time timestamp`);
+    return;
+  }
+
   const parsed = Date.parse(input[field]);
   if (!Number.isFinite(parsed)) {
-    issues.push(`${field} must be an ISO timestamp`);
+    issues.push(`${field} must be an ISO date-time timestamp`);
+  }
+}
+
+function rejectUnknownProperties(
+  input: Record<string, unknown>,
+  objectName: string,
+  allowedFields: readonly string[],
+  issues: string[],
+): void {
+  for (const field of Object.keys(input)) {
+    if (!allowedFields.includes(field)) {
+      issues.push(`${objectName}.${field} is not allowed`);
+    }
   }
 }
 

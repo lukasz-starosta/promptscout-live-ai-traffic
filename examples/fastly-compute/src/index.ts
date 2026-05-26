@@ -13,7 +13,6 @@ declare function addEventListener(
 ): void;
 
 const promptScoutRuntimeConfig = {
-  ingest: "replace-with-runtime-config-value",
   site: "replace-with-promptscout-site-id",
 };
 
@@ -21,7 +20,7 @@ const handler = createFastlyComputeHandler({
   originBackend: "origin",
   ingestBackend: "promptscout_ingest",
   ingestEndpoint: "https://ingest.promptscout.com/live-ai-traffic",
-  ingestToken: promptScoutRuntimeConfig.ingest,
+  ingestToken: "placeholder-runtime-config-value",
   siteId: promptScoutRuntimeConfig.site,
 });
 

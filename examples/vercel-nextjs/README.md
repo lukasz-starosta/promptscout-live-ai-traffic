@@ -20,9 +20,12 @@ Copy `.env.example` to `.env.local` and set the token and ingest URL from
 PromptScout:
 
 ```bash
-PROMPTSCOUT_INGEST_TOKEN=<your-ingest-token>
+PROMPTSCOUT_INGEST_TOKEN=
 PROMPTSCOUT_INGEST_URL=https://app.promptscout.com/api/live-ai-traffic/ingest
 ```
+
+Paste your site-scoped ingest token after `PROMPTSCOUT_INGEST_TOKEN=` in your
+local `.env.local` file. Do not commit real ingest tokens.
 
 ## Next.js 16 `proxy.ts`
 

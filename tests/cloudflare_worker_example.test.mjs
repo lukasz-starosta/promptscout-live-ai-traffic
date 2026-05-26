@@ -58,6 +58,12 @@ describe("cloudflare worker example", () => {
     assert.match(combined, /routes = \[/);
     assert.match(combined, /curl/);
     assert.match(combined, /mock/i);
+    assert.match(combined, /non-committed `examples\/cloudflare-worker\/\.dev\.vars`/);
+    assert.match(combined, /PROMPTSCOUT_INGEST_TOKEN=local-smoke-token/);
+    assert.match(
+      combined,
+      /PROMPTSCOUT_INGEST_URL=http:\/\/127\.0\.0\.1:9000\/live-ai-traffic\/ingest/,
+    );
     assert.match(combined, /Cloudflare is the front door/i);
     assert.match(combined, /origin remains (Vercel|Webflow|WordPress)/i);
     assert.match(combined, /DNS\/origin failures/i);

@@ -65,9 +65,16 @@ curl -i \
 ```
 
 For a fully mocked ingest smoke path, temporarily point
-`PROMPTSCOUT_INGEST_URL` at a local HTTP sink and confirm it receives a
-`request_observation` event while the curl response still comes from the
-forwarded origin path.
+`PROMPTSCOUT_INGEST_URL` at a local HTTP sink. For Wrangler local development,
+create a non-committed `examples/cloudflare-worker/.dev.vars` file:
+
+```dotenv
+PROMPTSCOUT_INGEST_TOKEN=local-smoke-token
+PROMPTSCOUT_INGEST_URL=http://127.0.0.1:9000/live-ai-traffic/ingest
+```
+
+Confirm the sink receives a `request_observation` event while the curl response
+still comes from the forwarded origin path.
 
 ## Deploy
 

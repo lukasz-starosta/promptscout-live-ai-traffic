@@ -28,7 +28,7 @@ yarn install --immutable
 Create the Cloudflare secret for the site-scoped PromptScout ingest token:
 
 ```bash
-yarn dlx wrangler@latest secret put PROMPTSCOUT_INGEST_TOKEN
+yarn dlx wrangler@latest --cwd examples/cloudflare-worker secret put PROMPTSCOUT_INGEST_TOKEN
 ```
 
 Edit `wrangler.toml` before deploy:
@@ -87,7 +87,7 @@ yarn workspace @promptscout/live-ai-traffic-example-cloudflare-worker deploy
 Equivalent raw Wrangler command:
 
 ```bash
-yarn dlx wrangler@latest deploy
+yarn dlx wrangler@latest --cwd examples/cloudflare-worker deploy
 ```
 
 Smoke the deployed route with:

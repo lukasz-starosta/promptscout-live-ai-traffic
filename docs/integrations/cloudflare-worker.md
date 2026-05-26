@@ -45,7 +45,7 @@ the brand-owned site source attached to the site-scoped ingest token.
 Keep `PROMPTSCOUT_INGEST_TOKEN` in Cloudflare secrets:
 
 ```bash
-yarn dlx wrangler@latest secret put PROMPTSCOUT_INGEST_TOKEN
+yarn dlx wrangler@latest --cwd examples/cloudflare-worker secret put PROMPTSCOUT_INGEST_TOKEN
 ```
 
 Non-secret variables can live in `wrangler.toml`:
@@ -117,7 +117,7 @@ yarn workspace @promptscout/live-ai-traffic-example-cloudflare-worker deploy
 Equivalent raw Wrangler command:
 
 ```bash
-yarn dlx wrangler@latest deploy
+yarn dlx wrangler@latest --cwd examples/cloudflare-worker deploy
 ```
 
 Manual smoke path:

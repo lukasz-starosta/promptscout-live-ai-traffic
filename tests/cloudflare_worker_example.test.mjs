@@ -52,9 +52,12 @@ describe("cloudflare worker example", () => {
     );
     assert.match(
       combined,
-      /wrangler(?:@latest)? secret put PROMPTSCOUT_INGEST_TOKEN/,
+      /wrangler(?:@latest)? --cwd examples\/cloudflare-worker secret put PROMPTSCOUT_INGEST_TOKEN/,
     );
-    assert.match(combined, /wrangler(?:@latest)? deploy/);
+    assert.match(
+      combined,
+      /wrangler(?:@latest)? --cwd examples\/cloudflare-worker deploy/,
+    );
     assert.match(combined, /routes = \[/);
     assert.match(combined, /curl/);
     assert.match(combined, /mock/i);

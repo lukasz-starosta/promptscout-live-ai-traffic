@@ -12,12 +12,17 @@ declare function addEventListener(
   listener: (event: FastlyComputeFetchEvent) => void,
 ): void;
 
+const promptScoutRuntimeConfig = {
+  ingest: "replace-with-runtime-config-value",
+  site: "replace-with-promptscout-site-id",
+};
+
 const handler = createFastlyComputeHandler({
   originBackend: "origin",
   ingestBackend: "promptscout_ingest",
   ingestEndpoint: "https://ingest.promptscout.com/live-ai-traffic",
-  ingestToken: "replace-with-runtime-config-value",
-  siteId: "replace-with-promptscout-site-id",
+  ingestToken: promptScoutRuntimeConfig.ingest,
+  siteId: promptScoutRuntimeConfig.site,
 });
 
 addEventListener("fetch", (event) => {

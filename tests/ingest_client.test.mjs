@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { describe, it } from "node:test";
 
+const TEST_INGEST_TOKEN = "test-ingest-token";
+const TEST_SIGNING_KEY = "test-signing-key";
+
 let coreModulePromise;
 
 async function coreModule() {
@@ -58,7 +61,7 @@ describe("live AI traffic ingest client", () => {
     };
     const client = createLiveAiTrafficIngestClient({
       endpoint: "https://promptscout.example/ingest/live-ai-traffic",
-      ingestToken: "pst_live_secret",
+      ingestToken: TEST_INGEST_TOKEN,
       siteId: "site_123",
       fetch,
     });
@@ -74,7 +77,10 @@ describe("live AI traffic ingest client", () => {
       "https://promptscout.example/ingest/live-ai-traffic",
     );
     assert.equal(calls[0].init.method, "POST");
-    assert.equal(calls[0].init.headers.authorization, "Bearer pst_live_secret");
+    assert.equal(
+      calls[0].init.headers.authorization,
+      `Bearer ${TEST_INGEST_TOKEN}`,
+    );
     assert.equal(calls[0].init.headers["x-promptscout-site-id"], "site_123");
     assert.equal(calls[0].init.headers["content-type"], "application/json");
     assert.deepEqual(JSON.parse(calls[0].init.body), {
@@ -88,8 +94,8 @@ describe("live AI traffic ingest client", () => {
     const calls = [];
     const client = createLiveAiTrafficIngestClient({
       endpoint: "https://promptscout.example/ingest/live-ai-traffic",
-      ingestToken: "pst_live_secret",
-      signingSecret: "signing-secret",
+      ingestToken: TEST_INGEST_TOKEN,
+      signingSecret: TEST_SIGNING_KEY,
       now: () => new Date("2026-05-26T09:35:00.000Z"),
       fetch: async (url, init) => {
         calls.push({ url, init });
@@ -114,7 +120,7 @@ describe("live AI traffic ingest client", () => {
     let attempts = 0;
     const client = createLiveAiTrafficIngestClient({
       endpoint: "https://promptscout.example/ingest/live-ai-traffic",
-      ingestToken: "pst_live_secret",
+      ingestToken: TEST_INGEST_TOKEN,
       fetch: async () => {
         attempts += 1;
         return response(401, "bad token");
@@ -134,7 +140,7 @@ describe("live AI traffic ingest client", () => {
     attempts = 0;
     const malformedClient = createLiveAiTrafficIngestClient({
       endpoint: "https://promptscout.example/ingest/live-ai-traffic",
-      ingestToken: "pst_live_secret",
+      ingestToken: TEST_INGEST_TOKEN,
       fetch: async () => {
         attempts += 1;
         return response(400, "bad event");
@@ -156,7 +162,7 @@ describe("live AI traffic ingest client", () => {
     let attempts = 0;
     const client = createLiveAiTrafficIngestClient({
       endpoint: "https://promptscout.example/ingest/live-ai-traffic",
-      ingestToken: "pst_live_secret",
+      ingestToken: TEST_INGEST_TOKEN,
       fetch: async () => {
         attempts += 1;
         if (attempts === 1) {
@@ -190,7 +196,7 @@ describe("live AI traffic ingest client", () => {
     const { createLiveAiTrafficIngestClient } = await coreModule();
     const client = createLiveAiTrafficIngestClient({
       endpoint: "https://promptscout.example/ingest/live-ai-traffic",
-      ingestToken: "pst_live_secret",
+      ingestToken: TEST_INGEST_TOKEN,
       fetch: async () => {
         throw new Error("offline");
       },
@@ -212,15 +218,15 @@ describe("live AI traffic privacy helpers", () => {
     const { hashLiveAiTrafficIp, normalizeLiveAiTrafficEvent } =
       await coreModule();
     const first = await hashLiveAiTrafficIp("203.0.113.42", {
-      salt: "site_123:pst_live_secret",
+      salt: `site_123:${TEST_INGEST_TOKEN}`,
       keyId: "site_123",
     });
     const second = await hashLiveAiTrafficIp("203.0.113.42", {
-      salt: "site_123:pst_live_secret",
+      salt: `site_123:${TEST_INGEST_TOKEN}`,
       keyId: "site_123",
     });
     const differentSalt = await hashLiveAiTrafficIp("203.0.113.42", {
-      salt: "site_456:pst_live_secret",
+      salt: `site_456:${TEST_INGEST_TOKEN}`,
       keyId: "site_456",
     });
 
@@ -253,7 +259,7 @@ describe("live AI traffic privacy helpers", () => {
       ip: {
         mode: "hash",
         value: "203.0.113.42",
-        salt: "site_123:pst_live_secret",
+        salt: `site_123:${TEST_INGEST_TOKEN}`,
       },
     });
 
@@ -289,7 +295,7 @@ describe("live AI traffic privacy helpers", () => {
     const sentBodies = [];
     const client = createLiveAiTrafficIngestClient({
       endpoint: "https://promptscout.example/ingest/live-ai-traffic",
-      ingestToken: "pst_live_secret",
+      ingestToken: TEST_INGEST_TOKEN,
       fetch: async (_url, init) => {
         sentBodies.push(JSON.parse(init.body));
         return response(202);

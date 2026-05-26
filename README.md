@@ -13,6 +13,8 @@ This repository uses Yarn workspaces:
   for customer-owned Cloudflare routes.
 - `examples/*` contains one minimal workspace example per provider.
 - `docs/getting-started.md` and `docs/integrations/*` hold the initial docs shell.
+- `docs/install-matrix-and-signal-quality.md` explains how customers should
+  choose an install path and how to interpret collector signal quality.
 
 Provider and example packages are intentionally private placeholders until
 runtime implementation work lands in later issues.
@@ -37,6 +39,10 @@ observations, not proof that an AI answer mentioned a brand or page.
 
 Classifier source evidence and fixture confidence labels are documented in
 [docs/evidence.md](docs/evidence.md).
+
+Customer-facing install selection, site-scoped ingest token behavior, and
+signal-quality guidance are documented in
+[docs/install-matrix-and-signal-quality.md](docs/install-matrix-and-signal-quality.md).
 
 Collector privacy, token rotation, failure handling, and operational ownership
 guidance is documented in

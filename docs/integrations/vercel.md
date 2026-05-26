@@ -20,7 +20,6 @@ export const proxy: NextProxy = (request, event) => {
   trackPromptScoutAiTraffic(request, event, {
     endpoint: process.env.PROMPTSCOUT_LIVE_AI_TRAFFIC_ENDPOINT!,
     ingestToken: process.env.PROMPTSCOUT_LIVE_AI_TRAFFIC_TOKEN!,
-    siteId: process.env.PROMPTSCOUT_SITE_ID,
     privacy: {
       query: { mode: "omit" },
       ip: { mode: "disabled" },
@@ -39,6 +38,10 @@ export const config = {
 
 No crawler or referrer detection rules are required in your app code. The
 collector uses the shared PromptScout classifier and event schema.
+
+The ingest token is site-scoped. Do not add a separate brand ID, team-site ID,
+or team-wide token to the customer app. PromptScout groups accepted events by
+the brand-owned site source attached to `PROMPTSCOUT_LIVE_AI_TRAFFIC_TOKEN`.
 
 ## Older `middleware.ts`
 

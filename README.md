@@ -18,9 +18,12 @@ This repository uses Yarn workspaces:
 - `docs/install-matrix-and-signal-quality.md` explains how customers should
   choose an install path and how to interpret collector signal quality.
 
-Provider and example packages are private while this repo is pre-release. Some
-provider directories remain placeholders until their runtime implementation work
-lands in later issues.
+Provider packages are configured for npm release dry-runs while this repo is
+pre-release. Some provider directories remain placeholders until their runtime
+implementation work lands in later issues. Published provider packages use the
+shared repository version. Example workspaces keep the same version for
+traceability, but remain private and are not published. See
+[docs/release.md](docs/release.md) for the release path.
 
 ## Verification
 

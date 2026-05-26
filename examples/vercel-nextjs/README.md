@@ -20,7 +20,7 @@ Copy `.env.example` to `.env.local` and set the token and ingest URL from
 PromptScout:
 
 ```bash
-PROMPTSCOUT_INGEST_TOKEN=ps_live_ai_traffic_...
+PROMPTSCOUT_INGEST_TOKEN=<your-ingest-token>
 PROMPTSCOUT_INGEST_URL=https://app.promptscout.com/api/live-ai-traffic/ingest
 ```
 

@@ -86,6 +86,7 @@ describe("live AI traffic event contract", () => {
       `${acceptedFixtureDirectory}/chatgpt-user.json`,
       `${acceptedFixtureDirectory}/claude-bot.json`,
       `${acceptedFixtureDirectory}/google-crawler-referral.json`,
+      `${acceptedFixtureDirectory}/google-referral.json`,
       `${acceptedFixtureDirectory}/gptbot.json`,
       `${acceptedFixtureDirectory}/openai-search-bot.json`,
       `${acceptedFixtureDirectory}/perplexity-bot.json`,

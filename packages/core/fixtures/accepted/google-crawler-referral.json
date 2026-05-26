@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "eventKind": "request_observation",
+  "sourceProvider": "wordpress",
+  "observedAt": "2026-05-26T07:11:00.000Z",
+  "request": {
+    "host": "example.com",
+    "path": "/",
+    "method": "GET",
+    "userAgent": "Googlebot/2.1",
+    "referer": "https://www.google.com/search?q=example"
+  },
+  "providerClassification": {
+    "provider": "google_crawler",
+    "agentType": "search_crawler",
+    "confidence": 0.9,
+    "matchedBy": ["user_agent", "referer"]
+  },
+  "ipHash": {
+    "algorithm": "hmac-sha256",
+    "value": "sha256:b7f4897f33a3f691",
+    "keyId": "edge-key-2026-05",
+    "truncatedBits": 64,
+    "originalIpRetention": "discarded_after_hash"
+  },
+  "integration": {
+    "name": "wordpress",
+    "requestId": "wp-google-001"
+  }
+}

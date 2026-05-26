@@ -27,24 +27,92 @@ describe("AI traffic classifier", () => {
       ),
     );
 
-    for (const {
-      userAgent,
-      provider,
-      agentType,
-      matchedRule,
-      docsUrl,
-    } of cases) {
+    for (const fixture of cases) {
+      const {
+        name,
+        userAgent,
+        provider,
+        agentType,
+        matchedRule,
+        docsUrl,
+        confidenceLabel,
+        signalSource,
+        sourceUrl,
+      } = fixture;
       const result = classifyUserAgent(userAgent);
 
-      assert.equal(result.provider, provider);
-      assert.equal(result.agentType, agentType);
-      assert.equal(result.matchedRule, matchedRule);
-      assert.deepEqual(result.matchedBy, ["user_agent"]);
-      assert.ok(result.confidence >= 0.9);
+      assert.ok(name, "fixture must have a stable name");
+      assert.ok(sourceUrl, `${name}: fixture must cite a signal source URL`);
+      assert.equal(
+        confidenceLabel,
+        "high",
+        `${name}: documented user-agent rules must be high confidence`,
+      );
+      assert.equal(signalSource, "user_agent", `${name}: signal source`);
+      assert.equal(result.provider, provider, `${name}: provider`);
+      assert.equal(result.agentType, agentType, `${name}: agentType`);
+      assert.equal(result.matchedRule, matchedRule, `${name}: matchedRule`);
+      assert.deepEqual(result.matchedBy, ["user_agent"], `${name}: matchedBy`);
+      assert.ok(result.confidence >= 0.9, `${name}: confidence`);
       if (docsUrl) {
-        assert.equal(result.docsUrl, docsUrl);
+        assert.equal(result.docsUrl, docsUrl, `${name}: docsUrl`);
       }
     }
+  });
+
+  it("classifies named AI assistant referral fixtures as advisory signals", async () => {
+    const { classifyReferer } = await coreModule();
+    const cases = JSON.parse(
+      await readFile(
+        "packages/core/fixtures/classifier/known-referrers.json",
+        "utf8",
+      ),
+    );
+
+    for (const fixture of cases) {
+      const {
+        name,
+        referer,
+        provider,
+        agentType,
+        matchedRule,
+        docsUrl,
+        confidenceLabel,
+        signalSource,
+        sourceUrl,
+      } = fixture;
+      const result = classifyReferer(referer);
+
+      assert.ok(name, "fixture must have a stable name");
+      assert.ok(sourceUrl, `${name}: fixture must cite a signal source URL`);
+      assert.equal(confidenceLabel, "advisory", `${name}: confidence label`);
+      assert.equal(signalSource, "referer", `${name}: signal source`);
+      assert.equal(result.provider, provider, `${name}: provider`);
+      assert.equal(result.agentType, agentType, `${name}: agentType`);
+      assert.equal(result.matchedRule, matchedRule, `${name}: matchedRule`);
+      assert.deepEqual(result.matchedBy, ["referer"], `${name}: matchedBy`);
+      assert.ok(result.confidence < 0.9, `${name}: confidence`);
+      if (docsUrl) {
+        assert.equal(result.docsUrl, docsUrl, `${name}: docsUrl`);
+      }
+    }
+  });
+
+  it("documents request-level evidence and crawler source links", async () => {
+    const evidence = await readFile("docs/evidence.md", "utf8");
+
+    assert.match(
+      evidence,
+      /JavaScript pixels are not complete AI crawler tracking/i,
+    );
+    assert.match(evidence, /https:\/\/platform\.openai\.com\/docs\/bots/);
+    assert.match(
+      evidence,
+      /https:\/\/vercel\.com\/blog\/the-rise-of-the-ai-crawler/,
+    );
+    assert.match(evidence, /https:\/\/vercel\.com\/i\/how-ai-is-changing-seo/);
+    assert.match(evidence, /High-confidence signals/i);
+    assert.match(evidence, /Weak or advisory signals/i);
   });
 
   it("uses explicit unknown fallbacks for missing and malformed user agents", async () => {

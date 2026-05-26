@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "eventKind": "request_observation",
+  "sourceProvider": "unknown_edge_network",
+  "observedAt": "2026-05-26T07:15:00.000Z",
+  "request": {
+    "host": "example.com",
+    "path": "/",
+    "method": "GET"
+  },
+  "providerClassification": {
+    "provider": "other",
+    "agentType": "other",
+    "confidence": 0.5,
+    "matchedBy": ["other"]
+  }
+}

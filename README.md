@@ -6,7 +6,8 @@ Repository for the PromptScout live AI traffic packages and examples.
 
 This repository uses Yarn workspaces:
 
-- `packages/core` contains shared placeholder code for all integrations.
+- `packages/core` contains shared placeholder code and the canonical live AI
+  traffic event contract for all integrations.
 - `packages/*` contains one provider package per integration.
 - `examples/*` contains one minimal workspace example per provider.
 - `docs/getting-started.md` and `docs/integrations/*` hold the initial docs shell.
@@ -27,3 +28,7 @@ foundation phase. It checks repository text formatting, scaffold completeness,
 shell script syntax, and focused verifier tests. See
 [docs/verification.md](docs/verification.md) for the full contract and current
 non-goals.
+
+The shared request observation schema is documented in
+[docs/event-contract.md](docs/event-contract.md). These events are analytics
+observations, not proof that an AI answer mentioned a brand or page.

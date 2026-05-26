@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "eventKind": "request_observation",
+  "sourceProvider": "vercel",
+  "observedAt": "2026-05-26T07:13:00.000Z",
+  "request": {
+    "host": "example.com",
+    "path": "/",
+    "method": "GET"
+  },
+  "providerClassification": {
+    "provider": "openai_gptbot",
+    "agentType": "new_ai_mode",
+    "confidence": 0.8,
+    "matchedBy": ["user_agent"]
+  }
+}

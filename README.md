@@ -35,3 +35,7 @@ observations, not proof that an AI answer mentioned a brand or page.
 
 Classifier source evidence and fixture confidence labels are documented in
 [docs/evidence.md](docs/evidence.md).
+
+Collector privacy, token rotation, failure handling, and operational ownership
+guidance is documented in
+[docs/privacy-security-operations.md](docs/privacy-security-operations.md).

@@ -17,9 +17,11 @@ Configure these bindings in Wrangler or the Cloudflare dashboard:
 - `PROMPTSCOUT_INGEST_TOKEN`: site-scoped ingest token. Store this as a secret.
 - `PROMPTSCOUT_INGEST_URL`: PromptScout live AI traffic ingest endpoint.
 - `PROMPTSCOUT_QUERY_POLICY`: optional query privacy policy. Supported values
-  are `keep`, `omit`, and `allowlist`. Defaults to `keep`.
-- `PROMPTSCOUT_QUERY_ALLOWLIST`: comma-separated query keys to keep when
-  `PROMPTSCOUT_QUERY_POLICY=allowlist`.
+  are `keep`, `omit`, and `allowlist`. Defaults to `omit`.
+- `PROMPTSCOUT_QUERY_ALLOWLIST`: comma-separated query keys to keep. Setting
+  this without `PROMPTSCOUT_QUERY_POLICY` enables allowlist mode. Use
+  `PROMPTSCOUT_QUERY_POLICY=keep` only when full query strings are safe to
+  send.
 - `PROMPTSCOUT_PATH_POLICY`: optional path privacy policy. Supported values are
   `keep` and `redact`. Defaults to `keep`.
 - `PROMPTSCOUT_PATH_REPLACEMENT`: optional replacement path when paths are

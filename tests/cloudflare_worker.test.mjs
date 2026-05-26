@@ -100,7 +100,6 @@ describe("cloudflare worker collector", () => {
       request: {
         host: "example.com",
         path: "/guides/live-ai-traffic",
-        search: "?utm_source=chatgpt&plan=pro",
         method: "GET",
         userAgent: "OAI-SearchBot/1.0",
         referer: "https://chatgpt.com/share/example",
@@ -121,7 +120,34 @@ describe("cloudflare worker collector", () => {
       },
     });
     assert.match(body.events[0].observedAt, /^\d{4}-\d{2}-\d{2}T/);
+    assert.equal("search" in body.events[0].request, false);
+    assert.equal(JSON.stringify(body).includes("utm_source=chatgpt"), false);
     assert.equal(JSON.stringify(body).includes("203.0.113.42"), false);
+  });
+
+  it("keeps query strings only when explicitly configured", async () => {
+    const { observeCloudflareWorkerRequest } = await cloudflareWorkerModule();
+    const ingestCalls = [];
+    const request = new Request(
+      "https://example.com/guides/live-ai-traffic?utm_source=chatgpt&plan=pro",
+      {
+        headers: { "user-agent": "OAI-SearchBot/1.0" },
+      },
+    );
+
+    await observeCloudflareWorkerRequest(
+      request,
+      env({ PROMPTSCOUT_QUERY_POLICY: "keep" }),
+      {
+        ingestFetch: async (url, init) => {
+          ingestCalls.push({ url, init });
+          return new Response("", { status: 202 });
+        },
+      },
+    );
+
+    const event = JSON.parse(ingestCalls[0].init.body).events[0];
+    assert.equal(event.request.search, "?utm_source=chatgpt&plan=pro");
   });
 
   it("applies path and query privacy bindings before ingest", async () => {
@@ -142,7 +168,6 @@ describe("cloudflare worker collector", () => {
       request,
       env({
         PROMPTSCOUT_PATH_POLICY: "redact",
-        PROMPTSCOUT_QUERY_POLICY: "allowlist",
         PROMPTSCOUT_QUERY_ALLOWLIST: "plan",
       }),
       {

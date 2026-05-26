@@ -157,18 +157,22 @@ function privacyOptions(
 function queryPrivacyOptions(
   env: PromptScoutCloudflareWorkerEnv,
 ): NonNullable<LiveAiTrafficPrivacyOptions["query"]> {
-  if (env.PROMPTSCOUT_QUERY_POLICY === "omit") {
-    return { mode: "omit" };
+  if (env.PROMPTSCOUT_QUERY_POLICY === "keep") {
+    return { mode: "keep" };
   }
 
-  if (env.PROMPTSCOUT_QUERY_POLICY === "allowlist") {
+  const allowlist = splitCsv(env.PROMPTSCOUT_QUERY_ALLOWLIST);
+  if (
+    env.PROMPTSCOUT_QUERY_POLICY === "allowlist" ||
+    (env.PROMPTSCOUT_QUERY_POLICY === undefined && allowlist.length > 0)
+  ) {
     return {
       mode: "allowlist",
-      allow: splitCsv(env.PROMPTSCOUT_QUERY_ALLOWLIST),
+      allow: allowlist,
     };
   }
 
-  return { mode: "keep" };
+  return { mode: "omit" };
 }
 
 function normalizeHttpMethod(method: string): LiveAiTrafficHttpMethod {

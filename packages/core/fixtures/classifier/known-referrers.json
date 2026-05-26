@@ -1,0 +1,68 @@
+[
+  {
+    "name": "chatgpt-share-referral",
+    "referer": "https://chatgpt.com/share/abc",
+    "provider": "ai_browser_referral",
+    "agentType": "ai_assistant_referral",
+    "matchedRule": "ref:openai:chatgpt",
+    "docsUrl": "https://platform.openai.com/docs/bots",
+    "confidenceLabel": "advisory",
+    "signalSource": "referer",
+    "sourceUrl": "https://platform.openai.com/docs/bots"
+  },
+  {
+    "name": "claude-referral",
+    "referer": "https://claude.ai/chat/abc",
+    "provider": "ai_browser_referral",
+    "agentType": "ai_assistant_referral",
+    "matchedRule": "ref:anthropic:claude",
+    "docsUrl": "https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler",
+    "confidenceLabel": "advisory",
+    "signalSource": "referer",
+    "sourceUrl": "https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler"
+  },
+  {
+    "name": "perplexity-search-referral",
+    "referer": "https://www.perplexity.ai/search/example",
+    "provider": "perplexity_referral",
+    "agentType": "ai_assistant_referral",
+    "matchedRule": "ref:perplexity",
+    "docsUrl": "https://docs.perplexity.ai/guides/bots",
+    "confidenceLabel": "advisory",
+    "signalSource": "referer",
+    "sourceUrl": "https://docs.perplexity.ai/guides/bots"
+  },
+  {
+    "name": "gemini-referral",
+    "referer": "https://gemini.google.com/app/abc",
+    "provider": "google_referral",
+    "agentType": "ai_assistant_referral",
+    "matchedRule": "ref:google:gemini",
+    "docsUrl": "https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers",
+    "confidenceLabel": "advisory",
+    "signalSource": "referer",
+    "sourceUrl": "https://vercel.com/i/how-ai-is-changing-seo"
+  },
+  {
+    "name": "google-search-referral",
+    "referer": "https://www.google.com/search?q=promptscout",
+    "provider": "google_referral",
+    "agentType": "search_referral",
+    "matchedRule": "ref:google:search",
+    "docsUrl": "https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers",
+    "confidenceLabel": "advisory",
+    "signalSource": "referer",
+    "sourceUrl": "https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers"
+  },
+  {
+    "name": "meta-ai-referral",
+    "referer": "https://www.meta.ai/c/abc",
+    "provider": "ai_browser_referral",
+    "agentType": "ai_assistant_referral",
+    "matchedRule": "ref:meta:ai",
+    "docsUrl": "https://developers.facebook.com/docs/sharing/webmasters/crawler",
+    "confidenceLabel": "advisory",
+    "signalSource": "referer",
+    "sourceUrl": "https://developers.facebook.com/docs/sharing/webmasters/crawler"
+  }
+]

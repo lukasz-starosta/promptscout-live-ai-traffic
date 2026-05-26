@@ -32,3 +32,6 @@ non-goals.
 The shared request observation schema is documented in
 [docs/event-contract.md](docs/event-contract.md). These events are analytics
 observations, not proof that an AI answer mentioned a brand or page.
+
+Classifier source evidence and fixture confidence labels are documented in
+[docs/evidence.md](docs/evidence.md).

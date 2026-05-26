@@ -125,3 +125,5 @@ Committed fixtures live under `packages/core/fixtures/accepted` and
 `packages/core/fixtures/rejected`. Classifier fixtures live under
 `packages/core/fixtures/classifier`. The focused Node tests validate those
 fixtures against the exported parser, classifier, and JSON schema metadata.
+Classifier evidence, crawler source links, and confidence label rules are
+documented in [docs/evidence.md](evidence.md).

@@ -13,6 +13,7 @@ const providers = [
   "node-express",
   "cloudfront-aws",
   "fastly",
+  "fastly-compute",
 ];
 
 async function readJson(path) {
@@ -85,6 +86,9 @@ describe("monorepo scaffold", () => {
       } else if (provider === "cloudfront-aws") {
         assert.match(integrationDoc, /real-time access logs/i);
         assert.match(integrationDoc, /Kinesis Data Streams/i);
+      } else if (provider === "fastly-compute") {
+        assert.match(integrationDoc, /Fastly Compute/i);
+        assert.match(integrationDoc, /promptscout_ingest/);
       } else {
         assert.match(integrationDoc, /intentionally deferred/i);
       }

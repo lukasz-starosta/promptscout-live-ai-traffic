@@ -57,6 +57,7 @@ PROVIDERS=(
   node-express
   cloudfront-aws
   fastly
+  fastly-compute
 )
 
 is_text_file() {

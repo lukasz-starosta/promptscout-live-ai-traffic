@@ -220,6 +220,59 @@ describe("live AI traffic event contract", () => {
           },
         },
       },
+      {
+        name: "empty location.region",
+        schemaProperty:
+          liveAiTrafficEventJsonSchema.properties.location.properties.region,
+        schemaValue: "",
+        event: {
+          ...fixture,
+          location: {
+            ...fixture.location,
+            region: "",
+          },
+        },
+      },
+      {
+        name: "empty ipHash.value",
+        schemaProperty:
+          liveAiTrafficEventJsonSchema.properties.ipHash.properties.value,
+        schemaValue: "",
+        event: {
+          ...fixture,
+          ipHash: {
+            ...fixture.ipHash,
+            value: "",
+          },
+        },
+      },
+      {
+        name: "empty ipHash.keyId",
+        schemaProperty:
+          liveAiTrafficEventJsonSchema.properties.ipHash.properties.keyId,
+        schemaValue: "",
+        event: {
+          ...fixture,
+          ipHash: {
+            ...fixture.ipHash,
+            keyId: "",
+          },
+        },
+      },
+      {
+        name: "empty integration.requestId",
+        schemaProperty:
+          liveAiTrafficEventJsonSchema.properties.integration.properties
+            .requestId,
+        schemaValue: "",
+        event: {
+          ...fixture,
+          integration: {
+            ...fixture.integration,
+            requestId: "",
+          },
+        },
+      },
     ];
 
     for (const { name, schemaProperty, schemaValue, event } of cases) {

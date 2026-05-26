@@ -369,7 +369,7 @@ function validateLocation(input: unknown, issues: string[]): void {
   if (typeof input.country === "string" && !/^[A-Z]{2}$/.test(input.country)) {
     issues.push("location.country must be an ISO 3166-1 alpha-2 code");
   }
-  requireOptionalString(input, "region", issues);
+  requireOptionalNonEmptyString(input, "region", issues);
 }
 
 function validateIpHash(input: unknown, issues: string[]): void {
@@ -385,8 +385,8 @@ function validateIpHash(input: unknown, issues: string[]): void {
     issues,
   );
   requireEnum(input, "algorithm", liveAiTrafficIpHashAlgorithms, issues);
-  requireOptionalString(input, "value", issues);
-  requireOptionalString(input, "keyId", issues);
+  requireOptionalNonEmptyString(input, "value", issues);
+  requireOptionalNonEmptyString(input, "keyId", issues);
   if (input.truncatedBits !== undefined) {
     requireInteger(input, "truncatedBits", issues);
     if (typeof input.truncatedBits === "number" && input.truncatedBits < 1) {
@@ -410,7 +410,7 @@ function validateIntegration(input: unknown, issues: string[]): void {
 
   rejectUnknownProperties(input, "integration", ["name", "requestId"], issues);
   requireString(input, "name", issues);
-  requireOptionalString(input, "requestId", issues);
+  requireOptionalNonEmptyString(input, "requestId", issues);
 }
 
 function requireString(
@@ -431,6 +431,18 @@ function requireOptionalString(
   if (input[field] !== undefined && typeof input[field] !== "string") {
     issues.push(`${field} must be a string when present`);
   }
+}
+
+function requireOptionalNonEmptyString(
+  input: Record<string, unknown>,
+  field: string,
+  issues: string[],
+): void {
+  if (input[field] === undefined) {
+    return;
+  }
+
+  requireString(input, field, issues);
 }
 
 function requireNumber(

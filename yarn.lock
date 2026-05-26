@@ -96,7 +96,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@promptscout/live-ai-traffic-cloudflare-worker@workspace:packages/cloudflare-worker":
+"@promptscout/live-ai-traffic-cloudflare-worker@workspace:*, @promptscout/live-ai-traffic-cloudflare-worker@workspace:packages/cloudflare-worker":
   version: 0.0.0-use.local
   resolution: "@promptscout/live-ai-traffic-cloudflare-worker@workspace:packages/cloudflare-worker"
   dependencies:
@@ -123,6 +123,14 @@ __metadata:
 "@promptscout/live-ai-traffic-core@workspace:*, @promptscout/live-ai-traffic-core@workspace:packages/core":
   version: 0.0.0-use.local
   resolution: "@promptscout/live-ai-traffic-core@workspace:packages/core"
+  languageName: unknown
+  linkType: soft
+
+"@promptscout/live-ai-traffic-example-cloudflare-worker@workspace:examples/cloudflare-worker":
+  version: 0.0.0-use.local
+  resolution: "@promptscout/live-ai-traffic-example-cloudflare-worker@workspace:examples/cloudflare-worker"
+  dependencies:
+    "@promptscout/live-ai-traffic-cloudflare-worker": "workspace:*"
   languageName: unknown
   linkType: soft
 

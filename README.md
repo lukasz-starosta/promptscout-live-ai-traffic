@@ -12,10 +12,13 @@ This repository uses Yarn workspaces:
 - `packages/cloudflare-worker` contains the Cloudflare Worker runtime collector
   for customer-owned Cloudflare routes.
 - `examples/*` contains one minimal workspace example per provider.
+- `examples/cloudflare-worker` contains the runnable Wrangler example for the
+  customer-owned Cloudflare Worker collector.
 - `docs/getting-started.md` and `docs/integrations/*` hold the initial docs shell.
 
-Provider and example packages are intentionally private placeholders until
-runtime implementation work lands in later issues.
+Provider and example packages are private while this repo is pre-release. Some
+provider directories remain placeholders until their runtime implementation work
+lands in later issues.
 
 ## Verification
 

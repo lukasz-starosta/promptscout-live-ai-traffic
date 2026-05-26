@@ -105,6 +105,44 @@ describe("live AI traffic event contract", () => {
     }
   });
 
+  it("parses events built from classifier output through the provider adapter", async () => {
+    const {
+      LIVE_AI_TRAFFIC_EVENT_SCHEMA_VERSION,
+      classifyAiTraffic,
+      parseLiveAiTrafficEvent,
+      toLiveAiTrafficProviderClassification,
+    } = await coreModule();
+
+    const classification = classifyAiTraffic({
+      userAgent: "OAI-SearchBot/1.0",
+      referer: "https://example.com/from-browser",
+    });
+    const providerClassification =
+      toLiveAiTrafficProviderClassification(classification);
+
+    assert.equal(classification.matchedRule, "ua:openai:oai-searchbot");
+    assert.equal(Object.hasOwn(providerClassification, "matchedRule"), false);
+    assert.equal(Object.hasOwn(providerClassification, "docsUrl"), false);
+
+    const event = parseLiveAiTrafficEvent({
+      schemaVersion: LIVE_AI_TRAFFIC_EVENT_SCHEMA_VERSION,
+      eventKind: "request_observation",
+      sourceProvider: "cloudflare",
+      observedAt: "2026-05-26T07:05:00.000Z",
+      request: {
+        host: "example.com",
+        path: "/guides/live-ai-traffic",
+        method: "GET",
+        userAgent: "OAI-SearchBot/1.0",
+        referer: "https://example.com/from-browser",
+      },
+      providerClassification,
+    });
+
+    assert.equal(event.providerClassification.provider, "openai_search_bot");
+    assert.deepEqual(event.providerClassification.matchedBy, ["user_agent"]);
+  });
+
   it("rejects invalid fixtures instead of silently mapping critical enums", async () => {
     const { parseLiveAiTrafficEvent } = await coreModule();
     const paths = await fixturePaths(rejectedFixtureDirectory);

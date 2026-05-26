@@ -106,6 +106,13 @@ export type AiTrafficClassification = {
   docsUrl?: string;
 };
 
+export type LiveAiTrafficProviderClassification = {
+  provider: LiveAiTrafficClassifiedProvider;
+  agentType: LiveAiTrafficAgentType;
+  confidence: number;
+  matchedBy: LiveAiTrafficMatchKind[];
+};
+
 export type AiTrafficRequestLike = {
   userAgent?: unknown;
   referer?: unknown;
@@ -393,6 +400,17 @@ export function classifyAiTraffic(
   return unknownClassification("fallback:unknown-request");
 }
 
+export function toLiveAiTrafficProviderClassification(
+  classification: AiTrafficClassification,
+): LiveAiTrafficProviderClassification {
+  return {
+    provider: classification.provider,
+    agentType: classification.agentType,
+    confidence: classification.confidence,
+    matchedBy: classification.matchedBy,
+  };
+}
+
 export type LiveAiTrafficEvent = {
   schemaVersion: number;
   eventKind: "request_observation";
@@ -406,12 +424,7 @@ export type LiveAiTrafficEvent = {
     userAgent?: string;
     referer?: string;
   };
-  providerClassification: {
-    provider: LiveAiTrafficClassifiedProvider;
-    agentType: LiveAiTrafficAgentType;
-    confidence: number;
-    matchedBy: LiveAiTrafficMatchKind[];
-  };
+  providerClassification: LiveAiTrafficProviderClassification;
   location?: {
     country?: string;
     region?: string;

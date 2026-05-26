@@ -79,6 +79,7 @@ preserve any integration-specific raw details outside the canonical fields.
 - `classifyAiTraffic(requestLike)`
 - `classifyUserAgent(userAgent)`
 - `classifyReferer(referer)`
+- `toLiveAiTrafficProviderClassification(classification)`
 
 ## Classification Helpers
 
@@ -97,6 +98,12 @@ The lower-level helpers return the same shape:
   `ua:openai:oai-searchbot` or `ref:perplexity`.
 - `matchedBy`: the signal type used for classification.
 - `docsUrl`: provider documentation when the rule has a useful public source.
+
+Classifier results include registry metadata for debugging and docs links. Before
+placing a classifier result on `LiveAiTrafficEvent.providerClassification`, call
+`toLiveAiTrafficProviderClassification(classification)` so the event only
+contains the closed contract fields: `provider`, `agentType`, `confidence`, and
+`matchedBy`.
 
 Agent types intentionally distinguish the traffic purpose:
 

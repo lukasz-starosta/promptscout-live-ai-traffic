@@ -18,3 +18,7 @@ Run the repo-owned verifier before handing off changes:
 
 See [event-contract.md](event-contract.md) for the shared request observation
 schema used by collectors and ingest endpoints.
+
+See [privacy-security-operations.md](privacy-security-operations.md) for the
+default privacy posture, site-scoped ingest token handling, failure modes, and
+security FAQ.

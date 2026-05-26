@@ -25,11 +25,16 @@ fields without breaking older consumers.
 - `request.method`: uppercase HTTP method or `OTHER`.
 - `providerClassification.provider`: known provider classification, such as
   `openai_search_bot`, `openai_gptbot`, `openai_chatgpt_user`,
-  `anthropic_claudebot`, `perplexitybot`, `google_crawler`,
-  `google_referral`, `ai_browser_referral`, or `other`.
+  `anthropic_claudebot`, `anthropic_claude_search_bot`,
+  `anthropic_claude_user`, `perplexitybot`, `perplexity_user`,
+  `perplexity_referral`, `google_crawler`, `google_agent`,
+  `google_notebooklm`, `google_referral`, `meta_external_agent`,
+  `meta_external_fetcher`, `bytedance_bytespider`, `ai_browser_referral`, or
+  `other`.
 - `providerClassification.agentType`: known traffic class, such as
   `ai_search_crawler`, `ai_training_crawler`, `ai_browser_user`,
-  `ai_assistant_referral`, `search_crawler`, `search_referral`, or `other`.
+  `link_preview`, `ai_assistant_referral`, `search_crawler`,
+  `search_referral`, or `other`.
 - `providerClassification.confidence`: number from `0` through `1`.
 - `providerClassification.matchedBy`: non-empty list of signals used to classify
   the event, such as `user_agent`, `referer`, `host`, `path`, `manual`, or
@@ -71,7 +76,52 @@ preserve any integration-specific raw details outside the canonical fields.
 - `parseLiveAiTrafficEvent`
 - `isLiveAiTrafficEvent`
 - `validateLiveAiTrafficEvent`
+- `classifyAiTraffic(requestLike)`
+- `classifyUserAgent(userAgent)`
+- `classifyReferer(referer)`
+- `toLiveAiTrafficProviderClassification(classification)`
+
+## Classification Helpers
+
+`classifyAiTraffic(requestLike)` is the shared classifier that provider
+packages should call before building a request observation event. It accepts a
+small request-like object with `userAgent`, `referer`/`referrer`, or a
+case-insensitive `headers` object. Provider packages should not duplicate crawler
+string matching.
+
+The lower-level helpers return the same shape:
+
+- `provider`: the canonical provider classification, or `other`.
+- `agentType`: the traffic class.
+- `confidence`: a `0` through `1` score for the matched signal.
+- `matchedRule`: the registry rule identifier, such as
+  `ua:openai:oai-searchbot` or `ref:perplexity`.
+- `matchedBy`: the signal type used for classification.
+- `docsUrl`: provider documentation when the rule has a useful public source.
+
+Classifier results include registry metadata for debugging and docs links. Before
+placing a classifier result on `LiveAiTrafficEvent.providerClassification`, call
+`toLiveAiTrafficProviderClassification(classification)` so the event only
+contains the closed contract fields: `provider`, `agentType`, `confidence`, and
+`matchedBy`.
+
+Agent types intentionally distinguish the traffic purpose:
+
+- `ai_search_crawler`: automated AI search/indexing crawler, such as
+  OpenAI `OAI-SearchBot`, Anthropic `Claude-SearchBot`, or PerplexityBot.
+- `ai_training_crawler`: crawler primarily associated with model or product data
+  collection, such as OpenAI `GPTBot`, Anthropic `ClaudeBot`,
+  Meta-ExternalAgent, or Bytespider.
+- `ai_browser_user`: user-triggered AI fetch, such as OpenAI `ChatGPT-User`,
+  Anthropic `Claude-User`, Perplexity-User, Google-Agent, or NotebookLM.
+- `link_preview`: preview/unfurl fetches, such as Meta/Facebook preview agents.
+- `ai_assistant_referral`: browser traffic referred from AI assistant surfaces,
+  such as ChatGPT, Claude, Perplexity, Gemini, or Meta AI.
+- `search_crawler` and `search_referral`: conventional Google crawler or search
+  referral traffic that is useful as a baseline next to AI traffic.
+- `other`: explicit fallback for missing, malformed, or unsupported signals.
 
 Committed fixtures live under `packages/core/fixtures/accepted` and
-`packages/core/fixtures/rejected`. The focused Node test validates those fixtures
-against the exported parser and JSON schema metadata.
+`packages/core/fixtures/rejected`. Classifier fixtures live under
+`packages/core/fixtures/classifier`. The focused Node tests validate those
+fixtures against the exported parser, classifier, and JSON schema metadata.

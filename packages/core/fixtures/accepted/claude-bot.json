@@ -11,7 +11,7 @@
   },
   "providerClassification": {
     "provider": "anthropic_claudebot",
-    "agentType": "ai_search_crawler",
+    "agentType": "ai_training_crawler",
     "confidence": 0.96,
     "matchedBy": ["user_agent"]
   },

@@ -250,6 +250,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@promptscout/live-ai-traffic-wordpress-plugin@workspace:packages/wordpress-plugin":
+  version: 0.0.0-use.local
+  resolution: "@promptscout/live-ai-traffic-wordpress-plugin@workspace:packages/wordpress-plugin"
+  languageName: unknown
+  linkType: soft
+
 "@promptscout/live-ai-traffic-wordpress@workspace:*, @promptscout/live-ai-traffic-wordpress@workspace:packages/wordpress":
   version: 0.0.0-use.local
   resolution: "@promptscout/live-ai-traffic-wordpress@workspace:packages/wordpress"

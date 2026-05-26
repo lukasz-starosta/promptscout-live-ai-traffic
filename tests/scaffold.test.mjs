@@ -68,6 +68,9 @@ describe("monorepo scaffold", () => {
       if (provider === "vercel") {
         assert.match(integrationDoc, /trackPromptScoutAiTraffic/);
         assert.match(integrationDoc, /matcher/i);
+      } else if (provider === "wordpress") {
+        assert.match(integrationDoc, /wp_remote_post/);
+        assert.match(integrationDoc, /brand-owned site source/);
       } else {
         assert.match(integrationDoc, /intentionally deferred/i);
       }

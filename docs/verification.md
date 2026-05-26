@@ -14,7 +14,7 @@ worktrees. It currently runs:
 
 - repository text formatting checks for trailing whitespace and exactly one
   final newline;
-- monorepo scaffold checks for package, example, and docs placeholders;
+- monorepo scaffold checks for package, example, and docs surfaces;
 - Bash syntax checks for shell scripts;
 - focused Node tests under `tests/*.test.mjs`, including the core package
   TypeScript build performed by the event contract test;
@@ -51,9 +51,11 @@ runtime surface.
 
 ## Intentionally Empty Packages
 
-The provider and example packages are structure-only placeholders. Each
+Most provider and example packages are still structure-only placeholders. Each
 provider imports `@promptscout/live-ai-traffic-core` and each example imports
-its matching provider package, but runtime behavior is intentionally deferred.
+its matching provider package, but runtime behavior is intentionally deferred
+except for the implemented Vercel middleware collector and WordPress plugin
+collector paths.
 
 ## Symphony Contract
 

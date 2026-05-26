@@ -2,11 +2,7 @@ import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { describe, it } from "node:test";
 
-const TEST_INGEST_TOKEN = [
-  "site-scoped",
-  "netlify",
-  "fixture",
-].join("-");
+const TEST_INGEST_TOKEN = ["site-scoped", "netlify", "fixture"].join("-");
 const TEST_INGEST_URL = "https://promptscout.example/ingest/live-ai-traffic";
 
 let netlifyEdgeModulePromise;

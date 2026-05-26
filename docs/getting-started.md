@@ -9,6 +9,9 @@ The current scaffold is intentionally minimal:
 - Provider packages import `@promptscout/live-ai-traffic-core` through workspace dependencies.
 - `packages/cloudflare-worker` is the Cloudflare Worker collector for sites
   already proxied through customer-owned Cloudflare routes.
+- `packages/cloudfront-aws` parses CloudFront real-time access logs delivered
+  through Kinesis Data Streams and can forward normalized events from a regional
+  Lambda or Kinesis consumer.
 - Examples are workspace packages that import their matching provider package.
 - Most placeholder provider runtime behavior, provider credentials, and
   deployment instructions are intentionally deferred to later implementation

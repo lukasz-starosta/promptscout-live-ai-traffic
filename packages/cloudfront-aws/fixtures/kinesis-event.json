@@ -1,0 +1,13 @@
+{
+  "Records": [
+    {
+      "eventSource": "aws:kinesis",
+      "eventID": "shardId-000000000000:49664643410762000000000000000000000000000000000000000000",
+      "kinesis": {
+        "partitionKey": "cloudfront-request-123",
+        "sequenceNumber": "49664643410762000000000000000000000000000000000000000000",
+        "data": "MjAyNi0wNS0yNlQwOTozMDowMFoJMjAzLjAuMTEzLjQyCTIwMAlHRVQJaHR0cHMJd3d3LmV4YW1wbGUuY29tCS9wcmljaW5nCWNsb3VkZnJvbnQtcmVxdWVzdC0xMjMJT0FJLVNlYXJjaEJvdC8xLjAJaHR0cHM6Ly9jaGF0Z3B0LmNvbS9zaGFyZS9leGFtcGxlCXV0bV9zb3VyY2U9Y2hhdGdwdCZ0b2tlbj1zZWNyZXQJVVMK"
+      }
+    }
+  ]
+}

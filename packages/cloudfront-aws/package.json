@@ -2,7 +2,7 @@
   "name": "@promptscout/live-ai-traffic-cloudfront-aws",
   "version": "0.0.0",
   "private": true,
-  "description": "Placeholder CloudFront/AWS integration for PromptScout live AI traffic.",
+  "description": "CloudFront real-time log and Kinesis consumer helpers for PromptScout live AI traffic.",
   "license": "Apache-2.0",
   "type": "module",
   "main": "./dist/index.js",

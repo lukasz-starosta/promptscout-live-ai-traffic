@@ -11,16 +11,21 @@ This repository uses Yarn workspaces:
 - `packages/*` contains one provider package per integration.
 - `packages/cloudflare-worker` contains the Cloudflare Worker runtime collector
   for customer-owned Cloudflare routes.
+- `packages/cloudfront-aws` contains the AWS CloudFront real-time log parser and
+  regional Kinesis/Lambda consumer helpers.
 - `examples/*` contains one minimal workspace example per provider.
 - `examples/cloudflare-worker` contains the runnable Wrangler example for the
   customer-owned Cloudflare Worker collector.
+- `examples/cloudfront-aws` contains the AWS CloudFront real-time logs through
+  Kinesis example notes.
 - `docs/getting-started.md` and `docs/integrations/*` hold the initial docs shell.
 - `docs/install-matrix-and-signal-quality.md` explains how customers should
   choose an install path and how to interpret collector signal quality.
 
 Provider and example packages are private while this repo is pre-release. Some
 provider directories remain placeholders until their runtime implementation work
-lands in later issues.
+lands in later issues. CloudFront/AWS is implemented through real-time access
+logs delivered to Kinesis Data Streams, not CloudFront Functions.
 
 ## Verification
 

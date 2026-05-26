@@ -14,13 +14,16 @@ const requiredProviders = [
   "CloudFront/AWS",
   "Fastly",
 ];
-const currentInstallPaths = ["Vercel middleware", "Cloudflare Worker"];
+const currentInstallPaths = [
+  "Vercel middleware",
+  "Cloudflare Worker",
+  "CloudFront/AWS",
+];
 const deferredInstallPaths = [
   "Netlify Edge",
   "nginx logs",
   "WordPress plugin",
   "Node/Express",
-  "CloudFront/AWS",
   "Fastly",
 ];
 
@@ -72,7 +75,9 @@ describe("install matrix docs", () => {
     for (const provider of currentInstallPaths) {
       assert.match(
         guide,
-        new RegExp(`\\| ${provider.replace("/", "\\/")} \\| Current \\|`),
+        new RegExp(
+          `\\| ${provider.replace("/", "\\/")} \\| Current(?: AWS path)? \\|`,
+        ),
       );
     }
 

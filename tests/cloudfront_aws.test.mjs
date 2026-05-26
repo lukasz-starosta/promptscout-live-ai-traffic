@@ -89,6 +89,26 @@ describe("CloudFront AWS real-time log collector", () => {
     });
   });
 
+  it("omits fixture query strings by default", async () => {
+    const {
+      buildPromptScoutCloudFrontAwsEventFromRealtimeLogRecord,
+      recommendedCloudFrontRealtimeLogFields,
+    } = await cloudFrontModule();
+    const record = await readText(
+      "packages/cloudfront-aws/fixtures/realtime-log-record.tsv",
+    );
+
+    const event = await buildPromptScoutCloudFrontAwsEventFromRealtimeLogRecord(
+      record,
+      {
+        fields: recommendedCloudFrontRealtimeLogFields,
+      },
+    );
+
+    assert.equal(event.request.search, undefined);
+    assert.equal(JSON.stringify(event).includes("token=secret"), false);
+  });
+
   it("builds events from local Lambda/Kinesis fixture records without AWS calls", async () => {
     const { buildPromptScoutCloudFrontAwsEventsFromKinesisEvent } =
       await cloudFrontModule();

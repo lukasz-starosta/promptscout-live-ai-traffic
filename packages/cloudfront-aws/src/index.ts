@@ -164,6 +164,7 @@ export async function buildPromptScoutCloudFrontAwsEventFromRealtimeLogRecord(
   });
 
   return normalizeLiveAiTrafficEvent(rawEvent, {
+    query: { mode: "omit" },
     ...options.privacy,
     ip: normalizeIpPrivacy(options.privacy?.ip, parsed["c-ip"]),
   });

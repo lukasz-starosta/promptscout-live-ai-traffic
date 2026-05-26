@@ -214,6 +214,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@promptscout/live-ai-traffic-vercel-middleware@workspace:packages/vercel-middleware":
+  version: 0.0.0-use.local
+  resolution: "@promptscout/live-ai-traffic-vercel-middleware@workspace:packages/vercel-middleware"
+  dependencies:
+    "@promptscout/live-ai-traffic-core": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@promptscout/live-ai-traffic-vercel@workspace:*, @promptscout/live-ai-traffic-vercel@workspace:packages/vercel":
   version: 0.0.0-use.local
   resolution: "@promptscout/live-ai-traffic-vercel@workspace:packages/vercel"

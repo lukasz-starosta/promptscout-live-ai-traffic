@@ -65,7 +65,12 @@ describe("monorepo scaffold", () => {
         source,
         new RegExp(`@promptscout/live-ai-traffic-${provider}`),
       );
-      assert.match(integrationDoc, /intentionally deferred/i);
+      if (provider === "vercel") {
+        assert.match(integrationDoc, /trackPromptScoutAiTraffic/);
+        assert.match(integrationDoc, /matcher/i);
+      } else {
+        assert.match(integrationDoc, /intentionally deferred/i);
+      }
     }
   });
 });

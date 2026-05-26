@@ -186,6 +186,22 @@ describe("live AI traffic event contract", () => {
     );
   });
 
+  it("rejects impossible observedAt calendar dates", async () => {
+    const { parseLiveAiTrafficEvent } = await coreModule();
+    const fixture = await readJson(
+      `${acceptedFixtureDirectory}/openai-search-bot.json`,
+    );
+
+    assert.throws(
+      () =>
+        parseLiveAiTrafficEvent({
+          ...fixture,
+          observedAt: "2026-02-31T00:00:00Z",
+        }),
+      /Invalid live AI traffic event/,
+    );
+  });
+
   it("accepts an empty request.search value", async () => {
     const { liveAiTrafficEventJsonSchema, parseLiveAiTrafficEvent } =
       await coreModule();

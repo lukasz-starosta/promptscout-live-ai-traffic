@@ -497,11 +497,7 @@ function requireIsoDateTime(
     return;
   }
 
-  if (
-    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(
-      input[field],
-    )
-  ) {
+  if (!isStrictIsoDateTime(input[field])) {
     issues.push(`${field} must be an ISO date-time timestamp`);
     return;
   }
@@ -510,6 +506,62 @@ function requireIsoDateTime(
   if (!Number.isFinite(parsed)) {
     issues.push(`${field} must be an ISO date-time timestamp`);
   }
+}
+
+function isStrictIsoDateTime(value: string): boolean {
+  const match =
+    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d+)?(?:Z|[+-](\d{2}):(\d{2}))$/.exec(
+      value,
+    );
+  if (!match) {
+    return false;
+  }
+
+  const [
+    ,
+    yearValue,
+    monthValue,
+    dayValue,
+    hourValue,
+    minuteValue,
+    secondValue,
+    offsetHourValue,
+    offsetMinuteValue,
+  ] = match;
+  const year = Number(yearValue);
+  const month = Number(monthValue);
+  const day = Number(dayValue);
+  const hour = Number(hourValue);
+  const minute = Number(minuteValue);
+  const second = Number(secondValue);
+  const offsetHour =
+    offsetHourValue === undefined ? 0 : Number(offsetHourValue);
+  const offsetMinute =
+    offsetMinuteValue === undefined ? 0 : Number(offsetMinuteValue);
+
+  return (
+    month >= 1 &&
+    month <= 12 &&
+    day >= 1 &&
+    day <= daysInMonth(year, month) &&
+    hour <= 23 &&
+    minute <= 59 &&
+    second <= 59 &&
+    offsetHour <= 23 &&
+    offsetMinute <= 59
+  );
+}
+
+function daysInMonth(year: number, month: number): number {
+  if (month === 2) {
+    return isLeapYear(year) ? 29 : 28;
+  }
+
+  return [4, 6, 9, 11].includes(month) ? 30 : 31;
+}
+
+function isLeapYear(year: number): boolean {
+  return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
 }
 
 function rejectUnknownProperties(

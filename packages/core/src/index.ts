@@ -365,13 +365,16 @@ export function classifyReferer(referer: unknown): AiTrafficClassification {
 export function classifyAiTraffic(
   requestLike: AiTrafficRequestLike,
 ): AiTrafficClassification {
-  const userAgent =
-    requestLike.userAgent ?? headerValue(requestLike, "user-agent");
-  const referer =
-    requestLike.referer ??
-    requestLike.referrer ??
-    headerValue(requestLike, "referer") ??
-    headerValue(requestLike, "referrer");
+  const userAgent = firstHeaderValue(
+    requestLike.userAgent,
+    headerValue(requestLike, "user-agent"),
+  );
+  const referer = firstHeaderValue(
+    requestLike.referer,
+    requestLike.referrer,
+    headerValue(requestLike, "referer"),
+    headerValue(requestLike, "referrer"),
+  );
 
   const userAgentClassification = classifyUserAgent(userAgent);
   const refererClassification = classifyReferer(referer);
@@ -767,6 +770,17 @@ function normalizeHeaderValue(input: unknown): string | undefined {
 
   const trimmed = input.trim();
   return trimmed.length > 0 ? trimmed : undefined;
+}
+
+function firstHeaderValue(...inputs: unknown[]): string | undefined {
+  for (const input of inputs) {
+    const normalizedValue = normalizeHeaderValue(input);
+    if (normalizedValue !== undefined) {
+      return normalizedValue;
+    }
+  }
+
+  return undefined;
 }
 
 function headerValue(

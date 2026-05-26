@@ -107,4 +107,24 @@ describe("AI traffic classifier", () => {
     assert.equal(result.matchedRule, "ua:openai:gptbot");
     assert.deepEqual(result.matchedBy, ["user_agent"]);
   });
+
+  it("falls back to populated header values when direct fields are blank", async () => {
+    const { classifyAiTraffic } = await coreModule();
+
+    assert.equal(
+      classifyAiTraffic({
+        userAgent: "",
+        headers: { "user-agent": "GPTBot/1.3" },
+      }).matchedRule,
+      "ua:openai:gptbot",
+    );
+
+    assert.equal(
+      classifyAiTraffic({
+        referer: "   ",
+        referrer: "https://www.perplexity.ai/search/example",
+      }).matchedRule,
+      "ref:perplexity",
+    );
+  });
 });

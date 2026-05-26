@@ -271,7 +271,9 @@ function isoDateTime(value: string | undefined, field: string): string {
     throw new Error(`CloudFront real-time log field ${field} is required`);
   }
 
-  const date = new Date(value);
+  const date = /^\d+(?:\.\d+)?$/.test(value)
+    ? new Date(Number(value) * 1000)
+    : new Date(value);
   if (Number.isNaN(date.getTime())) {
     throw new Error(`CloudFront real-time log field ${field} must be a date`);
   }

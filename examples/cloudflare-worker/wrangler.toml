@@ -1,0 +1,15 @@
+name = "promptscout-live-ai-traffic-example"
+main = "src/index.ts"
+compatibility_date = "2026-05-26"
+
+# Replace this with the hostname route served through Cloudflare's orange-cloud
+# DNS proxy. Keep local development narrow until the Worker has been smoked.
+routes = [
+  { pattern = "example.com/*", zone_name = "example.com" }
+]
+
+[vars]
+PROMPTSCOUT_INGEST_URL = "https://api.promptscout.com/live-ai-traffic/ingest"
+PROMPTSCOUT_QUERY_POLICY = "omit"
+PROMPTSCOUT_PATH_POLICY = "keep"
+PROMPTSCOUT_DEBUG = "false"

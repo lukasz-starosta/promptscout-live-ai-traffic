@@ -34,9 +34,18 @@ export const liveAiTrafficClassifiedProviders = [
   "openai_gptbot",
   "openai_chatgpt_user",
   "anthropic_claudebot",
+  "anthropic_claude_search_bot",
+  "anthropic_claude_user",
   "perplexitybot",
+  "perplexity_user",
+  "perplexity_referral",
   "google_crawler",
+  "google_agent",
+  "google_notebooklm",
   "google_referral",
+  "meta_external_agent",
+  "meta_external_fetcher",
+  "bytedance_bytespider",
   "ai_browser_referral",
   "other",
 ] as const;
@@ -45,6 +54,7 @@ export const liveAiTrafficAgentTypes = [
   "ai_search_crawler",
   "ai_training_crawler",
   "ai_browser_user",
+  "link_preview",
   "ai_assistant_referral",
   "search_crawler",
   "search_referral",
@@ -86,6 +96,299 @@ export type LiveAiTrafficHttpMethod = (typeof liveAiTrafficHttpMethods)[number];
 export type LiveAiTrafficMatchKind = (typeof liveAiTrafficMatchKinds)[number];
 export type LiveAiTrafficIpHashAlgorithm =
   (typeof liveAiTrafficIpHashAlgorithms)[number];
+
+export type AiTrafficClassification = {
+  provider: LiveAiTrafficClassifiedProvider;
+  agentType: LiveAiTrafficAgentType;
+  confidence: number;
+  matchedRule: string;
+  matchedBy: LiveAiTrafficMatchKind[];
+  docsUrl?: string;
+};
+
+export type AiTrafficRequestLike = {
+  userAgent?: unknown;
+  referer?: unknown;
+  referrer?: unknown;
+  headers?: unknown;
+};
+
+type ClassificationRule = {
+  id: string;
+  provider: LiveAiTrafficClassifiedProvider;
+  agentType: LiveAiTrafficAgentType;
+  confidence: number;
+  docsUrl?: string;
+  patterns: readonly RegExp[];
+};
+
+const openAiBotsDocsUrl = "https://platform.openai.com/docs/bots";
+const anthropicBotsDocsUrl =
+  "https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler";
+const googleCommonCrawlersDocsUrl =
+  "https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers";
+const googleUserFetchersDocsUrl =
+  "https://developers.google.com/crawling/docs/crawlers-fetchers/google-user-triggered-fetchers";
+const metaCrawlerDocsUrl =
+  "https://developers.facebook.com/docs/sharing/webmasters/crawler";
+
+const userAgentRules: readonly ClassificationRule[] = [
+  {
+    id: "ua:openai:oai-searchbot",
+    provider: "openai_search_bot",
+    agentType: "ai_search_crawler",
+    confidence: 0.99,
+    docsUrl: openAiBotsDocsUrl,
+    patterns: [/\boai-searchbot(?:\/|\b)/i],
+  },
+  {
+    id: "ua:openai:gptbot",
+    provider: "openai_gptbot",
+    agentType: "ai_training_crawler",
+    confidence: 0.98,
+    docsUrl: openAiBotsDocsUrl,
+    patterns: [/\bgptbot(?:\/|\b)/i],
+  },
+  {
+    id: "ua:openai:chatgpt-user",
+    provider: "openai_chatgpt_user",
+    agentType: "ai_browser_user",
+    confidence: 0.96,
+    docsUrl: openAiBotsDocsUrl,
+    patterns: [/\bchatgpt-user(?:\/|\b)/i],
+  },
+  {
+    id: "ua:anthropic:claude-searchbot",
+    provider: "anthropic_claude_search_bot",
+    agentType: "ai_search_crawler",
+    confidence: 0.96,
+    docsUrl: anthropicBotsDocsUrl,
+    patterns: [/\bclaude-searchbot(?:\/|\b)/i],
+  },
+  {
+    id: "ua:anthropic:claude-user",
+    provider: "anthropic_claude_user",
+    agentType: "ai_browser_user",
+    confidence: 0.94,
+    docsUrl: anthropicBotsDocsUrl,
+    patterns: [/\bclaude-user(?:\/|\b)/i],
+  },
+  {
+    id: "ua:anthropic:claudebot",
+    provider: "anthropic_claudebot",
+    agentType: "ai_training_crawler",
+    confidence: 0.96,
+    docsUrl: anthropicBotsDocsUrl,
+    patterns: [/\bclaudebot(?:\/|\b)/i],
+  },
+  {
+    id: "ua:perplexity:perplexitybot",
+    provider: "perplexitybot",
+    agentType: "ai_search_crawler",
+    confidence: 0.95,
+    docsUrl: "https://docs.perplexity.ai/guides/bots",
+    patterns: [/\bperplexitybot(?:\/|\b)/i],
+  },
+  {
+    id: "ua:perplexity:perplexity-user",
+    provider: "perplexity_user",
+    agentType: "ai_browser_user",
+    confidence: 0.92,
+    docsUrl: "https://docs.perplexity.ai/guides/bots",
+    patterns: [/\bperplexity-user(?:\/|\b)/i],
+  },
+  {
+    id: "ua:google:google-agent",
+    provider: "google_agent",
+    agentType: "ai_browser_user",
+    confidence: 0.91,
+    docsUrl: googleUserFetchersDocsUrl,
+    patterns: [/\bgoogle-agent(?:;|\/|\b)/i],
+  },
+  {
+    id: "ua:google:notebooklm",
+    provider: "google_notebooklm",
+    agentType: "ai_browser_user",
+    confidence: 0.9,
+    docsUrl: googleUserFetchersDocsUrl,
+    patterns: [/\bgoogle-notebooklm(?:\/|\b)/i],
+  },
+  {
+    id: "ua:google:googleother",
+    provider: "google_crawler",
+    agentType: "search_crawler",
+    confidence: 0.9,
+    docsUrl: googleCommonCrawlersDocsUrl,
+    patterns: [/\bgoogleother(?:-|;|\)|\b)/i],
+  },
+  {
+    id: "ua:google:googlebot",
+    provider: "google_crawler",
+    agentType: "search_crawler",
+    confidence: 0.9,
+    docsUrl: googleCommonCrawlersDocsUrl,
+    patterns: [/\bgooglebot(?:-|\/|\b)/i],
+  },
+  {
+    id: "ua:meta:externalagent",
+    provider: "meta_external_agent",
+    agentType: "ai_training_crawler",
+    confidence: 0.91,
+    docsUrl: metaCrawlerDocsUrl,
+    patterns: [/\bmeta-externalagent(?:\/|\b)/i],
+  },
+  {
+    id: "ua:meta:externalfetcher",
+    provider: "meta_external_fetcher",
+    agentType: "link_preview",
+    confidence: 0.86,
+    docsUrl: metaCrawlerDocsUrl,
+    patterns: [
+      /\bmeta-externalfetcher(?:\/|\b)/i,
+      /\bfacebookexternalhit(?:\/|\b)/i,
+      /\bfacebot(?:\/|\b)/i,
+    ],
+  },
+  {
+    id: "ua:bytedance:bytespider",
+    provider: "bytedance_bytespider",
+    agentType: "ai_training_crawler",
+    confidence: 0.9,
+    patterns: [/\bbytespider(?:\/|;|\b)/i],
+  },
+] as const;
+
+const refererRules: readonly ClassificationRule[] = [
+  {
+    id: "ref:openai:chatgpt",
+    provider: "ai_browser_referral",
+    agentType: "ai_assistant_referral",
+    confidence: 0.74,
+    docsUrl: openAiBotsDocsUrl,
+    patterns: [/^https?:\/\/(?:[^/]+\.)?chatgpt\.com(?:\/|$)/i],
+  },
+  {
+    id: "ref:openai",
+    provider: "ai_browser_referral",
+    agentType: "ai_assistant_referral",
+    confidence: 0.7,
+    docsUrl: openAiBotsDocsUrl,
+    patterns: [/^https?:\/\/(?:[^/]+\.)?openai\.com(?:\/|$)/i],
+  },
+  {
+    id: "ref:anthropic:claude",
+    provider: "ai_browser_referral",
+    agentType: "ai_assistant_referral",
+    confidence: 0.72,
+    docsUrl: anthropicBotsDocsUrl,
+    patterns: [/^https?:\/\/(?:[^/]+\.)?claude\.ai(?:\/|$)/i],
+  },
+  {
+    id: "ref:perplexity",
+    provider: "perplexity_referral",
+    agentType: "ai_assistant_referral",
+    confidence: 0.74,
+    docsUrl: "https://docs.perplexity.ai/guides/bots",
+    patterns: [/^https?:\/\/(?:[^/]+\.)?perplexity\.ai(?:\/|$)/i],
+  },
+  {
+    id: "ref:google:gemini",
+    provider: "google_referral",
+    agentType: "ai_assistant_referral",
+    confidence: 0.7,
+    docsUrl: googleCommonCrawlersDocsUrl,
+    patterns: [
+      /^https?:\/\/gemini\.google\.com(?:\/|$)/i,
+      /^https?:\/\/bard\.google\.com(?:\/|$)/i,
+      /^https?:\/\/(?:[^/]+\.)?ai\.google(?:\/|$)/i,
+    ],
+  },
+  {
+    id: "ref:google:search",
+    provider: "google_referral",
+    agentType: "search_referral",
+    confidence: 0.82,
+    docsUrl: googleCommonCrawlersDocsUrl,
+    patterns: [
+      /^https?:\/\/(?:www\.)?google\.[^/]+\/(?:search|url)(?:[/?#]|$)/i,
+    ],
+  },
+  {
+    id: "ref:meta:ai",
+    provider: "ai_browser_referral",
+    agentType: "ai_assistant_referral",
+    confidence: 0.68,
+    docsUrl: metaCrawlerDocsUrl,
+    patterns: [/^https?:\/\/(?:www\.)?meta\.ai(?:\/|$)/i],
+  },
+  {
+    id: "ref:generic-ai",
+    provider: "ai_browser_referral",
+    agentType: "ai_assistant_referral",
+    confidence: 0.55,
+    patterns: [
+      /^https?:\/\/(?:[^/]+\.)?(?:copilot\.microsoft\.com|poe\.com|you\.com)(?:\/|$)/i,
+    ],
+  },
+] as const;
+
+export function classifyUserAgent(userAgent: unknown): AiTrafficClassification {
+  const normalizedUserAgent = normalizeHeaderValue(userAgent);
+
+  if (normalizedUserAgent === undefined) {
+    return unknownClassification("fallback:unknown-user-agent");
+  }
+
+  return classifyByRules(
+    normalizedUserAgent,
+    userAgentRules,
+    "user_agent",
+    "fallback:unknown-user-agent",
+  );
+}
+
+export function classifyReferer(referer: unknown): AiTrafficClassification {
+  const normalizedReferer = normalizeHeaderValue(referer);
+
+  if (normalizedReferer === undefined) {
+    return unknownClassification("fallback:unknown-referer");
+  }
+
+  return classifyByRules(
+    normalizedReferer,
+    refererRules,
+    "referer",
+    "fallback:unknown-referer",
+  );
+}
+
+export function classifyAiTraffic(
+  requestLike: AiTrafficRequestLike,
+): AiTrafficClassification {
+  const userAgent =
+    requestLike.userAgent ?? headerValue(requestLike, "user-agent");
+  const referer =
+    requestLike.referer ??
+    requestLike.referrer ??
+    headerValue(requestLike, "referer") ??
+    headerValue(requestLike, "referrer");
+
+  const userAgentClassification = classifyUserAgent(userAgent);
+  const refererClassification = classifyReferer(referer);
+
+  if (
+    isKnownClassification(userAgentClassification) &&
+    userAgentClassification.confidence >= refererClassification.confidence
+  ) {
+    return userAgentClassification;
+  }
+
+  if (isKnownClassification(refererClassification)) {
+    return refererClassification;
+  }
+
+  return unknownClassification("fallback:unknown-request");
+}
 
 export type LiveAiTrafficEvent = {
   schemaVersion: number;
@@ -411,6 +714,83 @@ function validateIntegration(input: unknown, issues: string[]): void {
   rejectUnknownProperties(input, "integration", ["name", "requestId"], issues);
   requireString(input, "name", issues);
   requireOptionalNonEmptyString(input, "requestId", issues);
+}
+
+function classifyByRules(
+  value: string,
+  rules: readonly ClassificationRule[],
+  matchedBy: LiveAiTrafficMatchKind,
+  fallbackRule: string,
+): AiTrafficClassification {
+  for (const rule of rules) {
+    if (rule.patterns.some((pattern) => pattern.test(value))) {
+      return {
+        provider: rule.provider,
+        agentType: rule.agentType,
+        confidence: rule.confidence,
+        matchedRule: rule.id,
+        matchedBy: [matchedBy],
+        ...(rule.docsUrl === undefined ? {} : { docsUrl: rule.docsUrl }),
+      };
+    }
+  }
+
+  return unknownClassification(fallbackRule);
+}
+
+function unknownClassification(matchedRule: string): AiTrafficClassification {
+  return {
+    provider: "other",
+    agentType: "other",
+    confidence: 0,
+    matchedRule,
+    matchedBy: ["other"],
+  };
+}
+
+function isKnownClassification(
+  classification: AiTrafficClassification,
+): boolean {
+  return (
+    classification.provider !== "other" && classification.agentType !== "other"
+  );
+}
+
+function normalizeHeaderValue(input: unknown): string | undefined {
+  if (Array.isArray(input)) {
+    return normalizeHeaderValue(input[0]);
+  }
+
+  if (typeof input !== "string") {
+    return undefined;
+  }
+
+  const trimmed = input.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
+function headerValue(
+  requestLike: AiTrafficRequestLike,
+  headerName: string,
+): unknown {
+  const headers = requestLike.headers;
+
+  if (!isRecord(headers)) {
+    return undefined;
+  }
+
+  if (typeof headers.get === "function") {
+    return headers.get(headerName);
+  }
+
+  const lowerHeaderName = headerName.toLowerCase();
+  for (const [key, value] of Object.entries(headers)) {
+    if (key.toLowerCase() === lowerHeaderName) {
+      return value;
+    }
+  }
+
+  return undefined;
 }
 
 function requireString(

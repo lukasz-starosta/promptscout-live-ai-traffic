@@ -14,6 +14,15 @@ const requiredProviders = [
   "CloudFront/AWS",
   "Fastly",
 ];
+const currentInstallPaths = ["Vercel middleware", "Cloudflare Worker"];
+const deferredInstallPaths = [
+  "Netlify Edge",
+  "nginx logs",
+  "WordPress plugin",
+  "Node/Express",
+  "CloudFront/AWS",
+  "Fastly",
+];
 
 async function collectMarkdownFiles(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -48,6 +57,33 @@ describe("install matrix docs", () => {
     assert.match(guide, /AI referral/i);
     assert.match(guide, /ChatGPT answer mention/i);
     assert.match(guide, /collector event by itself cannot establish this/i);
+  });
+
+  it("separates current install choices from placeholder adapters", async () => {
+    const guide = await readFile(guidePath, "utf8");
+
+    assert.match(guide, /Current customer install paths/i);
+    assert.match(guide, /Future placeholder paths/i);
+    assert.match(
+      guide,
+      /runtime implementation and customer install instructions are\s+intentionally deferred/i,
+    );
+
+    for (const provider of currentInstallPaths) {
+      assert.match(
+        guide,
+        new RegExp(`\\| ${provider.replace("/", "\\/")} \\| Current \\|`),
+      );
+    }
+
+    for (const provider of deferredInstallPaths) {
+      assert.match(
+        guide,
+        new RegExp(
+          `\\| ${provider.replace("/", "\\/")} \\| Future placeholder \\|`,
+        ),
+      );
+    }
   });
 
   it("does not ask customers for a separate site identifier in docs", async () => {

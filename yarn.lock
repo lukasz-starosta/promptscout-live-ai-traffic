@@ -96,6 +96,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@promptscout/live-ai-traffic-cloudflare-worker@workspace:packages/cloudflare-worker":
+  version: 0.0.0-use.local
+  resolution: "@promptscout/live-ai-traffic-cloudflare-worker@workspace:packages/cloudflare-worker"
+  dependencies:
+    "@promptscout/live-ai-traffic-core": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@promptscout/live-ai-traffic-cloudflare@workspace:*, @promptscout/live-ai-traffic-cloudflare@workspace:packages/cloudflare":
   version: 0.0.0-use.local
   resolution: "@promptscout/live-ai-traffic-cloudflare@workspace:packages/cloudflare"

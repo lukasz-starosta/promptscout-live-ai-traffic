@@ -9,6 +9,8 @@ This repository uses Yarn workspaces:
 - `packages/core` contains shared event contracts, classification helpers,
   privacy normalization helpers, and the PromptScout ingest client.
 - `packages/*` contains one provider package per integration.
+- `packages/cloudflare-worker` contains the Cloudflare Worker runtime collector
+  for customer-owned Cloudflare routes.
 - `examples/*` contains one minimal workspace example per provider.
 - `docs/getting-started.md` and `docs/integrations/*` hold the initial docs shell.
 

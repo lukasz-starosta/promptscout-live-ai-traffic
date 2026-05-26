@@ -11,6 +11,9 @@
       "path": "./packages/cloudflare"
     },
     {
+      "path": "./packages/cloudflare-worker"
+    },
+    {
       "path": "./packages/netlify"
     },
     {

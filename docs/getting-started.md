@@ -31,3 +31,6 @@ AI referrals, and answer mentions.
 See [privacy-security-operations.md](privacy-security-operations.md) for the
 default privacy posture, site-scoped ingest token handling, failure modes, and
 security FAQ.
+
+See [release.md](release.md) for package versioning, release verification, npm
+publishing, WordPress artifact, and Docker image guidance.

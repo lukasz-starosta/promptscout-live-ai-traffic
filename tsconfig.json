@@ -8,6 +8,9 @@
       "path": "./packages/vercel"
     },
     {
+      "path": "./packages/vercel-middleware"
+    },
+    {
       "path": "./packages/cloudflare"
     },
     {

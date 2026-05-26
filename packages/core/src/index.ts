@@ -160,7 +160,7 @@ export const liveAiTrafficEventJsonSchema = {
       properties: {
         host: { type: "string", minLength: 1 },
         path: { type: "string", pattern: "^/" },
-        search: { type: "string" },
+        search: { type: "string", pattern: "^(?:$|\\?)" },
         method: { type: "string", enum: liveAiTrafficHttpMethods },
         userAgent: { type: "string" },
         referer: { type: "string" },
@@ -195,7 +195,7 @@ export const liveAiTrafficEventJsonSchema = {
       type: "object",
       additionalProperties: false,
       properties: {
-        country: { type: "string", minLength: 2, maxLength: 2 },
+        country: { type: "string", pattern: "^[A-Z]{2}$" },
         region: { type: "string", minLength: 1 },
       },
     },

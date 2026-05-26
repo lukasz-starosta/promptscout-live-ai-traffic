@@ -29,6 +29,35 @@ function cloneJson(value) {
   return JSON.parse(JSON.stringify(value));
 }
 
+function stringValueMatchesSchemaProperty(schemaProperty, value) {
+  if (schemaProperty.type !== "string") {
+    return false;
+  }
+
+  if (
+    typeof schemaProperty.minLength === "number" &&
+    value.length < schemaProperty.minLength
+  ) {
+    return false;
+  }
+
+  if (
+    typeof schemaProperty.maxLength === "number" &&
+    value.length > schemaProperty.maxLength
+  ) {
+    return false;
+  }
+
+  if (
+    typeof schemaProperty.pattern === "string" &&
+    !new RegExp(schemaProperty.pattern).test(value)
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
 async function fixturePaths(directory) {
   return (await readdir(directory))
     .filter((name) => name.endsWith(".json"))
@@ -154,5 +183,55 @@ describe("live AI traffic event contract", () => {
         }),
       /Invalid live AI traffic event/,
     );
+  });
+
+  it("keeps schema string constraints aligned with parser rejections", async () => {
+    const { liveAiTrafficEventJsonSchema, parseLiveAiTrafficEvent } =
+      await coreModule();
+    const fixture = await readJson(
+      `${acceptedFixtureDirectory}/openai-search-bot.json`,
+    );
+
+    const cases = [
+      {
+        name: "request.search without a leading question mark",
+        schemaProperty:
+          liveAiTrafficEventJsonSchema.properties.request.properties.search,
+        schemaValue: "utm_source=openai",
+        event: {
+          ...fixture,
+          request: {
+            ...fixture.request,
+            search: "utm_source=openai",
+          },
+        },
+      },
+      {
+        name: "lowercase location.country",
+        schemaProperty:
+          liveAiTrafficEventJsonSchema.properties.location.properties.country,
+        schemaValue: "us",
+        event: {
+          ...fixture,
+          location: {
+            ...fixture.location,
+            country: "us",
+          },
+        },
+      },
+    ];
+
+    for (const { name, schemaProperty, schemaValue, event } of cases) {
+      assert.throws(
+        () => parseLiveAiTrafficEvent(event),
+        /Invalid live AI traffic event/,
+        `${name} should be rejected by the parser`,
+      );
+      assert.equal(
+        stringValueMatchesSchemaProperty(schemaProperty, schemaValue),
+        false,
+        `${name} should also be rejected by the exported schema`,
+      );
+    }
   });
 });

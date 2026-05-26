@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Placeholder Netlify integration for PromptScout live AI traffic.",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

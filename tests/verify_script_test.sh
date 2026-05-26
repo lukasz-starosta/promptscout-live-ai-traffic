@@ -23,6 +23,7 @@ write_minimal_scaffold() {
   local providers=(
     vercel
     cloudflare
+    netlify-edge
     netlify
     nginx-log-forwarder
     wordpress

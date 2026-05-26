@@ -49,6 +49,7 @@ SCAFFOLD_FAILURES=0
 PROVIDERS=(
   vercel
   cloudflare
+  netlify-edge
   netlify
   nginx-log-forwarder
   wordpress

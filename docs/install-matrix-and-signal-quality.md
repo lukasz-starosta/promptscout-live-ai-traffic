@@ -11,18 +11,18 @@ Current customer install paths:
 
 1. Vercel middleware for Next.js sites hosted on Vercel.
 2. Cloudflare Worker for sites already proxied through Cloudflare.
+3. Netlify Edge for sites served through Netlify edge functions.
 
 Future placeholder paths:
 
-1. Netlify Edge for sites served through Netlify edge functions.
-2. WordPress plugin for WordPress sites where plugin deployment is the safest
+1. WordPress plugin for WordPress sites where plugin deployment is the safest
    operational path.
-3. Node/Express middleware for custom Node servers that own the request path.
-4. nginx log forwarder for infrastructure teams that already collect edge or
+2. Node/Express middleware for custom Node servers that own the request path.
+3. nginx log forwarder for infrastructure teams that already collect edge or
    origin access logs.
-5. CloudFront/AWS for AWS-hosted sites where CloudFront, Lambda@Edge, or
+4. CloudFront/AWS for AWS-hosted sites where CloudFront, Lambda@Edge, or
    regional Lambda owns request observation.
-6. Fastly for sites already served through Fastly Compute or edge logging.
+5. Fastly for sites already served through Fastly Compute or edge logging.
 
 The future placeholder paths have package, example, and integration-doc shells,
 but their runtime implementation and customer install instructions are
@@ -31,8 +31,8 @@ their placeholder docs are replaced with runtime setup guidance.
 
 If two options fit, choose the one nearest the public request edge and easiest
 to deploy without changing your origin application. For current installs, that
-means Vercel middleware or Cloudflare Worker before any future placeholder
-adapter.
+means Vercel middleware, Cloudflare Worker, or Netlify Edge before any future
+placeholder adapter.
 
 ## Install Matrix
 
@@ -40,7 +40,7 @@ adapter.
 | --- | --- | --- | --- | --- | --- |
 | Vercel middleware | Current | Next.js sites on Vercel | High for routed page requests before the app route runs | Low | Add one middleware or proxy helper and use Vercel environment variables. |
 | Cloudflare Worker | Current | Sites already proxied through Cloudflare | High at the edge for matched routes | Medium | Observe traffic before the origin while preserving normal Cloudflare routing. |
-| Netlify Edge | Future placeholder | Netlify-hosted sites using edge functions | High for matched edge routes | Low to medium | Future adapter path; current docs are placeholder shells only. |
+| Netlify Edge | Current | Netlify-hosted sites using edge functions | High for matched edge routes | Low to medium | Add one edge function declaration and use Netlify environment variables. |
 | nginx logs | Future placeholder | Sites behind nginx, reverse proxies, or log pipelines | High when logs include user agent, referer, host, path, method, and timestamp | Medium to high | Future log-forwarder path; current docs are placeholder shells only. |
 | WordPress plugin | Future placeholder | WordPress sites managed by site owners or agencies | Medium to high for WordPress-rendered requests | Low | Future plugin path; current docs are placeholder shells only. |
 | Node/Express | Future placeholder | Custom Node servers that own routing | High for requests reaching the Node app | Medium | Future middleware path; current docs are placeholder shells only. |

@@ -20,6 +20,9 @@
       "path": "./packages/netlify"
     },
     {
+      "path": "./packages/netlify-edge"
+    },
+    {
       "path": "./packages/nginx-log-forwarder"
     },
     {
@@ -42,6 +45,9 @@
     },
     {
       "path": "./examples/netlify"
+    },
+    {
+      "path": "./examples/netlify-edge"
     },
     {
       "path": "./examples/nginx-log-forwarder"

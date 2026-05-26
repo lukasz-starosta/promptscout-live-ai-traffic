@@ -5,6 +5,7 @@ import { describe, it } from "node:test";
 const providers = [
   "vercel",
   "cloudflare",
+  "netlify-edge",
   "netlify",
   "nginx-log-forwarder",
   "wordpress",
@@ -68,6 +69,9 @@ describe("monorepo scaffold", () => {
       if (provider === "vercel") {
         assert.match(integrationDoc, /trackPromptScoutAiTraffic/);
         assert.match(integrationDoc, /matcher/i);
+      } else if (provider === "netlify-edge") {
+        assert.match(integrationDoc, /handlePromptScoutNetlifyEdgeRequest/);
+        assert.match(integrationDoc, /context\.waitUntil/);
       } else {
         assert.match(integrationDoc, /intentionally deferred/i);
       }

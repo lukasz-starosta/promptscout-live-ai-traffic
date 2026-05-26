@@ -11,13 +11,15 @@ This repository uses Yarn workspaces:
 - `packages/*` contains one provider package per integration.
 - `packages/cloudflare-worker` contains the Cloudflare Worker runtime collector
   for customer-owned Cloudflare routes.
+- `packages/netlify-edge` contains the Netlify Edge Function runtime collector
+  for Netlify-hosted routes.
 - `examples/*` contains one minimal workspace example per provider.
 - `docs/getting-started.md` and `docs/integrations/*` hold the initial docs shell.
 - `docs/install-matrix-and-signal-quality.md` explains how customers should
   choose an install path and how to interpret collector signal quality.
 
-Provider and example packages are intentionally private placeholders until
-runtime implementation work lands in later issues.
+Provider and example packages are intentionally private while runtime
+implementation work lands provider by provider.
 
 ## Verification
 

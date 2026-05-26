@@ -16,7 +16,7 @@ const handler = createFastlyComputeHandler({
   originBackend: "origin",
   ingestBackend: "promptscout_ingest",
   ingestEndpoint: "https://ingest.promptscout.com/live-ai-traffic",
-  ingestToken: "replace-with-config-store-or-secret-store-token",
+  ingestToken: "replace-with-runtime-config-value",
   siteId: "replace-with-promptscout-site-id",
 });
 

@@ -58,7 +58,10 @@ describe("cloudflare worker example", () => {
     assert.match(combined, /routes = \[/);
     assert.match(combined, /curl/);
     assert.match(combined, /mock/i);
-    assert.match(combined, /non-committed `examples\/cloudflare-worker\/\.dev\.vars`/);
+    assert.match(
+      combined,
+      /non-committed `examples\/cloudflare-worker\/\.dev\.vars`/,
+    );
     assert.match(combined, /PROMPTSCOUT_INGEST_TOKEN=local-smoke-token/);
     assert.match(
       combined,

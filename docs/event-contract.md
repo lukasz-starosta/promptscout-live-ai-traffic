@@ -80,6 +80,18 @@ preserve any integration-specific raw details outside the canonical fields.
 - `classifyUserAgent(userAgent)`
 - `classifyReferer(referer)`
 - `toLiveAiTrafficProviderClassification(classification)`
+- `createLiveAiTrafficIngestClient(options)`
+- `normalizeLiveAiTrafficEvent(event, privacyOptions)`
+- `hashLiveAiTrafficIp(ipAddress, options)`
+- `filterLiveAiTrafficHeaders(headers, allowlist)`
+- `createLiveAiTrafficBatcher(options)`
+- `deliverLiveAiTrafficEvent(options)`
+
+The ingest client uses `fetch` and optional Web Crypto HMAC signing so provider
+packages can run in Node, edge, or log-forwarder environments without importing
+PromptScout-side secrets or Supabase keys. Privacy helpers let adapters hash or
+omit IP addresses, redact paths, allowlist query parameters, and keep only
+explicitly allowed request headers before sending events.
 
 ## Classification Helpers
 

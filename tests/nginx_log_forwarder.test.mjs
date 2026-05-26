@@ -248,6 +248,67 @@ describe("nginx log forwarder", () => {
     );
   });
 
+  it("resets the offset when log rotation replaces the file with a larger one", async () => {
+    const { createMemoryCheckpointStore, runNginxLogForwarderPass } =
+      await nginxModule();
+    const path = "access.log";
+    const oldText =
+      '203.0.113.1 - - [26/May/2026:11:59:00 +0000] "GET /old HTTP/1.1" 200 256 "-" "GPTBot/1.0"\n';
+    const newText = [
+      '203.0.113.2 - - [26/May/2026:12:00:00 +0000] "GET /new HTTP/1.1" 200 512 "-" "GPTBot/1.0"',
+      '203.0.113.3 - - [26/May/2026:12:01:00 +0000] "GET /pricing HTTP/1.1" 200 1024 "-" "ChatGPT-User/1.0"',
+      '203.0.113.4 - - [26/May/2026:12:02:00 +0000] "GET /docs HTTP/1.1" 200 2048 "-" "Mozilla/5.0"',
+    ].join("\n");
+    const rotatedText = `${newText}\n`;
+    assert.ok(Buffer.byteLength(rotatedText) > Buffer.byteLength(oldText));
+
+    const checkpointStore = createMemoryCheckpointStore([
+      {
+        path,
+        fileId: "old-device:old-inode",
+        offset: Buffer.byteLength(oldText),
+        updatedAt: "2026-05-26T11:59:00.000Z",
+      },
+    ]);
+    const readOffsets = [];
+    const sentBatches = [];
+    const client = {
+      async sendBatch(events) {
+        sentBatches.push(events);
+        return response(202);
+      },
+    };
+
+    const result = await runNginxLogForwarderPass({
+      file: {
+        path,
+        fileId: "new-device:new-inode",
+        size: Buffer.byteLength(rotatedText),
+        async readFrom(offset) {
+          readOffsets.push(offset);
+          return rotatedText.slice(offset);
+        },
+      },
+      checkpointStore,
+      client,
+      parse: { format: "common", defaultHost: "example.com" },
+      batchSize: 10,
+      now: () => new Date("2026-05-26T12:05:00.000Z"),
+    });
+
+    assert.equal(result.ok, true);
+    assert.equal(result.stats.startOffset, 0);
+    assert.deepEqual(readOffsets, [0]);
+    assert.equal(result.stats.parsedLines, 3);
+    assert.equal(result.stats.queuedEvents, 2);
+    assert.equal(sentBatches.length, 1);
+    assert.equal(checkpointStore.checkpoints()[0].fileId, "new-device:new-inode");
+    assert.equal(
+      checkpointStore.checkpoints()[0].offset,
+      Buffer.byteLength(rotatedText),
+    );
+  });
+
   it("does not advance past an incomplete trailing line", async () => {
     const { createMemoryCheckpointStore, runNginxLogForwarderPass } =
       await nginxModule();

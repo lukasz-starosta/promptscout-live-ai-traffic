@@ -52,6 +52,7 @@ async function fileReader() {
 
   return {
     path: logPath,
+    fileId: `${details.dev}:${details.ino}`,
     size: details.size,
     async readFrom(offset) {
       const content = await readFile(logPath);

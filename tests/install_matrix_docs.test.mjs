@@ -14,10 +14,13 @@ const requiredProviders = [
   "CloudFront/AWS",
   "Fastly",
 ];
-const currentInstallPaths = ["Vercel middleware", "Cloudflare Worker"];
+const currentInstallPaths = [
+  "Vercel middleware",
+  "Cloudflare Worker",
+  "nginx logs",
+];
 const deferredInstallPaths = [
   "Netlify Edge",
-  "nginx logs",
   "WordPress plugin",
   "Node/Express",
   "CloudFront/AWS",

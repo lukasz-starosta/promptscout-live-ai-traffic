@@ -61,6 +61,7 @@ export type NginxEventOptions = {
 
 export type NginxLogCheckpoint = {
   path: string;
+  fileId?: string;
   offset: number;
   updatedAt: string;
 };
@@ -72,6 +73,7 @@ export type NginxLogCheckpointStore = {
 
 export type NginxLogFileReader = {
   path: string;
+  fileId?: string;
   size: number;
   readFrom(offset: number): Promise<string>;
 };
@@ -251,6 +253,7 @@ export function parseNginxLogCheckpoint(
 
     return {
       path: parsed.path,
+      ...(typeof parsed.fileId === "string" ? { fileId: parsed.fileId } : {}),
       offset,
       updatedAt: parsed.updatedAt,
     };
@@ -292,9 +295,14 @@ export async function runNginxLogForwarderPass(
   const storedCheckpoint = await options.checkpointStore.load(
     options.file.path,
   );
+  const fileWasReplaced =
+    storedCheckpoint?.fileId !== undefined &&
+    options.file.fileId !== undefined &&
+    storedCheckpoint.fileId !== options.file.fileId;
   const startOffset =
     storedCheckpoint === undefined ||
-    storedCheckpoint.offset > options.file.size
+    storedCheckpoint.offset > options.file.size ||
+    fileWasReplaced
       ? 0
       : storedCheckpoint.offset;
   const chunk = await options.file.readFrom(startOffset);
@@ -319,6 +327,9 @@ export async function runNginxLogForwarderPass(
   const saveCheckpoint = async (offset: number): Promise<void> => {
     await options.checkpointStore.save({
       path: options.file.path,
+      ...(options.file.fileId === undefined
+        ? {}
+        : { fileId: options.file.fileId }),
       offset,
       updatedAt: now().toISOString(),
     });

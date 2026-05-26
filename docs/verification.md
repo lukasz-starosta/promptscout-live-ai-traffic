@@ -16,7 +16,8 @@ worktrees. It currently runs:
   final newline;
 - monorepo scaffold checks for package, example, and docs placeholders;
 - Bash syntax checks for shell scripts;
-- focused Node tests under `tests/*.test.mjs`;
+- focused Node tests under `tests/*.test.mjs`, including the core package
+  TypeScript build performed by the event contract test;
 - focused shell tests under `tests/*.sh`.
 
 The command scans tracked files and untracked, non-ignored files so newly added
@@ -25,8 +26,8 @@ source files are checked before they are committed.
 ## What It Does Not Cover
 
 This repository does not have an application stack yet, so the verifier does
-not run TypeScript builds, package builds, browser tests, live provider calls,
-or API E2E checks. Those checks should be added behind the same
+not run repo-wide TypeScript builds, package builds, browser tests, live
+provider calls, or API E2E checks. Those checks should be added behind the same
 `./scripts/verify` entry point when the relevant stack lands in later issues.
 
 ## Intentionally Empty Packages

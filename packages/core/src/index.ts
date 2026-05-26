@@ -308,7 +308,7 @@ function validateRequest(input: unknown, issues: string[]): void {
     issues.push("request.path must start with /");
   }
   if (input.search !== undefined) {
-    requireString(input, "search", issues);
+    requireOptionalString(input, "search", issues);
     if (
       typeof input.search === "string" &&
       input.search.length > 0 &&

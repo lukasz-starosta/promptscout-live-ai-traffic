@@ -186,6 +186,31 @@ describe("live AI traffic event contract", () => {
     );
   });
 
+  it("accepts an empty request.search value", async () => {
+    const { liveAiTrafficEventJsonSchema, parseLiveAiTrafficEvent } =
+      await coreModule();
+    const fixture = await readJson(
+      `${acceptedFixtureDirectory}/openai-search-bot.json`,
+    );
+
+    const parsed = parseLiveAiTrafficEvent({
+      ...fixture,
+      request: {
+        ...fixture.request,
+        search: "",
+      },
+    });
+
+    assert.equal(parsed.request.search, "");
+    assert.equal(
+      stringValueMatchesSchemaProperty(
+        liveAiTrafficEventJsonSchema.properties.request.properties.search,
+        "",
+      ),
+      true,
+    );
+  });
+
   it("keeps schema string constraints aligned with parser rejections", async () => {
     const { liveAiTrafficEventJsonSchema, parseLiveAiTrafficEvent } =
       await coreModule();

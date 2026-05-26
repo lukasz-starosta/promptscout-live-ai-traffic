@@ -30,6 +30,25 @@ not run repo-wide TypeScript builds, package builds, browser tests, live
 provider calls, or API E2E checks. Those checks should be added behind the same
 `./scripts/verify` entry point when the relevant stack lands in later issues.
 
+## CI Contract
+
+GitHub Actions runs the cheap verification path on pull requests and pushes to
+`main`. The workflow uses the committed Yarn lockfile contract and runs:
+
+```bash
+corepack enable
+yarn install --immutable
+yarn lint
+yarn typecheck
+yarn test
+./scripts/verify
+```
+
+CI intentionally does not require secrets and does not run live provider checks,
+network E2E, release automation, or PromptScout application/Supabase checks.
+Those remain local/manual follow-ups until the repository has the corresponding
+runtime surface.
+
 ## Intentionally Empty Packages
 
 The provider and example packages are structure-only placeholders. Each

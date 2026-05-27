@@ -1,7 +1,7 @@
 {
   "name": "@promptscout/live-ai-traffic-cloudfront-aws",
   "version": "0.0.0",
-  "description": "Placeholder CloudFront/AWS integration for PromptScout live AI traffic.",
+  "description": "CloudFront real-time log and Kinesis consumer helpers for PromptScout live AI traffic.",
   "license": "Apache-2.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -15,13 +15,13 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@promptscout/live-ai-traffic-core": "workspace:*"
   },
   "scripts": {
     "build": "tsc -b"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

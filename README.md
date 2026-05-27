@@ -12,12 +12,16 @@ This repository uses Yarn workspaces:
   runtime adapters such as `packages/node-middleware`.
 - `packages/cloudflare-worker` contains the Cloudflare Worker runtime collector
   for customer-owned Cloudflare routes.
+- `packages/cloudfront-aws` contains the AWS CloudFront real-time log parser and
+  regional Kinesis/Lambda consumer helpers.
 - `packages/netlify-edge` contains the Netlify Edge Function runtime collector
   for Netlify-hosted routes.
 - `examples/*` contains minimal workspace examples, including the Express
   middleware example under `examples/express`.
 - `examples/cloudflare-worker` contains the runnable Wrangler example for the
   customer-owned Cloudflare Worker collector.
+- `examples/cloudfront-aws` contains the AWS CloudFront real-time logs through
+  Kinesis example notes.
 - `examples/netlify-edge` contains the Netlify Edge Function example and
   declaration for Netlify-hosted routes.
 - `docs/getting-started.md` and `docs/integrations/*` hold the initial docs shell.
@@ -30,8 +34,11 @@ implementation work lands in later issues. Published provider packages use the
 shared repository version. Example workspaces keep the same version for
 traceability, but remain private and are not published. See
 [docs/release.md](docs/release.md) for the release path. `packages/node-middleware`
-and `packages/netlify-edge` reuse the shared core classifier, privacy
-normalization helpers, and ingest client for implemented runtime paths.
+and runtime collectors such as `packages/netlify-edge` and
+`packages/cloudfront-aws` reuse the shared core classifier, privacy normalization
+helpers, and ingest client for implemented runtime paths. CloudFront/AWS is
+implemented through real-time access logs delivered to Kinesis Data Streams, not
+CloudFront Functions.
 
 ## Verification
 

@@ -12,6 +12,11 @@ The current scaffold is intentionally minimal:
   send matching events asynchronously.
 - `packages/cloudflare-worker` is the Cloudflare Worker collector for sites
   already proxied through customer-owned Cloudflare routes.
+- `packages/cloudfront-aws` parses CloudFront real-time access logs delivered
+  through Kinesis Data Streams and can forward normalized events from a regional
+  Lambda or Kinesis consumer.
+- `packages/netlify-edge` provides the Netlify Edge Function collector for
+  Netlify-hosted routes.
 - Examples are workspace packages that import their matching provider or
   adapter package. The Express example can run with mocked ingest for local
   smoke checks.

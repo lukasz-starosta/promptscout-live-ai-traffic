@@ -10,23 +10,31 @@ You do not need to configure a separate brand ID or team-site ID in the app.
 
 ## Install
 
-No public npm package is published yet. From this repository checkout, build
-and pack local tarballs:
+For PromptScout dogfooding before npm packages are published, create local
+tarballs from this repository:
 
 ```bash
-corepack enable
-yarn install --immutable
-yarn tsc -b packages/core packages/vercel-middleware
-(cd packages/core && yarn pack --out /tmp/promptscout-live-ai-traffic-core-0.0.0.tgz)
-(cd packages/vercel-middleware && yarn pack --out /tmp/promptscout-live-ai-traffic-vercel-middleware-0.0.0.tgz)
+yarn pack:vercel-local
 ```
 
-Then install both tarballs from your Next.js app:
+Then install both local tarballs from the PromptScout checkout:
 
 ```bash
-npm install \
-  /tmp/promptscout-live-ai-traffic-core-0.0.0.tgz \
-  /tmp/promptscout-live-ai-traffic-vercel-middleware-0.0.0.tgz
+LIVE_AI_TRAFFIC_REPO=/absolute/path/to/promptscout-live-ai-traffic
+yarn add @promptscout/live-ai-traffic-core@file:$LIVE_AI_TRAFFIC_REPO/.promptscout-local-packages/promptscout-live-ai-traffic-core-v0.0.0.tgz @promptscout/live-ai-traffic-vercel-middleware@file:$LIVE_AI_TRAFFIC_REPO/.promptscout-local-packages/promptscout-live-ai-traffic-vercel-middleware-v0.0.0.tgz
+```
+
+No npm publish is required.
+
+Version `0.0.0` is intentional while this repository is local-first. Replace the
+tarballs with a published semver install only after PromptScout starts public
+package publishing.
+
+After package publication, install the same middleware package name from your
+Next.js app:
+
+```bash
+npm install @promptscout/live-ai-traffic-vercel-middleware
 ```
 
 Copy `.env.example` to `.env.local` and set the token and ingest URL from
@@ -39,10 +47,6 @@ PROMPTSCOUT_INGEST_URL=https://app.promptscout.com/api/live-ai-traffic/ingest
 
 Paste your site-scoped ingest token after `PROMPTSCOUT_INGEST_TOKEN=` in your
 local `.env.local` file. Do not commit real ingest tokens.
-
-Version `0.0.0` is intentional while this repository is local-first. Replace the
-tarballs with a published semver install only after PromptScout starts public
-package publishing.
 
 ## Next.js 16 `proxy.ts`
 

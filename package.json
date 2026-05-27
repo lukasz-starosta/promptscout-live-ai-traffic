@@ -17,6 +17,7 @@
     "typecheck": "tsc -b",
     "lint": "biome check .",
     "format": "biome format --write .",
+    "pack:vercel-local": "./scripts/pack-vercel-local",
     "dogfood:vercel": "yarn tsc -b packages/vercel-middleware && node examples/vercel-nextjs/dogfood-promptscout.mjs"
   },
   "devDependencies": {

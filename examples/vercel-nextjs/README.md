@@ -10,10 +10,23 @@ You do not need to configure a separate brand ID or team-site ID in the app.
 
 ## Install
 
-From your Next.js app:
+No public npm package is published yet. From this repository checkout, build
+and pack local tarballs:
 
 ```bash
-npm install @promptscout/live-ai-traffic-vercel-middleware
+corepack enable
+yarn install --immutable
+yarn tsc -b packages/core packages/vercel-middleware
+(cd packages/core && yarn pack --out /tmp/promptscout-live-ai-traffic-core-0.0.0.tgz)
+(cd packages/vercel-middleware && yarn pack --out /tmp/promptscout-live-ai-traffic-vercel-middleware-0.0.0.tgz)
+```
+
+Then install both tarballs from your Next.js app:
+
+```bash
+npm install \
+  /tmp/promptscout-live-ai-traffic-core-0.0.0.tgz \
+  /tmp/promptscout-live-ai-traffic-vercel-middleware-0.0.0.tgz
 ```
 
 Copy `.env.example` to `.env.local` and set the token and ingest URL from
@@ -26,6 +39,10 @@ PROMPTSCOUT_INGEST_URL=https://app.promptscout.com/api/live-ai-traffic/ingest
 
 Paste your site-scoped ingest token after `PROMPTSCOUT_INGEST_TOKEN=` in your
 local `.env.local` file. Do not commit real ingest tokens.
+
+Version `0.0.0` is intentional while this repository is local-first. Replace the
+tarballs with a published semver install only after PromptScout starts public
+package publishing.
 
 ## Next.js 16 `proxy.ts`
 

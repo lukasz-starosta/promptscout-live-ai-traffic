@@ -53,18 +53,20 @@ runtime surface.
 
 GitHub Actions also exposes a manual `Release` workflow. It runs the same
 install, lint, typecheck, unit test, and `./scripts/verify` checks before any
-package publish command. The workflow defaults to a dry run so release
-candidates can validate npm package contents without publishing.
+package dry run or future publish command. The workflow defaults to a dry run so
+release candidates can validate package contents without publishing. Public npm
+publishing remains deferred while the repository version is `0.0.0`.
 
 ## Intentionally Empty Packages
 
-Most provider and example packages are structure-only placeholders. Each
+Some generic provider and example packages are structure-only placeholders. Each
 placeholder provider imports `@promptscout/live-ai-traffic-core` and each
 placeholder example imports its matching provider package, but runtime behavior
 is intentionally deferred except for implemented Vercel middleware, Cloudflare
-Worker, WordPress plugin, and generic Node middleware paths. Runtime adapters
-such as `packages/node-middleware` must add focused tests that prove response
-behavior and ingest scheduling.
+Worker, CloudFront/AWS, Netlify Edge, nginx log forwarder, WordPress plugin,
+Fastly Compute, and generic Node middleware paths. Runtime adapters such as
+`packages/node-middleware` must add focused tests that prove response behavior
+and ingest scheduling.
 
 ## Symphony Contract
 

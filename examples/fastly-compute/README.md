@@ -44,8 +44,10 @@ PromptScout ingest backend returns an error.
 
 ## Deploy
 
-Before deploying, replace the placeholder token and site ID with values loaded
-from Fastly configuration or secret storage. Do not hard-code production tokens.
+Before deploying, replace the placeholder token with a value loaded from Fastly
+configuration or secret storage. The ingest token resolves the PromptScout site
+source, so do not configure a separate brand ID, team-site ID, or site ID in the
+Compute service. Do not hard-code production tokens.
 
 ```bash
 fastly compute deploy

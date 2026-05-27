@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM"],
+    "rootDir": ".",
+    "outDir": "dist"
+  },
+  "references": [
+    {
+      "path": "../../packages/netlify-edge"
+    }
+  ],
+  "include": ["src/**/*.ts", "netlify/edge-functions/**/*.ts"]
+}

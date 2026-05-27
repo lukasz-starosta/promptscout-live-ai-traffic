@@ -150,11 +150,27 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@promptscout/live-ai-traffic-example-express@workspace:examples/express":
+  version: 0.0.0-use.local
+  resolution: "@promptscout/live-ai-traffic-example-express@workspace:examples/express"
+  dependencies:
+    "@promptscout/live-ai-traffic-node-middleware": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@promptscout/live-ai-traffic-example-fastly@workspace:examples/fastly":
   version: 0.0.0-use.local
   resolution: "@promptscout/live-ai-traffic-example-fastly@workspace:examples/fastly"
   dependencies:
     "@promptscout/live-ai-traffic-fastly": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@promptscout/live-ai-traffic-example-netlify-edge@workspace:examples/netlify-edge":
+  version: 0.0.0-use.local
+  resolution: "@promptscout/live-ai-traffic-example-netlify-edge@workspace:examples/netlify-edge"
+  dependencies:
+    "@promptscout/live-ai-traffic-netlify-edge": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -218,6 +234,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@promptscout/live-ai-traffic-netlify-edge@workspace:*, @promptscout/live-ai-traffic-netlify-edge@workspace:packages/netlify-edge":
+  version: 0.0.0-use.local
+  resolution: "@promptscout/live-ai-traffic-netlify-edge@workspace:packages/netlify-edge"
+  dependencies:
+    "@promptscout/live-ai-traffic-core": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@promptscout/live-ai-traffic-netlify@workspace:*, @promptscout/live-ai-traffic-netlify@workspace:packages/netlify":
   version: 0.0.0-use.local
   resolution: "@promptscout/live-ai-traffic-netlify@workspace:packages/netlify"
@@ -242,6 +266,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@promptscout/live-ai-traffic-node-middleware@workspace:*, @promptscout/live-ai-traffic-node-middleware@workspace:packages/node-middleware":
+  version: 0.0.0-use.local
+  resolution: "@promptscout/live-ai-traffic-node-middleware@workspace:packages/node-middleware"
+  dependencies:
+    "@promptscout/live-ai-traffic-core": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@promptscout/live-ai-traffic-vercel-middleware@workspace:*, @promptscout/live-ai-traffic-vercel-middleware@workspace:packages/vercel-middleware":
   version: 0.0.0-use.local
   resolution: "@promptscout/live-ai-traffic-vercel-middleware@workspace:packages/vercel-middleware"
@@ -255,6 +287,12 @@ __metadata:
   resolution: "@promptscout/live-ai-traffic-vercel@workspace:packages/vercel"
   dependencies:
     "@promptscout/live-ai-traffic-core": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@promptscout/live-ai-traffic-wordpress-plugin@workspace:packages/wordpress-plugin":
+  version: 0.0.0-use.local
+  resolution: "@promptscout/live-ai-traffic-wordpress-plugin@workspace:packages/wordpress-plugin"
   languageName: unknown
   linkType: soft
 

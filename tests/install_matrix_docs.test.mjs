@@ -18,14 +18,10 @@ const currentInstallPaths = [
   "Vercel middleware",
   "Cloudflare Worker",
   "CloudFront/AWS",
-];
-const deferredInstallPaths = [
   "Netlify Edge",
-  "nginx logs",
   "WordPress plugin",
-  "Node/Express",
-  "Fastly",
 ];
+const deferredInstallPaths = ["nginx logs", "Node/Express", "Fastly"];
 
 async function collectMarkdownFiles(directory) {
   const entries = await readdir(directory, { withFileTypes: true });

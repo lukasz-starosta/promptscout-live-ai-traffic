@@ -20,6 +20,9 @@
       "path": "./packages/netlify"
     },
     {
+      "path": "./packages/netlify-edge"
+    },
+    {
       "path": "./packages/nginx-log-forwarder"
     },
     {
@@ -27,6 +30,9 @@
     },
     {
       "path": "./packages/node-express"
+    },
+    {
+      "path": "./packages/node-middleware"
     },
     {
       "path": "./packages/cloudfront-aws"
@@ -47,6 +53,9 @@
       "path": "./examples/netlify"
     },
     {
+      "path": "./examples/netlify-edge"
+    },
+    {
       "path": "./examples/nginx-log-forwarder"
     },
     {
@@ -54,6 +63,9 @@
     },
     {
       "path": "./examples/node-express"
+    },
+    {
+      "path": "./examples/express"
     },
     {
       "path": "./examples/cloudfront-aws"

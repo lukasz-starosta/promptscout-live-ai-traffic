@@ -8,18 +8,30 @@ This repository uses Yarn workspaces:
 
 - `packages/core` contains shared event contracts, classification helpers,
   privacy normalization helpers, and the PromptScout ingest client.
-- `packages/*` contains one provider package per integration.
+- `packages/*` contains one provider package per integration plus shared
+  runtime adapters such as `packages/node-middleware`.
 - `packages/cloudflare-worker` contains the Cloudflare Worker runtime collector
   for customer-owned Cloudflare routes.
 - `packages/netlify-edge` contains the Netlify Edge Function runtime collector
   for Netlify-hosted routes.
-- `examples/*` contains one minimal workspace example per provider.
+- `examples/*` contains minimal workspace examples, including the Express
+  middleware example under `examples/express`.
+- `examples/cloudflare-worker` contains the runnable Wrangler example for the
+  customer-owned Cloudflare Worker collector.
+- `examples/netlify-edge` contains the Netlify Edge Function example and
+  declaration for Netlify-hosted routes.
 - `docs/getting-started.md` and `docs/integrations/*` hold the initial docs shell.
 - `docs/install-matrix-and-signal-quality.md` explains how customers should
   choose an install path and how to interpret collector signal quality.
 
-Provider and example packages are intentionally private while runtime
-implementation work lands provider by provider.
+Provider packages are configured for npm release dry-runs while this repo is
+pre-release. Some provider directories remain placeholders until their runtime
+implementation work lands in later issues. Published provider packages use the
+shared repository version. Example workspaces keep the same version for
+traceability, but remain private and are not published. See
+[docs/release.md](docs/release.md) for the release path. `packages/node-middleware`
+and `packages/netlify-edge` reuse the shared core classifier, privacy
+normalization helpers, and ingest client for implemented runtime paths.
 
 ## Verification
 

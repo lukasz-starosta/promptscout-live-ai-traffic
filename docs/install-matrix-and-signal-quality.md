@@ -12,17 +12,17 @@ Current customer install paths:
 1. Vercel middleware for Next.js sites hosted on Vercel.
 2. Cloudflare Worker for sites already proxied through Cloudflare.
 3. Netlify Edge for sites served through Netlify edge functions.
+4. WordPress plugin for WordPress sites where plugin deployment is the safest
+   operational path.
 
 Future placeholder paths:
 
-1. WordPress plugin for WordPress sites where plugin deployment is the safest
-   operational path.
-2. Node/Express middleware for custom Node servers that own the request path.
-3. nginx log forwarder for infrastructure teams that already collect edge or
+1. Node/Express middleware for custom Node servers that own the request path.
+2. nginx log forwarder for infrastructure teams that already collect edge or
    origin access logs.
-4. CloudFront/AWS for AWS-hosted sites where CloudFront, Lambda@Edge, or
+3. CloudFront/AWS for AWS-hosted sites where CloudFront, Lambda@Edge, or
    regional Lambda owns request observation.
-5. Fastly for sites already served through Fastly Compute or edge logging.
+4. Fastly for sites already served through Fastly Compute or edge logging.
 
 The future placeholder paths have package, example, and integration-doc shells,
 but their runtime implementation and customer install instructions are
@@ -31,8 +31,8 @@ their placeholder docs are replaced with runtime setup guidance.
 
 If two options fit, choose the one nearest the public request edge and easiest
 to deploy without changing your origin application. For current installs, that
-means Vercel middleware, Cloudflare Worker, or Netlify Edge before any future
-placeholder adapter.
+means Vercel middleware, Cloudflare Worker, Netlify Edge, or the implemented
+WordPress plugin before any future placeholder adapter.
 
 ## Install Matrix
 
@@ -41,8 +41,8 @@ placeholder adapter.
 | Vercel middleware | Current | Next.js sites on Vercel | High for routed page requests before the app route runs | Low | Add one middleware or proxy helper and use Vercel environment variables. |
 | Cloudflare Worker | Current | Sites already proxied through Cloudflare | High at the edge for matched routes | Medium | Observe traffic before the origin while preserving normal Cloudflare routing. |
 | Netlify Edge | Current | Netlify-hosted sites using edge functions | High for matched edge routes | Low to medium | Add one edge function declaration and use Netlify environment variables. |
+| WordPress plugin | Current | WordPress sites managed by site owners or agencies | Medium to high for WordPress-rendered requests | Low | Install the implemented plugin collector and configure its site-scoped ingest token in WordPress admin. |
 | nginx logs | Future placeholder | Sites behind nginx, reverse proxies, or log pipelines | High when logs include user agent, referer, host, path, method, and timestamp | Medium to high | Future log-forwarder path; current docs are placeholder shells only. |
-| WordPress plugin | Future placeholder | WordPress sites managed by site owners or agencies | Medium to high for WordPress-rendered requests | Low | Future plugin path; current docs are placeholder shells only. |
 | Node/Express | Future placeholder | Custom Node servers that own routing | High for requests reaching the Node app | Medium | Future middleware path; current docs are placeholder shells only. |
 | CloudFront/AWS | Future placeholder | AWS sites using CloudFront, Lambda@Edge, regional Lambda, or centralized logs | High at the CDN or AWS request layer | Medium to high | Future AWS path; current docs are placeholder shells only. |
 | Fastly | Future placeholder | Sites already served through Fastly | High at the edge for configured services | Medium to high | Future edge path; current docs are placeholder shells only. |

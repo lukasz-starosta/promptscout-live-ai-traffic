@@ -1,7 +1,6 @@
 {
   "name": "@promptscout/live-ai-traffic-netlify-edge",
   "version": "0.0.0",
-  "private": true,
   "description": "Netlify Edge Function collector for PromptScout live AI traffic.",
   "license": "Apache-2.0",
   "type": "module",
@@ -16,6 +15,9 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@promptscout/live-ai-traffic-core": "workspace:*"
   },

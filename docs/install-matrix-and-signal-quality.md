@@ -14,15 +14,15 @@ Current customer install paths:
 3. CloudFront/AWS real-time access logs for AWS sites where CloudFront can
    deliver request observations through Kinesis Data Streams.
 4. Netlify Edge for sites served through Netlify edge functions.
-5. WordPress plugin for WordPress sites where plugin deployment is the safest
+5. nginx log forwarder for infrastructure teams that already collect edge or
+   origin access logs.
+6. WordPress plugin for WordPress sites where plugin deployment is the safest
    operational path.
 
 Future placeholder paths:
 
 1. Node/Express middleware for custom Node servers that own the request path.
-2. nginx log forwarder for infrastructure teams that already collect edge or
-   origin access logs.
-3. Fastly for sites already served through Fastly Compute or edge logging.
+2. Fastly for sites already served through Fastly Compute or edge logging.
 
 The future placeholder paths have package, example, and integration-doc shells,
 but their runtime implementation and customer install instructions are
@@ -32,7 +32,8 @@ their placeholder docs are replaced with runtime setup guidance.
 If two options fit, choose the one nearest the public request edge and easiest
 to deploy without changing your origin application. For current installs, that
 means Vercel middleware, Cloudflare Worker, CloudFront real-time logs, Netlify
-Edge, or the implemented WordPress plugin before any future placeholder adapter.
+Edge, nginx logs, or the implemented WordPress plugin before any future
+placeholder adapter.
 
 ## Install Matrix
 
@@ -42,7 +43,7 @@ Edge, or the implemented WordPress plugin before any future placeholder adapter.
 | Cloudflare Worker | Current | Sites already proxied through Cloudflare | High at the edge for matched routes | Medium | Observe traffic before the origin while preserving normal Cloudflare routing. |
 | Netlify Edge | Current | Netlify-hosted sites using edge functions | High for matched edge routes | Low to medium | Add one edge function declaration and use Netlify environment variables. |
 | WordPress plugin | Current | WordPress sites managed by site owners or agencies | Medium to high for WordPress-rendered requests | Low | Install the implemented plugin collector and configure its site-scoped ingest token in WordPress admin. |
-| nginx logs | Future placeholder | Sites behind nginx, reverse proxies, or log pipelines | High when logs include user agent, referer, host, path, method, and timestamp | Medium to high | Future log-forwarder path; current docs are placeholder shells only. |
+| nginx logs | Current | Sites behind nginx, reverse proxies, or log pipelines | High when logs include user agent, referer, host, path, method, and timestamp | Medium to high | Run the log forwarder against access logs, batch classified AI traffic, and checkpoint processed bytes. |
 | Node/Express | Future placeholder | Custom Node servers that own routing | High for requests reaching the Node app | Medium | Future middleware path; current docs are placeholder shells only. |
 | CloudFront/AWS | Current AWS path | AWS sites using CloudFront real-time access logs with Kinesis Data Streams and a regional Lambda or Kinesis consumer | High at the CDN log layer for configured cache behaviors, subject to best-effort log delivery | Medium to high | Avoids CloudFront Function outbound-network limits and does not require changing the origin application. |
 | Fastly | Future placeholder | Sites already served through Fastly | High at the edge for configured services | Medium to high | Future edge path; current docs are placeholder shells only. |

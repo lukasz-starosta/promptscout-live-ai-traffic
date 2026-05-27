@@ -79,6 +79,9 @@ describe("monorepo scaffold", () => {
       } else if (provider === "cloudflare-worker") {
         assert.match(integrationDoc, /wrangler/i);
         assert.match(integrationDoc, /Cloudflare is the front door/i);
+      } else if (provider === "nginx-log-forwarder") {
+        assert.match(integrationDoc, /access logs/i);
+        assert.match(integrationDoc, /examples\/nginx-docker/);
       } else if (provider === "cloudfront-aws") {
         assert.match(integrationDoc, /real-time access logs/i);
         assert.match(integrationDoc, /Kinesis Data Streams/i);

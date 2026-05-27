@@ -1,7 +1,7 @@
 {
   "name": "@promptscout/live-ai-traffic-nginx-log-forwarder",
   "version": "0.0.0",
-  "description": "Placeholder nginx log forwarder integration for PromptScout live AI traffic.",
+  "description": "nginx access-log parser and forwarder for PromptScout live AI traffic.",
   "license": "Apache-2.0",
   "type": "module",
   "main": "./dist/index.js",

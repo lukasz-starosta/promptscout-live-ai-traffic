@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readdir, readFile } from "node:fs/promises";
+import { access, readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { describe, it } from "node:test";
 
@@ -22,11 +22,23 @@ async function packageDirectories() {
 
 async function exampleDirectories() {
   const entries = await readdir("examples", { withFileTypes: true });
+  const directories = [];
 
-  return entries
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => path.join("examples", entry.name))
-    .sort();
+  for (const entry of entries) {
+    if (!entry.isDirectory()) {
+      continue;
+    }
+
+    const directory = path.join("examples", entry.name);
+    try {
+      await access(path.join(directory, "package.json"));
+      directories.push(directory);
+    } catch {
+      // Compose-only examples are not package-managed workspaces.
+    }
+  }
+
+  return directories.sort();
 }
 
 describe("release workflow", () => {

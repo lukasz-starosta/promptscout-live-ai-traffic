@@ -6,15 +6,14 @@
   "request": {
     "host": "example.com",
     "path": "/pricing",
-    "search": "?utm_source=chatgpt.com",
     "method": "GET",
     "userAgent": "Mozilla/5.0",
     "referer": "https://chatgpt.com/"
   },
   "providerClassification": {
-    "provider": "ai_browser_referral",
-    "agentType": "ai_assistant_referral",
-    "confidence": 0.74,
+    "provider": "openai_chatgpt_referral",
+    "agentType": "ai_referral_visit",
+    "confidence": 0.78,
     "matchedBy": ["referer"]
   },
   "location": {

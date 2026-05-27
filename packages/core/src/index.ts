@@ -39,13 +39,17 @@ export const liveAiTrafficClassifiedProviders = [
   "anthropic_claudebot",
   "anthropic_claude_search_bot",
   "anthropic_claude_user",
+  "anthropic_claude_referral",
   "perplexitybot",
   "perplexity_user",
   "perplexity_referral",
   "google_crawler",
   "google_agent",
   "google_notebooklm",
+  "google_gemini_referral",
   "google_referral",
+  "microsoft_copilot_referral",
+  "openai_chatgpt_referral",
   "meta_external_agent",
   "meta_external_fetcher",
   "bytedance_bytespider",
@@ -57,6 +61,7 @@ export const liveAiTrafficAgentTypes = [
   "ai_search_crawler",
   "ai_training_crawler",
   "ai_browser_user",
+  "ai_referral_visit",
   "link_preview",
   "ai_assistant_referral",
   "search_crawler",
@@ -139,8 +144,13 @@ const googleCommonCrawlersDocsUrl =
   "https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers";
 const googleUserFetchersDocsUrl =
   "https://developers.google.com/crawling/docs/crawlers-fetchers/google-user-triggered-fetchers";
+const chatGptGeneratedLinksDocsUrl =
+  "https://help.openai.com/en/articles/10984597-chatgpt-generated-links";
+const microsoftCopilotDocsUrl =
+  "https://support.microsoft.com/en-us/microsoft-365-copilot/what-s-the-difference-between-microsoft-copilot-free-and-copilot-in-microsoft-365";
 const metaCrawlerDocsUrl =
   "https://developers.facebook.com/docs/sharing/webmasters/crawler";
+const aiSeoResearchUrl = "https://vercel.com/i/how-ai-is-changing-seo";
 
 const userAgentRules: readonly ClassificationRule[] = [
   {
@@ -271,46 +281,57 @@ const userAgentRules: readonly ClassificationRule[] = [
 const refererRules: readonly ClassificationRule[] = [
   {
     id: "ref:openai:chatgpt",
-    provider: "ai_browser_referral",
-    agentType: "ai_assistant_referral",
-    confidence: 0.74,
-    docsUrl: openAiBotsDocsUrl,
+    provider: "openai_chatgpt_referral",
+    agentType: "ai_referral_visit",
+    confidence: 0.78,
+    docsUrl: chatGptGeneratedLinksDocsUrl,
     patterns: [/^https?:\/\/(?:[^/]+\.)?chatgpt\.com(?:\/|$)/i],
   },
   {
     id: "ref:openai",
     provider: "ai_browser_referral",
-    agentType: "ai_assistant_referral",
+    agentType: "ai_referral_visit",
     confidence: 0.7,
     docsUrl: openAiBotsDocsUrl,
     patterns: [/^https?:\/\/(?:[^/]+\.)?openai\.com(?:\/|$)/i],
   },
   {
     id: "ref:anthropic:claude",
-    provider: "ai_browser_referral",
-    agentType: "ai_assistant_referral",
+    provider: "anthropic_claude_referral",
+    agentType: "ai_referral_visit",
     confidence: 0.72,
-    docsUrl: anthropicBotsDocsUrl,
+    docsUrl: aiSeoResearchUrl,
     patterns: [/^https?:\/\/(?:[^/]+\.)?claude\.ai(?:\/|$)/i],
   },
   {
     id: "ref:perplexity",
     provider: "perplexity_referral",
-    agentType: "ai_assistant_referral",
+    agentType: "ai_referral_visit",
     confidence: 0.74,
     docsUrl: "https://docs.perplexity.ai/guides/bots",
     patterns: [/^https?:\/\/(?:[^/]+\.)?perplexity\.ai(?:\/|$)/i],
   },
   {
     id: "ref:google:gemini",
-    provider: "google_referral",
-    agentType: "ai_assistant_referral",
+    provider: "google_gemini_referral",
+    agentType: "ai_referral_visit",
     confidence: 0.7,
-    docsUrl: googleCommonCrawlersDocsUrl,
+    docsUrl: googleUserFetchersDocsUrl,
     patterns: [
       /^https?:\/\/gemini\.google\.com(?:\/|$)/i,
       /^https?:\/\/bard\.google\.com(?:\/|$)/i,
       /^https?:\/\/(?:[^/]+\.)?ai\.google(?:\/|$)/i,
+    ],
+  },
+  {
+    id: "ref:microsoft:copilot",
+    provider: "microsoft_copilot_referral",
+    agentType: "ai_referral_visit",
+    confidence: 0.7,
+    docsUrl: microsoftCopilotDocsUrl,
+    patterns: [
+      /^https?:\/\/copilot\.microsoft\.com(?:\/|$)/i,
+      /^https?:\/\/(?:www\.)?bing\.com\/chat(?:[/?#]|$)/i,
     ],
   },
   {
@@ -326,7 +347,7 @@ const refererRules: readonly ClassificationRule[] = [
   {
     id: "ref:meta:ai",
     provider: "ai_browser_referral",
-    agentType: "ai_assistant_referral",
+    agentType: "ai_referral_visit",
     confidence: 0.68,
     docsUrl: metaCrawlerDocsUrl,
     patterns: [/^https?:\/\/(?:www\.)?meta\.ai(?:\/|$)/i],
@@ -334,7 +355,7 @@ const refererRules: readonly ClassificationRule[] = [
   {
     id: "ref:generic-ai",
     provider: "ai_browser_referral",
-    agentType: "ai_assistant_referral",
+    agentType: "ai_referral_visit",
     confidence: 0.55,
     patterns: [
       /^https?:\/\/(?:[^/]+\.)?(?:copilot\.microsoft\.com|poe\.com|you\.com)(?:\/|$)/i,

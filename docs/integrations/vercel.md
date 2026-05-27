@@ -75,3 +75,10 @@ images, CSS, and JavaScript will not be collected.
 If static assets matter to your AI-traffic analysis, remove the matching
 exclusion deliberately and monitor ingest volume. Asset-heavy sites can generate
 many observations from non-page requests.
+
+## PromptScout Dogfood Smoke
+
+When validating against the real PromptScout ingest PoC, use
+`docs/dogfood-vercel-promptscout.md`. The dogfood smoke sends `ChatGPT-User`,
+`OAI-SearchBot`, and `GPTBot` requests through the Vercel middleware helper and
+records the ingest/debug evidence needed for the Linear issue.

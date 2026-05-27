@@ -34,11 +34,13 @@ implementation work lands in later issues. Published provider packages use the
 shared repository version. Example workspaces keep the same version for
 traceability, but remain private and are not published. See
 [docs/release.md](docs/release.md) for the release path. `packages/node-middleware`
-and runtime collectors such as `packages/netlify-edge` and
-`packages/cloudfront-aws` reuse the shared core classifier, privacy normalization
-helpers, and ingest client for implemented runtime paths. CloudFront/AWS is
-implemented through real-time access logs delivered to Kinesis Data Streams, not
-CloudFront Functions.
+and runtime collectors such as `packages/netlify-edge`, `packages/cloudfront-aws`,
+and `packages/fastly-compute` reuse the shared core classifier, privacy
+normalization helpers, and ingest client for implemented runtime paths.
+CloudFront/AWS is implemented through real-time access logs delivered to Kinesis
+Data Streams, not CloudFront Functions. `examples/fastly-compute` shows how to
+wire Fastly JavaScript Compute to customer origin and PromptScout ingest
+backends.
 
 ## Verification
 

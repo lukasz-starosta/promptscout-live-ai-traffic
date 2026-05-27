@@ -158,6 +158,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@promptscout/live-ai-traffic-example-fastly-compute@workspace:examples/fastly-compute":
+  version: 0.0.0-use.local
+  resolution: "@promptscout/live-ai-traffic-example-fastly-compute@workspace:examples/fastly-compute"
+  dependencies:
+    "@promptscout/live-ai-traffic-fastly-compute": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@promptscout/live-ai-traffic-example-fastly@workspace:examples/fastly":
   version: 0.0.0-use.local
   resolution: "@promptscout/live-ai-traffic-example-fastly@workspace:examples/fastly"
@@ -223,6 +231,14 @@ __metadata:
   resolution: "@promptscout/live-ai-traffic-example-wordpress@workspace:examples/wordpress"
   dependencies:
     "@promptscout/live-ai-traffic-wordpress": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@promptscout/live-ai-traffic-fastly-compute@workspace:*, @promptscout/live-ai-traffic-fastly-compute@workspace:packages/fastly-compute":
+  version: 0.0.0-use.local
+  resolution: "@promptscout/live-ai-traffic-fastly-compute@workspace:packages/fastly-compute"
+  dependencies:
+    "@promptscout/live-ai-traffic-core": "workspace:*"
   languageName: unknown
   linkType: soft
 

@@ -31,6 +31,7 @@ write_minimal_scaffold() {
     node-express
     cloudfront-aws
     fastly
+    fastly-compute
   )
 
   cat >"$repo/package.json" <<'JSON'

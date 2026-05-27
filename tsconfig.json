@@ -41,6 +41,9 @@
       "path": "./packages/fastly"
     },
     {
+      "path": "./packages/fastly-compute"
+    },
+    {
       "path": "./examples/vercel"
     },
     {
@@ -72,6 +75,9 @@
     },
     {
       "path": "./examples/fastly"
+    },
+    {
+      "path": "./examples/fastly-compute"
     }
   ]
 }

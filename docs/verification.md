@@ -14,7 +14,7 @@ worktrees. It currently runs:
 
 - repository text formatting checks for trailing whitespace and exactly one
   final newline;
-- monorepo scaffold checks for package, example, and docs placeholders;
+- monorepo scaffold checks for package, example, and docs surfaces;
 - Bash syntax checks for shell scripts;
 - focused Node tests under `tests/*.test.mjs`, including the core package
   TypeScript build performed by the event contract test;
@@ -61,8 +61,10 @@ candidates can validate npm package contents without publishing.
 Most provider and example packages are structure-only placeholders. Each
 placeholder provider imports `@promptscout/live-ai-traffic-core` and each
 placeholder example imports its matching provider package, but runtime behavior
-is intentionally deferred. Runtime adapters such as `packages/node-middleware`
-must add focused tests that prove response behavior and ingest scheduling.
+is intentionally deferred except for implemented Vercel middleware, Cloudflare
+Worker, WordPress plugin, and generic Node middleware paths. Runtime adapters
+such as `packages/node-middleware` must add focused tests that prove response
+behavior and ingest scheduling.
 
 ## Symphony Contract
 

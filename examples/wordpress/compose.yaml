@@ -1,0 +1,27 @@
+services:
+  wordpress:
+    image: wordpress:php8.2-apache
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: promptscout
+      WORDPRESS_DB_USER: promptscout
+      WORDPRESS_DB_PASSWORD: promptscout
+    volumes:
+      - ../../packages/wordpress-plugin:/var/www/html/wp-content/plugins/promptscout-live-ai-traffic:ro
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: promptscout
+      MYSQL_USER: promptscout
+      MYSQL_PASSWORD: promptscout
+      MYSQL_RANDOM_ROOT_PASSWORD: "1"
+    volumes:
+      - wordpress-db:/var/lib/mysql
+
+volumes:
+  wordpress-db:

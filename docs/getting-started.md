@@ -10,6 +10,8 @@ The current scaffold is intentionally minimal:
 - `packages/node-middleware` provides generic Node helpers and Express-style
   middleware that classify requests, normalize privacy-sensitive fields, and
   send matching events asynchronously.
+- `packages/cloudflare-worker` is the Cloudflare Worker collector for sites
+  already proxied through customer-owned Cloudflare routes.
 - Examples are workspace packages that import their matching provider or
   adapter package. The Express example can run with mocked ingest for local
   smoke checks.
@@ -25,3 +27,15 @@ Run the repo-owned verifier before handing off changes:
 
 See [event-contract.md](event-contract.md) for the shared request observation
 schema used by collectors and ingest endpoints.
+
+See [install-matrix-and-signal-quality.md](install-matrix-and-signal-quality.md)
+for customer-facing guidance on choosing the right integration, why server-side
+request visibility matters, and how to distinguish crawler visits, user fetches,
+AI referrals, and answer mentions.
+
+See [privacy-security-operations.md](privacy-security-operations.md) for the
+default privacy posture, site-scoped ingest token handling, failure modes, and
+security FAQ.
+
+See [release.md](release.md) for package versioning, release verification, npm
+publishing, WordPress artifact, and Docker image guidance.

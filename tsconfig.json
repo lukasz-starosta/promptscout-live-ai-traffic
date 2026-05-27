@@ -8,7 +8,13 @@
       "path": "./packages/vercel"
     },
     {
+      "path": "./packages/vercel-middleware"
+    },
+    {
       "path": "./packages/cloudflare"
+    },
+    {
+      "path": "./packages/cloudflare-worker"
     },
     {
       "path": "./packages/netlify"
@@ -36,6 +42,9 @@
     },
     {
       "path": "./examples/cloudflare"
+    },
+    {
+      "path": "./examples/cloudflare-worker"
     },
     {
       "path": "./examples/netlify"

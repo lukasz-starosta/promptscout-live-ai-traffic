@@ -15,7 +15,6 @@ app.use(
   createExpressLiveAiTrafficMiddleware({
     endpoint: process.env.PROMPTSCOUT_INGEST_ENDPOINT,
     ingestToken: process.env.PROMPTSCOUT_INGEST_TOKEN,
-    siteId: process.env.PROMPTSCOUT_SITE_ID,
   }),
 );
 

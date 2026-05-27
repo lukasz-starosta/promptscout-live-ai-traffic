@@ -10,14 +10,24 @@ This repository uses Yarn workspaces:
   privacy normalization helpers, and the PromptScout ingest client.
 - `packages/*` contains one provider package per integration plus shared
   runtime adapters such as `packages/node-middleware`.
+- `packages/cloudflare-worker` contains the Cloudflare Worker runtime collector
+  for customer-owned Cloudflare routes.
 - `examples/*` contains minimal workspace examples, including the Express
   middleware example under `examples/express`.
+- `examples/cloudflare-worker` contains the runnable Wrangler example for the
+  customer-owned Cloudflare Worker collector.
 - `docs/getting-started.md` and `docs/integrations/*` hold the initial docs shell.
+- `docs/install-matrix-and-signal-quality.md` explains how customers should
+  choose an install path and how to interpret collector signal quality.
 
-Most provider and example packages remain private placeholders until their
-runtime implementation work lands. `packages/node-middleware` is the first
-server-side runtime adapter and reuses the shared core classifier, privacy
-normalization helpers, and ingest client.
+Provider packages are configured for npm release dry-runs while this repo is
+pre-release. Some provider directories remain placeholders until their runtime
+implementation work lands in later issues. Published provider packages use the
+shared repository version. Example workspaces keep the same version for
+traceability, but remain private and are not published. See
+[docs/release.md](docs/release.md) for the release path. `packages/node-middleware`
+is the first server-side runtime adapter and reuses the shared core classifier,
+privacy normalization helpers, and ingest client.
 
 ## Verification
 
@@ -39,3 +49,11 @@ observations, not proof that an AI answer mentioned a brand or page.
 
 Classifier source evidence and fixture confidence labels are documented in
 [docs/evidence.md](docs/evidence.md).
+
+Customer-facing install selection, site-scoped ingest token behavior, and
+signal-quality guidance are documented in
+[docs/install-matrix-and-signal-quality.md](docs/install-matrix-and-signal-quality.md).
+
+Collector privacy, token rotation, failure handling, and operational ownership
+guidance is documented in
+[docs/privacy-security-operations.md](docs/privacy-security-operations.md).

@@ -49,6 +49,13 @@ network E2E, release automation, or PromptScout application/Supabase checks.
 Those remain local/manual follow-ups until the repository has the corresponding
 runtime surface.
 
+## Release Workflow Contract
+
+GitHub Actions also exposes a manual `Release` workflow. It runs the same
+install, lint, typecheck, unit test, and `./scripts/verify` checks before any
+package publish command. The workflow defaults to a dry run so release
+candidates can validate npm package contents without publishing.
+
 ## Intentionally Empty Packages
 
 Most provider and example packages are structure-only placeholders. Each

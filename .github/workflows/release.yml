@@ -1,0 +1,91 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Run verification and package publish dry-runs without publishing.
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: Release packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Typecheck
+        run: yarn typecheck
+
+      - name: Unit tests
+        run: yarn test
+
+      - name: Repo verification
+        run: ./scripts/verify
+
+      - name: Build packages
+        run: yarn build
+
+      - name: Block placeholder version for real publishes
+        if: ${{ !inputs.dry_run }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFile } from "node:fs/promises";
+
+          const rootPackage = JSON.parse(await readFile("package.json", "utf8"));
+          if (rootPackage.version === "0.0.0") {
+            throw new Error("Set a real release version before publishing.");
+          }
+          NODE
+
+      - name: Dry-run package contents
+        if: ${{ inputs.dry_run }}
+        run: |
+          for manifest in packages/*/package.json; do
+            package_dir="${manifest%/package.json}"
+            echo "Dry-run packing ${package_dir}"
+            (cd "$package_dir" && yarn pack --dry-run)
+          done
+
+      - name: Publish npm packages
+        if: ${{ !inputs.dry_run }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [[ -z "${NODE_AUTH_TOKEN:-}" ]]; then
+            echo "NPM_TOKEN is required for real publishes" >&2
+            exit 1
+          fi
+
+          for manifest in packages/*/package.json; do
+            package_dir="${manifest%/package.json}"
+            echo "Publishing ${package_dir}"
+            current_dir="$PWD"
+            cd "$package_dir"
+            yarn npm publish --access public
+            cd "$current_dir"
+          done

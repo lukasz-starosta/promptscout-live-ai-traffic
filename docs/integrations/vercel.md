@@ -6,30 +6,56 @@ runs.
 
 ## Install
 
-No public npm package is published yet. During dogfooding, build and install
-local tarballs for both `packages/core` and `packages/vercel-middleware`.
-
-From this repository checkout:
+For PromptScout dogfooding before npm packages are published, build local
+tarballs from this repository and install both the core package and the
+Vercel/Next.js middleware package into the local PromptScout checkout:
 
 ```bash
-corepack enable
-yarn install --immutable
+yarn pack:vercel-local
+```
+
+The command runs:
+
+```bash
 yarn tsc -b packages/core packages/vercel-middleware
-(cd packages/core && yarn pack --out /tmp/promptscout-live-ai-traffic-core-0.0.0.tgz)
-(cd packages/vercel-middleware && yarn pack --out /tmp/promptscout-live-ai-traffic-vercel-middleware-0.0.0.tgz)
 ```
 
-From the Next.js app:
+It writes these local artifacts:
+
+```text
+.promptscout-local-packages/promptscout-live-ai-traffic-core-v0.0.0.tgz
+.promptscout-local-packages/promptscout-live-ai-traffic-vercel-middleware-v0.0.0.tgz
+```
+
+From the PromptScout checkout, install the local tarballs with `file:`
+dependencies:
 
 ```bash
-npm install \
-  /tmp/promptscout-live-ai-traffic-core-0.0.0.tgz \
-  /tmp/promptscout-live-ai-traffic-vercel-middleware-0.0.0.tgz
+LIVE_AI_TRAFFIC_REPO=/absolute/path/to/promptscout-live-ai-traffic
+yarn add @promptscout/live-ai-traffic-core@file:$LIVE_AI_TRAFFIC_REPO/.promptscout-local-packages/promptscout-live-ai-traffic-core-v0.0.0.tgz @promptscout/live-ai-traffic-vercel-middleware@file:$LIVE_AI_TRAFFIC_REPO/.promptscout-local-packages/promptscout-live-ai-traffic-vercel-middleware-v0.0.0.tgz
 ```
+
+Equivalent `package.json` entries:
+
+```json
+{
+  "@promptscout/live-ai-traffic-core": "file:/absolute/path/to/promptscout-live-ai-traffic/.promptscout-local-packages/promptscout-live-ai-traffic-core-v0.0.0.tgz",
+  "@promptscout/live-ai-traffic-vercel-middleware": "file:/absolute/path/to/promptscout-live-ai-traffic/.promptscout-local-packages/promptscout-live-ai-traffic-vercel-middleware-v0.0.0.tgz"
+}
+```
+
+No npm publish is required.
 
 Package version `0.0.0` is intentional for this local-first phase. Replace
 these tarball installs with published semver only after PromptScout approves the
 first public package release.
+
+After the first public package release, new applications can install the same
+middleware package name from npm:
+
+```bash
+yarn add @promptscout/live-ai-traffic-vercel-middleware
+```
 
 ## Next.js 16 `proxy.ts`
 

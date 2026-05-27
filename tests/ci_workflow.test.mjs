@@ -31,7 +31,12 @@ describe("GitHub Actions verification workflow", () => {
       assert.match(workflow, new RegExp(expected.replaceAll(".", "\\.")));
     }
 
-    assert.match(workflow, /cache:\s*yarn/);
-    assert.match(workflow, /cache-dependency-path:\s*yarn\.lock/);
+    const setupNodeIndex = workflow.indexOf("uses: actions/setup-node@v4");
+    const corepackIndex = workflow.indexOf("run: corepack enable");
+    const installIndex = workflow.indexOf("run: yarn install --immutable");
+
+    assert.ok(setupNodeIndex < corepackIndex);
+    assert.ok(corepackIndex < installIndex);
+    assert.doesNotMatch(workflow, /cache:\s*yarn/);
   });
 });

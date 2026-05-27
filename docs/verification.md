@@ -58,9 +58,11 @@ candidates can validate npm package contents without publishing.
 
 ## Intentionally Empty Packages
 
-The provider and example packages are structure-only placeholders. Each
-provider imports `@promptscout/live-ai-traffic-core` and each example imports
-its matching provider package, but runtime behavior is intentionally deferred.
+Most provider and example packages are structure-only placeholders. Each
+placeholder provider imports `@promptscout/live-ai-traffic-core` and each
+placeholder example imports its matching provider package, but runtime behavior
+is intentionally deferred. Runtime adapters such as `packages/node-middleware`
+must add focused tests that prove response behavior and ingest scheduling.
 
 ## Symphony Contract
 

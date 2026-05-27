@@ -150,6 +150,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@promptscout/live-ai-traffic-example-express@workspace:examples/express":
+  version: 0.0.0-use.local
+  resolution: "@promptscout/live-ai-traffic-example-express@workspace:examples/express"
+  dependencies:
+    "@promptscout/live-ai-traffic-node-middleware": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@promptscout/live-ai-traffic-example-fastly@workspace:examples/fastly":
   version: 0.0.0-use.local
   resolution: "@promptscout/live-ai-traffic-example-fastly@workspace:examples/fastly"
@@ -237,6 +245,14 @@ __metadata:
 "@promptscout/live-ai-traffic-node-express@workspace:*, @promptscout/live-ai-traffic-node-express@workspace:packages/node-express":
   version: 0.0.0-use.local
   resolution: "@promptscout/live-ai-traffic-node-express@workspace:packages/node-express"
+  dependencies:
+    "@promptscout/live-ai-traffic-core": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@promptscout/live-ai-traffic-node-middleware@workspace:*, @promptscout/live-ai-traffic-node-middleware@workspace:packages/node-middleware":
+  version: 0.0.0-use.local
+  resolution: "@promptscout/live-ai-traffic-node-middleware@workspace:packages/node-middleware"
   dependencies:
     "@promptscout/live-ai-traffic-core": "workspace:*"
   languageName: unknown

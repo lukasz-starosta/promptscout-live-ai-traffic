@@ -96,7 +96,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@promptscout/live-ai-traffic-cloudflare-worker@workspace:packages/cloudflare-worker":
+"@promptscout/live-ai-traffic-cloudflare-worker@workspace:*, @promptscout/live-ai-traffic-cloudflare-worker@workspace:packages/cloudflare-worker":
   version: 0.0.0-use.local
   resolution: "@promptscout/live-ai-traffic-cloudflare-worker@workspace:packages/cloudflare-worker"
   dependencies:
@@ -126,6 +126,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@promptscout/live-ai-traffic-example-cloudflare-worker@workspace:examples/cloudflare-worker":
+  version: 0.0.0-use.local
+  resolution: "@promptscout/live-ai-traffic-example-cloudflare-worker@workspace:examples/cloudflare-worker"
+  dependencies:
+    "@promptscout/live-ai-traffic-cloudflare-worker": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@promptscout/live-ai-traffic-example-cloudflare@workspace:examples/cloudflare":
   version: 0.0.0-use.local
   resolution: "@promptscout/live-ai-traffic-example-cloudflare@workspace:examples/cloudflare"
@@ -139,6 +147,14 @@ __metadata:
   resolution: "@promptscout/live-ai-traffic-example-cloudfront-aws@workspace:examples/cloudfront-aws"
   dependencies:
     "@promptscout/live-ai-traffic-cloudfront-aws": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@promptscout/live-ai-traffic-example-express@workspace:examples/express":
+  version: 0.0.0-use.local
+  resolution: "@promptscout/live-ai-traffic-example-express@workspace:examples/express"
+  dependencies:
+    "@promptscout/live-ai-traffic-node-middleware": "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -229,6 +245,14 @@ __metadata:
 "@promptscout/live-ai-traffic-node-express@workspace:*, @promptscout/live-ai-traffic-node-express@workspace:packages/node-express":
   version: 0.0.0-use.local
   resolution: "@promptscout/live-ai-traffic-node-express@workspace:packages/node-express"
+  dependencies:
+    "@promptscout/live-ai-traffic-core": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@promptscout/live-ai-traffic-node-middleware@workspace:*, @promptscout/live-ai-traffic-node-middleware@workspace:packages/node-middleware":
+  version: 0.0.0-use.local
+  resolution: "@promptscout/live-ai-traffic-node-middleware@workspace:packages/node-middleware"
   dependencies:
     "@promptscout/live-ai-traffic-core": "workspace:*"
   languageName: unknown

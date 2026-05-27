@@ -6,6 +6,7 @@ const providers = [
   "vercel",
   "cloudflare",
   "cloudflare-worker",
+  "netlify-edge",
   "netlify",
   "nginx-log-forwarder",
   "wordpress",
@@ -69,12 +70,21 @@ describe("monorepo scaffold", () => {
       if (provider === "vercel") {
         assert.match(integrationDoc, /trackPromptScoutAiTraffic/);
         assert.match(integrationDoc, /matcher/i);
+      } else if (provider === "netlify-edge") {
+        assert.match(integrationDoc, /handlePromptScoutNetlifyEdgeRequest/);
+        assert.match(integrationDoc, /context\.waitUntil/);
+      } else if (provider === "wordpress") {
+        assert.match(integrationDoc, /wp_remote_post/);
+        assert.match(integrationDoc, /brand-owned site source/);
       } else if (provider === "cloudflare-worker") {
         assert.match(integrationDoc, /wrangler/i);
         assert.match(integrationDoc, /Cloudflare is the front door/i);
       } else if (provider === "nginx-log-forwarder") {
         assert.match(integrationDoc, /access logs/i);
         assert.match(integrationDoc, /examples\/nginx-docker/);
+      } else if (provider === "cloudfront-aws") {
+        assert.match(integrationDoc, /real-time access logs/i);
+        assert.match(integrationDoc, /Kinesis Data Streams/i);
       } else {
         assert.match(integrationDoc, /intentionally deferred/i);
       }

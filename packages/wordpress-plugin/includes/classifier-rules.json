@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 1,
+  "generatedFrom": "packages/core/src/index.ts",
+  "userAgentRules": [
+    {
+      "id": "ua:openai:oai-searchbot",
+      "provider": "openai_search_bot",
+      "agentType": "ai_search_crawler",
+      "confidence": 0.99,
+      "matchKind": "user_agent",
+      "docsUrl": "https://platform.openai.com/docs/bots",
+      "patterns": [{ "source": "\\boai-searchbot(?:/|\\b)", "flags": "i" }]
+    },
+    {
+      "id": "ua:openai:gptbot",
+      "provider": "openai_gptbot",
+      "agentType": "ai_training_crawler",
+      "confidence": 0.98,
+      "matchKind": "user_agent",
+      "docsUrl": "https://platform.openai.com/docs/bots",
+      "patterns": [{ "source": "\\bgptbot(?:/|\\b)", "flags": "i" }]
+    },
+    {
+      "id": "ua:openai:chatgpt-user",
+      "provider": "openai_chatgpt_user",
+      "agentType": "ai_browser_user",
+      "confidence": 0.96,
+      "matchKind": "user_agent",
+      "docsUrl": "https://platform.openai.com/docs/bots",
+      "patterns": [{ "source": "\\bchatgpt-user(?:/|\\b)", "flags": "i" }]
+    },
+    {
+      "id": "ua:anthropic:claude-searchbot",
+      "provider": "anthropic_claude_search_bot",
+      "agentType": "ai_search_crawler",
+      "confidence": 0.96,
+      "matchKind": "user_agent",
+      "docsUrl": "https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler",
+      "patterns": [{ "source": "\\bclaude-searchbot(?:/|\\b)", "flags": "i" }]
+    },
+    {
+      "id": "ua:anthropic:claude-user",
+      "provider": "anthropic_claude_user",
+      "agentType": "ai_browser_user",
+      "confidence": 0.94,
+      "matchKind": "user_agent",
+      "docsUrl": "https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler",
+      "patterns": [{ "source": "\\bclaude-user(?:/|\\b)", "flags": "i" }]
+    },
+    {
+      "id": "ua:anthropic:claudebot",
+      "provider": "anthropic_claudebot",
+      "agentType": "ai_training_crawler",
+      "confidence": 0.96,
+      "matchKind": "user_agent",
+      "docsUrl": "https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler",
+      "patterns": [{ "source": "\\bclaudebot(?:/|\\b)", "flags": "i" }]
+    },
+    {
+      "id": "ua:perplexity:perplexitybot",
+      "provider": "perplexitybot",
+      "agentType": "ai_search_crawler",
+      "confidence": 0.95,
+      "matchKind": "user_agent",
+      "docsUrl": "https://docs.perplexity.ai/guides/bots",
+      "patterns": [{ "source": "\\bperplexitybot(?:/|\\b)", "flags": "i" }]
+    },
+    {
+      "id": "ua:perplexity:perplexity-user",
+      "provider": "perplexity_user",
+      "agentType": "ai_browser_user",
+      "confidence": 0.92,
+      "matchKind": "user_agent",
+      "docsUrl": "https://docs.perplexity.ai/guides/bots",
+      "patterns": [{ "source": "\\bperplexity-user(?:/|\\b)", "flags": "i" }]
+    },
+    {
+      "id": "ua:google:google-agent",
+      "provider": "google_agent",
+      "agentType": "ai_browser_user",
+      "confidence": 0.91,
+      "matchKind": "user_agent",
+      "docsUrl": "https://developers.google.com/crawling/docs/crawlers-fetchers/google-user-triggered-fetchers",
+      "patterns": [{ "source": "\\bgoogle-agent(?:;|/|\\b)", "flags": "i" }]
+    },
+    {
+      "id": "ua:google:notebooklm",
+      "provider": "google_notebooklm",
+      "agentType": "ai_browser_user",
+      "confidence": 0.9,
+      "matchKind": "user_agent",
+      "docsUrl": "https://developers.google.com/crawling/docs/crawlers-fetchers/google-user-triggered-fetchers",
+      "patterns": [{ "source": "\\bgoogle-notebooklm(?:/|\\b)", "flags": "i" }]
+    },
+    {
+      "id": "ua:google:googleother",
+      "provider": "google_crawler",
+      "agentType": "search_crawler",
+      "confidence": 0.9,
+      "matchKind": "user_agent",
+      "docsUrl": "https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers",
+      "patterns": [{ "source": "\\bgoogleother(?:-|;|\\)|\\b)", "flags": "i" }]
+    },
+    {
+      "id": "ua:google:googlebot",
+      "provider": "google_crawler",
+      "agentType": "search_crawler",
+      "confidence": 0.9,
+      "matchKind": "user_agent",
+      "docsUrl": "https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers",
+      "patterns": [{ "source": "\\bgooglebot(?:-|/|\\b)", "flags": "i" }]
+    },
+    {
+      "id": "ua:meta:externalagent",
+      "provider": "meta_external_agent",
+      "agentType": "ai_training_crawler",
+      "confidence": 0.91,
+      "matchKind": "user_agent",
+      "docsUrl": "https://developers.facebook.com/docs/sharing/webmasters/crawler",
+      "patterns": [{ "source": "\\bmeta-externalagent(?:/|\\b)", "flags": "i" }]
+    },
+    {
+      "id": "ua:meta:externalfetcher",
+      "provider": "meta_external_fetcher",
+      "agentType": "link_preview",
+      "confidence": 0.86,
+      "matchKind": "user_agent",
+      "docsUrl": "https://developers.facebook.com/docs/sharing/webmasters/crawler",
+      "patterns": [
+        { "source": "\\bmeta-externalfetcher(?:/|\\b)", "flags": "i" },
+        { "source": "\\bfacebookexternalhit(?:/|\\b)", "flags": "i" },
+        { "source": "\\bfacebot(?:/|\\b)", "flags": "i" }
+      ]
+    },
+    {
+      "id": "ua:bytedance:bytespider",
+      "provider": "bytedance_bytespider",
+      "agentType": "ai_training_crawler",
+      "confidence": 0.9,
+      "matchKind": "user_agent",
+      "patterns": [{ "source": "\\bbytespider(?:/|;|\\b)", "flags": "i" }]
+    }
+  ],
+  "refererRules": [
+    {
+      "id": "ref:openai:chatgpt",
+      "provider": "ai_browser_referral",
+      "agentType": "ai_assistant_referral",
+      "confidence": 0.74,
+      "matchKind": "referer",
+      "docsUrl": "https://platform.openai.com/docs/bots",
+      "patterns": [
+        {
+          "source": "^https?://(?:[^/]+\\.)?chatgpt\\.com(?:/|$)",
+          "flags": "i"
+        }
+      ]
+    },
+    {
+      "id": "ref:openai",
+      "provider": "ai_browser_referral",
+      "agentType": "ai_assistant_referral",
+      "confidence": 0.7,
+      "matchKind": "referer",
+      "docsUrl": "https://platform.openai.com/docs/bots",
+      "patterns": [
+        { "source": "^https?://(?:[^/]+\\.)?openai\\.com(?:/|$)", "flags": "i" }
+      ]
+    },
+    {
+      "id": "ref:anthropic:claude",
+      "provider": "ai_browser_referral",
+      "agentType": "ai_assistant_referral",
+      "confidence": 0.72,
+      "matchKind": "referer",
+      "docsUrl": "https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler",
+      "patterns": [
+        { "source": "^https?://(?:[^/]+\\.)?claude\\.ai(?:/|$)", "flags": "i" }
+      ]
+    },
+    {
+      "id": "ref:perplexity",
+      "provider": "perplexity_referral",
+      "agentType": "ai_assistant_referral",
+      "confidence": 0.74,
+      "matchKind": "referer",
+      "docsUrl": "https://docs.perplexity.ai/guides/bots",
+      "patterns": [
+        {
+          "source": "^https?://(?:[^/]+\\.)?perplexity\\.ai(?:/|$)",
+          "flags": "i"
+        }
+      ]
+    },
+    {
+      "id": "ref:google:gemini",
+      "provider": "google_referral",
+      "agentType": "ai_assistant_referral",
+      "confidence": 0.7,
+      "matchKind": "referer",
+      "docsUrl": "https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers",
+      "patterns": [
+        { "source": "^https?://gemini\\.google\\.com(?:/|$)", "flags": "i" },
+        { "source": "^https?://bard\\.google\\.com(?:/|$)", "flags": "i" },
+        { "source": "^https?://(?:[^/]+\\.)?ai\\.google(?:/|$)", "flags": "i" }
+      ]
+    },
+    {
+      "id": "ref:google:search",
+      "provider": "google_referral",
+      "agentType": "search_referral",
+      "confidence": 0.82,
+      "matchKind": "referer",
+      "docsUrl": "https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers",
+      "patterns": [
+        {
+          "source": "^https?://(?:www\\.)?google\\.[^/]+/(?:search|url)(?:[/?#]|$)",
+          "flags": "i"
+        }
+      ]
+    },
+    {
+      "id": "ref:meta:ai",
+      "provider": "ai_browser_referral",
+      "agentType": "ai_assistant_referral",
+      "confidence": 0.68,
+      "matchKind": "referer",
+      "docsUrl": "https://developers.facebook.com/docs/sharing/webmasters/crawler",
+      "patterns": [
+        { "source": "^https?://(?:www\\.)?meta\\.ai(?:/|$)", "flags": "i" }
+      ]
+    },
+    {
+      "id": "ref:generic-ai",
+      "provider": "ai_browser_referral",
+      "agentType": "ai_assistant_referral",
+      "confidence": 0.55,
+      "matchKind": "referer",
+      "patterns": [
+        {
+          "source": "^https?://(?:[^/]+\\.)?(?:copilot\\.microsoft\\.com|poe\\.com|you\\.com)(?:/|$)",
+          "flags": "i"
+        }
+      ]
+    }
+  ]
+}

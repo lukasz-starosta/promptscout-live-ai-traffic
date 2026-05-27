@@ -17,15 +17,12 @@ const requiredProviders = [
 const currentInstallPaths = [
   "Vercel middleware",
   "Cloudflare Worker",
-  "nginx logs",
-];
-const deferredInstallPaths = [
-  "Netlify Edge",
-  "WordPress plugin",
-  "Node/Express",
   "CloudFront/AWS",
-  "Fastly",
+  "Netlify Edge",
+  "nginx logs",
+  "WordPress plugin",
 ];
+const deferredInstallPaths = ["Node/Express", "Fastly"];
 
 async function collectMarkdownFiles(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -75,7 +72,9 @@ describe("install matrix docs", () => {
     for (const provider of currentInstallPaths) {
       assert.match(
         guide,
-        new RegExp(`\\| ${provider.replace("/", "\\/")} \\| Current \\|`),
+        new RegExp(
+          `\\| ${provider.replace("/", "\\/")} \\| Current(?: AWS path)? \\|`,
+        ),
       );
     }
 

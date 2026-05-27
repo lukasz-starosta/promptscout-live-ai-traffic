@@ -302,7 +302,10 @@ describe("nginx log forwarder", () => {
     assert.equal(result.stats.parsedLines, 3);
     assert.equal(result.stats.queuedEvents, 2);
     assert.equal(sentBatches.length, 1);
-    assert.equal(checkpointStore.checkpoints()[0].fileId, "new-device:new-inode");
+    assert.equal(
+      checkpointStore.checkpoints()[0].fileId,
+      "new-device:new-inode",
+    );
     assert.equal(
       checkpointStore.checkpoints()[0].offset,
       Buffer.byteLength(rotatedText),

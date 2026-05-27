@@ -1,3 +1,6 @@
-import { integration } from "@promptscout/live-ai-traffic-cloudfront-aws";
-
-export { integration };
+export {
+  buildPromptScoutCloudFrontAwsEventsFromKinesisEvent,
+  cloudFrontAwsImplementationDecision,
+  handlePromptScoutCloudFrontAwsKinesisEvent,
+  recommendedCloudFrontRealtimeLogFields,
+} from "@promptscout/live-ai-traffic-cloudfront-aws";

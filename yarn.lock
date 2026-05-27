@@ -166,6 +166,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@promptscout/live-ai-traffic-example-netlify-edge@workspace:examples/netlify-edge":
+  version: 0.0.0-use.local
+  resolution: "@promptscout/live-ai-traffic-example-netlify-edge@workspace:examples/netlify-edge"
+  dependencies:
+    "@promptscout/live-ai-traffic-netlify-edge": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@promptscout/live-ai-traffic-example-netlify@workspace:examples/netlify":
   version: 0.0.0-use.local
   resolution: "@promptscout/live-ai-traffic-example-netlify@workspace:examples/netlify"
@@ -221,6 +229,14 @@ __metadata:
 "@promptscout/live-ai-traffic-fastly@workspace:*, @promptscout/live-ai-traffic-fastly@workspace:packages/fastly":
   version: 0.0.0-use.local
   resolution: "@promptscout/live-ai-traffic-fastly@workspace:packages/fastly"
+  dependencies:
+    "@promptscout/live-ai-traffic-core": "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"@promptscout/live-ai-traffic-netlify-edge@workspace:*, @promptscout/live-ai-traffic-netlify-edge@workspace:packages/netlify-edge":
+  version: 0.0.0-use.local
+  resolution: "@promptscout/live-ai-traffic-netlify-edge@workspace:packages/netlify-edge"
   dependencies:
     "@promptscout/live-ai-traffic-core": "workspace:*"
   languageName: unknown

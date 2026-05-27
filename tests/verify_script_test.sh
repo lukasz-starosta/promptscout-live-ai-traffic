@@ -24,6 +24,7 @@ write_minimal_scaffold() {
     vercel
     cloudflare
     cloudflare-worker
+    netlify-edge
     netlify
     nginx-log-forwarder
     wordpress

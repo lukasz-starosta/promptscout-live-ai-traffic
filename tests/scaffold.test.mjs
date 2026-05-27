@@ -6,6 +6,7 @@ const providers = [
   "vercel",
   "cloudflare",
   "cloudflare-worker",
+  "netlify-edge",
   "netlify",
   "nginx-log-forwarder",
   "wordpress",
@@ -69,6 +70,9 @@ describe("monorepo scaffold", () => {
       if (provider === "vercel") {
         assert.match(integrationDoc, /trackPromptScoutAiTraffic/);
         assert.match(integrationDoc, /matcher/i);
+      } else if (provider === "netlify-edge") {
+        assert.match(integrationDoc, /handlePromptScoutNetlifyEdgeRequest/);
+        assert.match(integrationDoc, /context\.waitUntil/);
       } else if (provider === "wordpress") {
         assert.match(integrationDoc, /wp_remote_post/);
         assert.match(integrationDoc, /brand-owned site source/);

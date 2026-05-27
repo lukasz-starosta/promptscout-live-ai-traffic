@@ -18,9 +18,9 @@ const currentInstallPaths = [
   "Vercel middleware",
   "Cloudflare Worker",
   "WordPress plugin",
+  "Netlify Edge",
 ];
 const deferredInstallPaths = [
-  "Netlify Edge",
   "nginx logs",
   "Node/Express",
   "CloudFront/AWS",

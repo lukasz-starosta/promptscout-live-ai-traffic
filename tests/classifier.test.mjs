@@ -113,11 +113,25 @@ describe("AI traffic classifier", () => {
     assert.match(evidence, /https:\/\/platform\.openai\.com\/docs\/bots/);
     assert.match(
       evidence,
+      /https:\/\/help\.openai\.com\/en\/articles\/10984597-chatgpt-generated-links/,
+    );
+    assert.match(
+      evidence,
+      /https:\/\/support\.claude\.com\/en\/articles\/10593882-sharing-and-unsharing-chats/,
+    );
+    assert.match(
+      evidence,
+      /https:\/\/support\.google\.com\/gemini\/answer\/13743730/,
+    );
+    assert.match(
+      evidence,
       /https:\/\/vercel\.com\/blog\/the-rise-of-the-ai-crawler/,
     );
     assert.match(evidence, /https:\/\/vercel\.com\/i\/how-ai-is-changing-seo/);
     assert.match(evidence, /High-confidence signals/i);
     assert.match(evidence, /Weak or advisory signals/i);
+    assert.match(evidence, /AI Referral Research Notes/i);
+    assert.match(evidence, /Explicit non-goals/i);
   });
 
   it("uses explicit unknown fallbacks for missing and malformed user agents", async () => {
@@ -151,7 +165,8 @@ describe("AI traffic classifier", () => {
       confidence: 0.78,
       matchedRule: "ref:openai:chatgpt",
       matchedBy: ["referer"],
-      docsUrl: "https://help.openai.com/en/articles/10984597-chatgpt-generated-links",
+      docsUrl:
+        "https://help.openai.com/en/articles/10984597-chatgpt-generated-links",
     });
 
     const result = classifyAiTraffic({

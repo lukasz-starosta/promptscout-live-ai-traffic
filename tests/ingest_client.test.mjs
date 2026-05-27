@@ -51,7 +51,8 @@ function aiReferralVisitEvent(overrides = {}) {
       search: "?utm_source=chatgpt.com&prompt=secret",
       method: "GET",
       userAgent: "Mozilla/5.0",
-      referer: "https://chatgpt.com/share/example?utm_source=chatgpt.com&prompt=secret#details",
+      referer:
+        "https://chatgpt.com/share/example?utm_source=chatgpt.com&prompt=secret#details",
     },
     providerClassification: {
       provider: "openai_chatgpt_referral",
@@ -325,7 +326,10 @@ describe("live AI traffic privacy helpers", () => {
       normalizedReferral.request.referer,
       "https://chatgpt.com/share/example",
     );
-    assert.equal(JSON.stringify(normalizedReferral).includes("prompt=secret"), false);
+    assert.equal(
+      JSON.stringify(normalizedReferral).includes("prompt=secret"),
+      false,
+    );
 
     assert.deepEqual(
       filterLiveAiTrafficHeaders(

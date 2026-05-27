@@ -16,10 +16,10 @@
     "provider": "anthropic_claude_referral",
     "agentType": "ai_referral_visit",
     "matchedRule": "ref:anthropic:claude",
-    "docsUrl": "https://vercel.com/i/how-ai-is-changing-seo",
+    "docsUrl": "https://support.claude.com/en/articles/10593882-sharing-and-unsharing-chats",
     "confidenceLabel": "advisory",
     "signalSource": "referer",
-    "sourceUrl": "https://vercel.com/i/how-ai-is-changing-seo"
+    "sourceUrl": "https://support.claude.com/en/articles/10593882-sharing-and-unsharing-chats"
   },
   {
     "name": "perplexity-search-referral",
@@ -27,10 +27,10 @@
     "provider": "perplexity_referral",
     "agentType": "ai_referral_visit",
     "matchedRule": "ref:perplexity",
-    "docsUrl": "https://docs.perplexity.ai/guides/bots",
+    "docsUrl": "https://docs.perplexity.ai/docs/resources/perplexity-crawlers",
     "confidenceLabel": "advisory",
     "signalSource": "referer",
-    "sourceUrl": "https://docs.perplexity.ai/guides/bots"
+    "sourceUrl": "https://docs.perplexity.ai/docs/resources/perplexity-crawlers"
   },
   {
     "name": "gemini-referral",
@@ -38,10 +38,10 @@
     "provider": "google_gemini_referral",
     "agentType": "ai_referral_visit",
     "matchedRule": "ref:google:gemini",
-    "docsUrl": "https://developers.google.com/crawling/docs/crawlers-fetchers/google-user-triggered-fetchers",
+    "docsUrl": "https://support.google.com/gemini/answer/13743730",
     "confidenceLabel": "advisory",
     "signalSource": "referer",
-    "sourceUrl": "https://developers.google.com/crawling/docs/crawlers-fetchers/google-user-triggered-fetchers"
+    "sourceUrl": "https://support.google.com/gemini/answer/13743730"
   },
   {
     "name": "copilot-referral",
@@ -60,7 +60,7 @@
     "provider": "microsoft_copilot_referral",
     "agentType": "ai_referral_visit",
     "matchedRule": "ref:microsoft:copilot",
-    "docsUrl": "https://learn.microsoft.com/en-us/copilot/overview",
+    "docsUrl": "https://support.microsoft.com/en-us/microsoft-365-copilot/what-s-the-difference-between-microsoft-copilot-free-and-copilot-in-microsoft-365",
     "confidenceLabel": "advisory",
     "signalSource": "referer",
     "sourceUrl": "https://learn.microsoft.com/en-us/copilot/overview"

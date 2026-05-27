@@ -146,11 +146,16 @@ const googleUserFetchersDocsUrl =
   "https://developers.google.com/crawling/docs/crawlers-fetchers/google-user-triggered-fetchers";
 const chatGptGeneratedLinksDocsUrl =
   "https://help.openai.com/en/articles/10984597-chatgpt-generated-links";
+const claudeSharingDocsUrl =
+  "https://support.claude.com/en/articles/10593882-sharing-and-unsharing-chats";
+const perplexityCrawlersDocsUrl =
+  "https://docs.perplexity.ai/docs/resources/perplexity-crawlers";
+const geminiSharingDocsUrl =
+  "https://support.google.com/gemini/answer/13743730";
 const microsoftCopilotDocsUrl =
   "https://support.microsoft.com/en-us/microsoft-365-copilot/what-s-the-difference-between-microsoft-copilot-free-and-copilot-in-microsoft-365";
 const metaCrawlerDocsUrl =
   "https://developers.facebook.com/docs/sharing/webmasters/crawler";
-const aiSeoResearchUrl = "https://vercel.com/i/how-ai-is-changing-seo";
 
 const userAgentRules: readonly ClassificationRule[] = [
   {
@@ -300,7 +305,7 @@ const refererRules: readonly ClassificationRule[] = [
     provider: "anthropic_claude_referral",
     agentType: "ai_referral_visit",
     confidence: 0.72,
-    docsUrl: aiSeoResearchUrl,
+    docsUrl: claudeSharingDocsUrl,
     patterns: [/^https?:\/\/(?:[^/]+\.)?claude\.ai(?:\/|$)/i],
   },
   {
@@ -308,7 +313,7 @@ const refererRules: readonly ClassificationRule[] = [
     provider: "perplexity_referral",
     agentType: "ai_referral_visit",
     confidence: 0.74,
-    docsUrl: "https://docs.perplexity.ai/guides/bots",
+    docsUrl: perplexityCrawlersDocsUrl,
     patterns: [/^https?:\/\/(?:[^/]+\.)?perplexity\.ai(?:\/|$)/i],
   },
   {
@@ -316,7 +321,7 @@ const refererRules: readonly ClassificationRule[] = [
     provider: "google_gemini_referral",
     agentType: "ai_referral_visit",
     confidence: 0.7,
-    docsUrl: googleUserFetchersDocsUrl,
+    docsUrl: geminiSharingDocsUrl,
     patterns: [
       /^https?:\/\/gemini\.google\.com(?:\/|$)/i,
       /^https?:\/\/bard\.google\.com(?:\/|$)/i,

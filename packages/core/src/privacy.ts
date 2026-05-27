@@ -193,15 +193,13 @@ export function sanitizeLiveAiTrafficEventForIngest(
 
 export function sanitizeLiveAiTrafficReferer(referer: string): string {
   const trimmed = referer.trim();
+  const queryIndex = trimmed.indexOf("?");
+  const hashIndex = trimmed.indexOf("#");
+  const cutoff = [queryIndex, hashIndex]
+    .filter((index) => index >= 0)
+    .sort((left, right) => left - right)[0];
 
-  try {
-    const url = new URL(trimmed);
-    url.search = "";
-    url.hash = "";
-    return url.toString();
-  } catch {
-    return trimmed.split(/[?#]/, 1)[0] ?? "";
-  }
+  return cutoff === undefined ? trimmed : trimmed.slice(0, cutoff);
 }
 
 export async function hmacSha256Hex(

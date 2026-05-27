@@ -16,6 +16,22 @@ purposes.
 ## Sources
 
 - OpenAI crawler docs: https://platform.openai.com/docs/bots
+- OpenAI ChatGPT generated links:
+  https://help.openai.com/en/articles/10984597-chatgpt-generated-links
+- OpenAI ChatGPT shared links:
+  https://help.openai.com/en/articles/7925741-chatgpt-shared-links-faq
+- Claude shared chats:
+  https://support.claude.com/en/articles/10593882-sharing-and-unsharing-chats
+- Perplexity crawlers and response links:
+  https://docs.perplexity.ai/docs/resources/perplexity-crawlers
+- Gemini shared chats:
+  https://support.google.com/gemini/answer/13743730
+- Microsoft Copilot surfaces:
+  https://support.microsoft.com/en-us/microsoft-365-copilot/what-s-the-difference-between-microsoft-copilot-free-and-copilot-in-microsoft-365
+- Microsoft 365 Copilot web grounding:
+  https://learn.microsoft.com/en-us/microsoft-365/copilot/manage-public-web-access
+- Microsoft 365 Copilot Chat overview:
+  https://learn.microsoft.com/en-us/copilot/overview
 - Vercel and MERJ AI crawler behavior research:
   https://vercel.com/blog/the-rise-of-the-ai-crawler
 - Vercel AI SEO guidance:
@@ -62,8 +78,40 @@ reproducible while marking them as advisory.
 | Signal source | Fixture examples | How to interpret it |
 | --- | --- | --- |
 | `referer` | `chatgpt-share-referral`, `claude-referral`, `perplexity-search-referral` | Likely browser traffic from an AI assistant surface. |
-| `referer` | `gemini-referral`, `meta-ai-referral` | Assistant-surface traffic, useful for attribution but not crawler proof. |
+| `referer` | `gemini-referral`, `copilot-referral`, `bing-chat-referral`, `meta-ai-referral` | Assistant-surface traffic, useful for attribution but not crawler proof. |
 | `referer` | `google-search-referral` | Conventional search referral baseline, not AI crawler traffic. |
+
+## AI Referral Research Notes
+
+Last reviewed: 2026-05-27.
+
+The AI referral rules intentionally match only provider-owned chat or answer
+surfaces with current public evidence:
+
+| Provider surface | Matched examples | Source basis | Confidence |
+| --- | --- | --- | --- |
+| ChatGPT | `https://chatgpt.com/share/...`, `https://chatgpt.com/` | OpenAI documents ChatGPT-generated outbound links and `chatgpt.com/share/...` shared-link URLs. | Advisory, `0.78` |
+| Claude | `https://claude.ai/chat/...` | Claude documents shareable chat snapshots from the Claude product and links users to `claude.ai` settings for shared chats. | Advisory, `0.72` |
+| Perplexity | `https://www.perplexity.ai/search/...` | Perplexity documents responses that include links to pages surfaced by Perplexity. | Advisory, `0.74` |
+| Gemini | `https://gemini.google.com/app/...` | Gemini documents its web app and public shared-chat flow, including redirects back to `gemini.google.com`. | Advisory, `0.70` |
+| Copilot/Bing | `https://copilot.microsoft.com/...`, `https://www.bing.com/chat...` | Microsoft documents Copilot availability at `copilot.microsoft.com`, in Edge, and in Microsoft Bing, plus Bing-backed web grounding. | Advisory, `0.70` |
+
+Referer behavior is treated as an observed request signal, not a provider
+guarantee. Browsers and in-app surfaces can omit or rewrite `Referer`, and some
+AI products also append query parameters such as UTM tags. The core privacy
+helpers therefore strip referer query strings and fragments, and AI referral
+visit events omit the landing-page query string before storage or forwarding.
+
+Explicit non-goals:
+
+- Do not infer AI referral traffic from arbitrary `utm_source` values without a
+  matching provider-owned referer.
+- Do not classify Google Search or AI Overview clicks as Gemini traffic when the
+  referer is only a normal Google Search URL.
+- Do not treat referral visits as crawler, training, or user-triggered fetch
+  events.
+- Do not store raw prompts, raw query strings, or UTM parameters from referers or
+  referral landing-page URLs.
 
 ## Validation Fixtures
 

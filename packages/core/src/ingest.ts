@@ -1,5 +1,9 @@
 import type { LiveAiTrafficEvent } from "./index.js";
-import { hmacSha256Hex, type WebCryptoLike } from "./privacy.js";
+import {
+  hmacSha256Hex,
+  sanitizeLiveAiTrafficEventForIngest,
+  type WebCryptoLike,
+} from "./privacy.js";
 
 export type LiveAiTrafficFetchResponse = {
   ok: boolean;
@@ -119,7 +123,9 @@ export function createLiveAiTrafficIngestClient(
   const sendBatch = async (
     events: readonly LiveAiTrafficEvent[],
   ): Promise<LiveAiTrafficIngestResult> => {
-    const body = JSON.stringify({ events });
+    const body = JSON.stringify({
+      events: events.map((event) => sanitizeLiveAiTrafficEventForIngest(event)),
+    });
     const headers = await ingestHeaders(options, body);
     let attempts = 0;
     let lastError: Error | undefined;

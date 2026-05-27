@@ -60,7 +60,7 @@ describe("AI traffic classifier", () => {
     }
   });
 
-  it("classifies named AI assistant referral fixtures as advisory signals", async () => {
+  it("classifies named AI referral visit fixtures as advisory signals", async () => {
     const { classifyReferer } = await coreModule();
     const cases = JSON.parse(
       await readFile(
@@ -87,6 +87,11 @@ describe("AI traffic classifier", () => {
       assert.ok(sourceUrl, `${name}: fixture must cite a signal source URL`);
       assert.equal(confidenceLabel, "advisory", `${name}: confidence label`);
       assert.equal(signalSource, "referer", `${name}: signal source`);
+      if (matchedRule === "ref:google:search") {
+        assert.equal(agentType, "search_referral", `${name}: agentType`);
+      } else {
+        assert.equal(agentType, "ai_referral_visit", `${name}: agentType`);
+      }
       assert.equal(result.provider, provider, `${name}: provider`);
       assert.equal(result.agentType, agentType, `${name}: agentType`);
       assert.equal(result.matchedRule, matchedRule, `${name}: matchedRule`);
@@ -108,11 +113,25 @@ describe("AI traffic classifier", () => {
     assert.match(evidence, /https:\/\/platform\.openai\.com\/docs\/bots/);
     assert.match(
       evidence,
+      /https:\/\/help\.openai\.com\/en\/articles\/10984597-chatgpt-generated-links/,
+    );
+    assert.match(
+      evidence,
+      /https:\/\/support\.claude\.com\/en\/articles\/10593882-sharing-and-unsharing-chats/,
+    );
+    assert.match(
+      evidence,
+      /https:\/\/support\.google\.com\/gemini\/answer\/13743730/,
+    );
+    assert.match(
+      evidence,
       /https:\/\/vercel\.com\/blog\/the-rise-of-the-ai-crawler/,
     );
     assert.match(evidence, /https:\/\/vercel\.com\/i\/how-ai-is-changing-seo/);
     assert.match(evidence, /High-confidence signals/i);
     assert.match(evidence, /Weak or advisory signals/i);
+    assert.match(evidence, /AI Referral Research Notes/i);
+    assert.match(evidence, /Explicit non-goals/i);
   });
 
   it("uses explicit unknown fallbacks for missing and malformed user agents", async () => {
@@ -137,16 +156,17 @@ describe("AI traffic classifier", () => {
     }
   });
 
-  it("classifies AI referrals without an AI bot user agent", async () => {
+  it("classifies AI referral visits without an AI bot user agent", async () => {
     const { classifyAiTraffic, classifyReferer } = await coreModule();
 
     assert.deepEqual(classifyReferer("https://chatgpt.com/share/abc"), {
-      provider: "ai_browser_referral",
-      agentType: "ai_assistant_referral",
-      confidence: 0.74,
+      provider: "openai_chatgpt_referral",
+      agentType: "ai_referral_visit",
+      confidence: 0.78,
       matchedRule: "ref:openai:chatgpt",
       matchedBy: ["referer"],
-      docsUrl: "https://platform.openai.com/docs/bots",
+      docsUrl:
+        "https://help.openai.com/en/articles/10984597-chatgpt-generated-links",
     });
 
     const result = classifyAiTraffic({
@@ -155,9 +175,26 @@ describe("AI traffic classifier", () => {
     });
 
     assert.equal(result.provider, "perplexity_referral");
-    assert.equal(result.agentType, "ai_assistant_referral");
+    assert.equal(result.agentType, "ai_referral_visit");
     assert.equal(result.matchedRule, "ref:perplexity");
     assert.deepEqual(result.matchedBy, ["referer"]);
+  });
+
+  it("classifies conservative Copilot and Bing chat referers as Microsoft AI referral visits", async () => {
+    const { classifyReferer } = await coreModule();
+
+    for (const referer of [
+      "https://copilot.microsoft.com/chats/abc",
+      "https://www.bing.com/chat?q=promptscout",
+    ]) {
+      const result = classifyReferer(referer);
+
+      assert.equal(result.provider, "microsoft_copilot_referral", referer);
+      assert.equal(result.agentType, "ai_referral_visit", referer);
+      assert.equal(result.matchedRule, "ref:microsoft:copilot", referer);
+      assert.deepEqual(result.matchedBy, ["referer"], referer);
+      assert.ok(result.confidence < 0.9, referer);
+    }
   });
 
   it("prefers higher-confidence AI bot user-agent signals over conflicting referrals", async () => {

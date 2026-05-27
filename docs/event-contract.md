@@ -26,15 +26,16 @@ fields without breaking older consumers.
 - `providerClassification.provider`: known provider classification, such as
   `openai_search_bot`, `openai_gptbot`, `openai_chatgpt_user`,
   `anthropic_claudebot`, `anthropic_claude_search_bot`,
-  `anthropic_claude_user`, `perplexitybot`, `perplexity_user`,
-  `perplexity_referral`, `google_crawler`, `google_agent`,
-  `google_notebooklm`, `google_referral`, `meta_external_agent`,
-  `meta_external_fetcher`, `bytedance_bytespider`, `ai_browser_referral`, or
-  `other`.
+  `anthropic_claude_user`, `anthropic_claude_referral`, `perplexitybot`,
+  `perplexity_user`, `perplexity_referral`, `google_crawler`,
+  `google_agent`, `google_notebooklm`, `google_gemini_referral`,
+  `google_referral`, `microsoft_copilot_referral`,
+  `openai_chatgpt_referral`, `meta_external_agent`, `meta_external_fetcher`,
+  `bytedance_bytespider`, `ai_browser_referral`, or `other`.
 - `providerClassification.agentType`: known traffic class, such as
   `ai_search_crawler`, `ai_training_crawler`, `ai_browser_user`,
-  `link_preview`, `ai_assistant_referral`, `search_crawler`,
-  `search_referral`, or `other`.
+  `ai_referral_visit`, `link_preview`, `ai_assistant_referral`,
+  `search_crawler`, `search_referral`, or `other`.
 - `providerClassification.confidence`: number from `0` through `1`.
 - `providerClassification.matchedBy`: non-empty list of signals used to classify
   the event, such as `user_agent`, `referer`, `host`, `path`, `manual`, or
@@ -126,9 +127,13 @@ Agent types intentionally distinguish the traffic purpose:
   Meta-ExternalAgent, or Bytespider.
 - `ai_browser_user`: user-triggered AI fetch, such as OpenAI `ChatGPT-User`,
   Anthropic `Claude-User`, Perplexity-User, Google-Agent, or NotebookLM.
+- `ai_referral_visit`: a normal browser visit referred by an AI chat or answer
+  surface, such as ChatGPT, Claude, Perplexity, Gemini, or Copilot. These are
+  advisory referral signals and are separate from crawler/user-agent fetches.
 - `link_preview`: preview/unfurl fetches, such as Meta/Facebook preview agents.
-- `ai_assistant_referral`: browser traffic referred from AI assistant surfaces,
-  such as ChatGPT, Claude, Perplexity, Gemini, or Meta AI.
+- `ai_assistant_referral`: legacy referral label retained in the schema for
+  compatibility with older collectors; new classifier output should use
+  `ai_referral_visit`.
 - `search_crawler` and `search_referral`: conventional Google crawler or search
   referral traffic that is useful as a baseline next to AI traffic.
 - `other`: explicit fallback for missing, malformed, or unsupported signals.

@@ -2,46 +2,68 @@
   {
     "name": "chatgpt-share-referral",
     "referer": "https://chatgpt.com/share/abc",
-    "provider": "ai_browser_referral",
-    "agentType": "ai_assistant_referral",
+    "provider": "openai_chatgpt_referral",
+    "agentType": "ai_referral_visit",
     "matchedRule": "ref:openai:chatgpt",
-    "docsUrl": "https://platform.openai.com/docs/bots",
+    "docsUrl": "https://help.openai.com/en/articles/10984597-chatgpt-generated-links",
     "confidenceLabel": "advisory",
     "signalSource": "referer",
-    "sourceUrl": "https://platform.openai.com/docs/bots"
+    "sourceUrl": "https://help.openai.com/en/articles/10984597-chatgpt-generated-links"
   },
   {
     "name": "claude-referral",
     "referer": "https://claude.ai/chat/abc",
-    "provider": "ai_browser_referral",
-    "agentType": "ai_assistant_referral",
+    "provider": "anthropic_claude_referral",
+    "agentType": "ai_referral_visit",
     "matchedRule": "ref:anthropic:claude",
-    "docsUrl": "https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler",
+    "docsUrl": "https://support.claude.com/en/articles/10593882-sharing-and-unsharing-chats",
     "confidenceLabel": "advisory",
     "signalSource": "referer",
-    "sourceUrl": "https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler"
+    "sourceUrl": "https://support.claude.com/en/articles/10593882-sharing-and-unsharing-chats"
   },
   {
     "name": "perplexity-search-referral",
     "referer": "https://www.perplexity.ai/search/example",
     "provider": "perplexity_referral",
-    "agentType": "ai_assistant_referral",
+    "agentType": "ai_referral_visit",
     "matchedRule": "ref:perplexity",
-    "docsUrl": "https://docs.perplexity.ai/guides/bots",
+    "docsUrl": "https://docs.perplexity.ai/docs/resources/perplexity-crawlers",
     "confidenceLabel": "advisory",
     "signalSource": "referer",
-    "sourceUrl": "https://docs.perplexity.ai/guides/bots"
+    "sourceUrl": "https://docs.perplexity.ai/docs/resources/perplexity-crawlers"
   },
   {
     "name": "gemini-referral",
     "referer": "https://gemini.google.com/app/abc",
-    "provider": "google_referral",
-    "agentType": "ai_assistant_referral",
+    "provider": "google_gemini_referral",
+    "agentType": "ai_referral_visit",
     "matchedRule": "ref:google:gemini",
-    "docsUrl": "https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers",
+    "docsUrl": "https://support.google.com/gemini/answer/13743730",
     "confidenceLabel": "advisory",
     "signalSource": "referer",
-    "sourceUrl": "https://vercel.com/i/how-ai-is-changing-seo"
+    "sourceUrl": "https://support.google.com/gemini/answer/13743730"
+  },
+  {
+    "name": "copilot-referral",
+    "referer": "https://copilot.microsoft.com/chats/abc",
+    "provider": "microsoft_copilot_referral",
+    "agentType": "ai_referral_visit",
+    "matchedRule": "ref:microsoft:copilot",
+    "docsUrl": "https://support.microsoft.com/en-us/microsoft-365-copilot/what-s-the-difference-between-microsoft-copilot-free-and-copilot-in-microsoft-365",
+    "confidenceLabel": "advisory",
+    "signalSource": "referer",
+    "sourceUrl": "https://support.microsoft.com/en-us/microsoft-365-copilot/what-s-the-difference-between-microsoft-copilot-free-and-copilot-in-microsoft-365"
+  },
+  {
+    "name": "bing-chat-referral",
+    "referer": "https://www.bing.com/chat?q=promptscout",
+    "provider": "microsoft_copilot_referral",
+    "agentType": "ai_referral_visit",
+    "matchedRule": "ref:microsoft:copilot",
+    "docsUrl": "https://support.microsoft.com/en-us/microsoft-365-copilot/what-s-the-difference-between-microsoft-copilot-free-and-copilot-in-microsoft-365",
+    "confidenceLabel": "advisory",
+    "signalSource": "referer",
+    "sourceUrl": "https://learn.microsoft.com/en-us/copilot/overview"
   },
   {
     "name": "google-search-referral",
@@ -58,7 +80,7 @@
     "name": "meta-ai-referral",
     "referer": "https://www.meta.ai/c/abc",
     "provider": "ai_browser_referral",
-    "agentType": "ai_assistant_referral",
+    "agentType": "ai_referral_visit",
     "matchedRule": "ref:meta:ai",
     "docsUrl": "https://developers.facebook.com/docs/sharing/webmasters/crawler",
     "confidenceLabel": "advisory",

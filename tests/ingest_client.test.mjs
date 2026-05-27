@@ -43,6 +43,27 @@ function fixtureEvent(overrides = {}) {
   };
 }
 
+function aiReferralVisitEvent(overrides = {}) {
+  return fixtureEvent({
+    request: {
+      host: "example.com",
+      path: "/pricing",
+      search: "?utm_source=chatgpt.com&prompt=secret",
+      method: "GET",
+      userAgent: "Mozilla/5.0",
+      referer:
+        "https://chatgpt.com/share/example?utm_source=chatgpt.com&prompt=secret#details",
+    },
+    providerClassification: {
+      provider: "openai_chatgpt_referral",
+      agentType: "ai_referral_visit",
+      confidence: 0.78,
+      matchedBy: ["referer"],
+    },
+    ...overrides,
+  });
+}
+
 function response(status, body = "") {
   return {
     ok: status >= 200 && status < 300,
@@ -87,6 +108,31 @@ describe("live AI traffic ingest client", () => {
       events: [fixtureEvent()],
     });
     assert.equal(JSON.stringify(calls[0].init).includes("supabase"), false);
+  });
+
+  it("removes raw query strings from AI referral visits before forwarding", async () => {
+    const { createLiveAiTrafficIngestClient } = await coreModule();
+    const calls = [];
+    const client = createLiveAiTrafficIngestClient({
+      endpoint: "https://promptscout.example/ingest/live-ai-traffic",
+      ingestToken: TEST_INGEST_TOKEN,
+      fetch: async (url, init) => {
+        calls.push({ url, init });
+        return response(202);
+      },
+    });
+
+    await client.send(aiReferralVisitEvent());
+
+    const body = JSON.parse(calls[0].init.body);
+    assert.equal(body.events[0].request.search, undefined);
+    assert.equal(
+      body.events[0].request.referer,
+      "https://chatgpt.com/share/example",
+    );
+    assert.equal(calls[0].init.body.includes("utm_source"), false);
+    assert.equal(calls[0].init.body.includes("prompt=secret"), false);
+    assert.equal(calls[0].init.body.includes("#details"), false);
   });
 
   it("can sign event batches with a deterministic Web Crypto HMAC", async () => {
@@ -269,12 +315,29 @@ describe("live AI traffic privacy helpers", () => {
     assert.equal(JSON.stringify(normalized).includes("203.0.113.42"), false);
     assert.equal(JSON.stringify(normalized).includes("token=secret"), false);
 
+    const normalizedReferral = await normalizeLiveAiTrafficEvent(
+      aiReferralVisitEvent(),
+      {
+        query: { mode: "allowlist", allow: ["utm_source"] },
+      },
+    );
+    assert.equal(normalizedReferral.request.search, undefined);
+    assert.equal(
+      normalizedReferral.request.referer,
+      "https://chatgpt.com/share/example",
+    );
+    assert.equal(
+      JSON.stringify(normalizedReferral).includes("prompt=secret"),
+      false,
+    );
+
     assert.deepEqual(
       filterLiveAiTrafficHeaders(
         {
           Authorization: "Bearer raw-secret",
           "User-Agent": "OAI-SearchBot/1.0",
-          Referer: "https://chatgpt.com/share/example",
+          Referer:
+            "https://chatgpt.com/share/example?utm_source=chatgpt.com&prompt=secret#details",
           "X-Forwarded-For": "203.0.113.42",
         },
         ["user-agent", "referer"],

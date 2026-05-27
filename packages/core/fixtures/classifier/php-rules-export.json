@@ -144,11 +144,11 @@
   "refererRules": [
     {
       "id": "ref:openai:chatgpt",
-      "provider": "ai_browser_referral",
-      "agentType": "ai_assistant_referral",
-      "confidence": 0.74,
+      "provider": "openai_chatgpt_referral",
+      "agentType": "ai_referral_visit",
+      "confidence": 0.78,
       "matchKind": "referer",
-      "docsUrl": "https://platform.openai.com/docs/bots",
+      "docsUrl": "https://help.openai.com/en/articles/10984597-chatgpt-generated-links",
       "patterns": [
         {
           "source": "^https?://(?:[^/]+\\.)?chatgpt\\.com(?:/|$)",
@@ -159,7 +159,7 @@
     {
       "id": "ref:openai",
       "provider": "ai_browser_referral",
-      "agentType": "ai_assistant_referral",
+      "agentType": "ai_referral_visit",
       "confidence": 0.7,
       "matchKind": "referer",
       "docsUrl": "https://platform.openai.com/docs/bots",
@@ -169,11 +169,11 @@
     },
     {
       "id": "ref:anthropic:claude",
-      "provider": "ai_browser_referral",
-      "agentType": "ai_assistant_referral",
+      "provider": "anthropic_claude_referral",
+      "agentType": "ai_referral_visit",
       "confidence": 0.72,
       "matchKind": "referer",
-      "docsUrl": "https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler",
+      "docsUrl": "https://support.claude.com/en/articles/10593882-sharing-and-unsharing-chats",
       "patterns": [
         { "source": "^https?://(?:[^/]+\\.)?claude\\.ai(?:/|$)", "flags": "i" }
       ]
@@ -181,10 +181,10 @@
     {
       "id": "ref:perplexity",
       "provider": "perplexity_referral",
-      "agentType": "ai_assistant_referral",
+      "agentType": "ai_referral_visit",
       "confidence": 0.74,
       "matchKind": "referer",
-      "docsUrl": "https://docs.perplexity.ai/guides/bots",
+      "docsUrl": "https://docs.perplexity.ai/docs/resources/perplexity-crawlers",
       "patterns": [
         {
           "source": "^https?://(?:[^/]+\\.)?perplexity\\.ai(?:/|$)",
@@ -194,15 +194,33 @@
     },
     {
       "id": "ref:google:gemini",
-      "provider": "google_referral",
-      "agentType": "ai_assistant_referral",
+      "provider": "google_gemini_referral",
+      "agentType": "ai_referral_visit",
       "confidence": 0.7,
       "matchKind": "referer",
-      "docsUrl": "https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers",
+      "docsUrl": "https://support.google.com/gemini/answer/13743730",
       "patterns": [
         { "source": "^https?://gemini\\.google\\.com(?:/|$)", "flags": "i" },
         { "source": "^https?://bard\\.google\\.com(?:/|$)", "flags": "i" },
         { "source": "^https?://(?:[^/]+\\.)?ai\\.google(?:/|$)", "flags": "i" }
+      ]
+    },
+    {
+      "id": "ref:microsoft:copilot",
+      "provider": "microsoft_copilot_referral",
+      "agentType": "ai_referral_visit",
+      "confidence": 0.7,
+      "matchKind": "referer",
+      "docsUrl": "https://support.microsoft.com/en-us/microsoft-365-copilot/what-s-the-difference-between-microsoft-copilot-free-and-copilot-in-microsoft-365",
+      "patterns": [
+        {
+          "source": "^https?://copilot\\.microsoft\\.com(?:/|$)",
+          "flags": "i"
+        },
+        {
+          "source": "^https?://(?:www\\.)?bing\\.com/chat(?:[/?#]|$)",
+          "flags": "i"
+        }
       ]
     },
     {
@@ -222,7 +240,7 @@
     {
       "id": "ref:meta:ai",
       "provider": "ai_browser_referral",
-      "agentType": "ai_assistant_referral",
+      "agentType": "ai_referral_visit",
       "confidence": 0.68,
       "matchKind": "referer",
       "docsUrl": "https://developers.facebook.com/docs/sharing/webmasters/crawler",
@@ -233,7 +251,7 @@
     {
       "id": "ref:generic-ai",
       "provider": "ai_browser_referral",
-      "agentType": "ai_assistant_referral",
+      "agentType": "ai_referral_visit",
       "confidence": 0.55,
       "matchKind": "referer",
       "patterns": [

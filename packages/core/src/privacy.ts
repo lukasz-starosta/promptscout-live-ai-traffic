@@ -115,6 +115,9 @@ export async function normalizeLiveAiTrafficEvent(
     }
   }
 
+  sanitizeRefererInPlace(normalized);
+  omitAiReferralVisitSearchInPlace(normalized);
+
   if (options.ip?.mode === "omit") {
     delete normalized.ipHash;
   } else if (options.ip?.mode === "none" || options.ip?.mode === "disabled") {
@@ -157,11 +160,46 @@ export function filterLiveAiTrafficHeaders(
 
     const normalizedValue = normalizeHeaderValue(value);
     if (normalizedValue !== undefined) {
-      filtered[normalizedName] = normalizedValue;
+      filtered[normalizedName] = isRefererHeader(normalizedName)
+        ? sanitizeLiveAiTrafficReferer(normalizedValue)
+        : normalizedValue;
     }
   }
 
   return filtered;
+}
+
+export function sanitizeLiveAiTrafficEventForIngest(
+  event: LiveAiTrafficEvent,
+): LiveAiTrafficEvent {
+  const sanitized: LiveAiTrafficEvent = {
+    ...event,
+    request: { ...event.request },
+    providerClassification: { ...event.providerClassification },
+    ...(event.location === undefined
+      ? {}
+      : { location: { ...event.location } }),
+    ...(event.ipHash === undefined ? {} : { ipHash: { ...event.ipHash } }),
+    ...(event.integration === undefined
+      ? {}
+      : { integration: { ...event.integration } }),
+  };
+
+  sanitizeRefererInPlace(sanitized);
+  omitAiReferralVisitSearchInPlace(sanitized);
+
+  return sanitized;
+}
+
+export function sanitizeLiveAiTrafficReferer(referer: string): string {
+  const trimmed = referer.trim();
+  const queryIndex = trimmed.indexOf("?");
+  const hashIndex = trimmed.indexOf("#");
+  const cutoff = [queryIndex, hashIndex]
+    .filter((index) => index >= 0)
+    .sort((left, right) => left - right)[0];
+
+  return cutoff === undefined ? trimmed : trimmed.slice(0, cutoff);
 }
 
 export async function hmacSha256Hex(
@@ -248,6 +286,29 @@ function filterSearchParams(
   }
 
   return kept.length === 0 ? "" : `?${kept.join("&")}`;
+}
+
+function sanitizeRefererInPlace(event: LiveAiTrafficEvent): void {
+  if (event.request.referer === undefined) {
+    return;
+  }
+
+  const sanitized = sanitizeLiveAiTrafficReferer(event.request.referer);
+  if (sanitized.length === 0) {
+    delete event.request.referer;
+  } else {
+    event.request.referer = sanitized;
+  }
+}
+
+function omitAiReferralVisitSearchInPlace(event: LiveAiTrafficEvent): void {
+  if (event.providerClassification.agentType === "ai_referral_visit") {
+    delete event.request.search;
+  }
+}
+
+function isRefererHeader(name: string): boolean {
+  return name === "referer" || name === "referrer";
 }
 
 function decodeFormComponent(value: string): string {

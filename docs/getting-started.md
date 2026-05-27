@@ -2,10 +2,11 @@
 
 This repository uses Yarn workspaces with packages under `packages/*` and runnable shells under `examples/*`.
 
-The repository is local-first during dogfooding. PromptScout is not publishing
-npm packages from this repo yet, and version `0.0.0` is intentional until the
-first public package release is approved. Install implemented collectors from a
-local checkout or local tarballs while testing.
+The repository supports local tarball dogfooding and private GitHub Packages
+publishing for PromptScout consumption. Public npm publishing remains out of
+scope. Install implemented collectors from a local checkout or local tarballs
+while testing, or use the private GitHub Packages flow in
+[release.md](release.md) once a private version is published.
 
 ## Local Next.js/Vercel Dogfood
 
@@ -39,7 +40,9 @@ The current scaffold is intentionally small:
 
 - `packages/core` owns shared placeholder types, helper exports, and the
   canonical live AI traffic event contract.
-- Provider packages import `@promptscout/live-ai-traffic-core` through workspace dependencies.
+- Provider packages import
+  `@lukasz-starosta/promptscout-live-ai-traffic-core` through workspace
+  dependencies.
 - `packages/vercel-middleware` provides the current Next.js/Vercel Proxy and
   Middleware collector. `examples/vercel-nextjs` is the copyable dogfood
   reference.
@@ -79,5 +82,6 @@ See [privacy-security-operations.md](privacy-security-operations.md) for the
 default privacy posture, site-scoped ingest token handling, failure modes, and
 security FAQ.
 
-See [release.md](release.md) for package versioning, release verification,
-deferred npm publishing, WordPress artifact, and Docker image guidance.
+See [release.md](release.md) for package versioning, private GitHub Packages
+publishing, PromptScout install auth, WordPress artifact, and Docker image
+guidance.

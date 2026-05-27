@@ -22,7 +22,7 @@ describe("cloudflare worker example", () => {
     );
     assert.equal(
       packageJson.dependencies[
-        "@promptscout/live-ai-traffic-cloudflare-worker"
+        "@lukasz-starosta/promptscout-live-ai-traffic-cloudflare-worker"
       ],
       "workspace:*",
     );
@@ -30,7 +30,10 @@ describe("cloudflare worker example", () => {
     assert.match(packageJson.scripts.deploy, /wrangler(?:@latest)? deploy/);
 
     const source = await file("examples/cloudflare-worker/src/index.ts");
-    assert.match(source, /@promptscout\/live-ai-traffic-cloudflare-worker/);
+    assert.match(
+      source,
+      /@lukasz-starosta\/promptscout-live-ai-traffic-cloudflare-worker/,
+    );
     assert.match(source, /export default worker/);
 
     const wranglerToml = await file("examples/cloudflare-worker/wrangler.toml");
@@ -48,7 +51,7 @@ describe("cloudflare worker example", () => {
 
     assert.match(
       combined,
-      /yarn workspace @promptscout\/live-ai-traffic-example-cloudflare-worker dev/,
+      /yarn workspace @lukasz-starosta\/promptscout-live-ai-traffic-example-cloudflare-worker dev/,
     );
     assert.match(
       combined,

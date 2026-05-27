@@ -4,10 +4,9 @@ Repository for the PromptScout live AI traffic packages and examples.
 
 ## Current Release Status
 
-This repo is local-first during dogfooding. PromptScout is not publishing npm
-packages from this repository yet, and package version `0.0.0` is intentional
-until the first public package release is approved. Use workspace installs or
-packed local tarballs when testing collectors in another app.
+This repo supports local tarball dogfooding and private GitHub Packages
+publishing for PromptScout consumption. Public npm publishing is out of scope.
+Package version `0.0.0` is intentional until a private version bump is approved.
 
 The first local install target is the Next.js/Vercel middleware in
 `packages/vercel-middleware`, with the runnable reference app in
@@ -70,13 +69,15 @@ This repository uses Yarn workspaces:
 - `docs/install-matrix-and-signal-quality.md` explains how customers should
   choose an install path and how to interpret collector signal quality.
 
-Provider packages are configured for release dry-runs while this repo is
-pre-release, but no npm package should be published yet. Some generic provider
-directories remain placeholders until their runtime implementation work lands in
-later issues. Future published provider packages will use the shared repository
-version. Example workspaces keep the same version for traceability, but remain
-private and are not published. See [docs/release.md](docs/release.md) for the
-deferred release gate. `packages/node-middleware` and runtime collectors such as
+Provider packages are configured for private GitHub Packages metadata, but the
+manual release workflow publishes only `packages/core` and
+`packages/vercel-middleware` for the current PromptScout consumption path. Some
+generic provider directories remain placeholders until their runtime
+implementation work lands in later issues. Future published provider packages
+will use the shared repository version. Example workspaces keep the same version
+for traceability, but remain private and are not published. See
+[docs/release.md](docs/release.md) for `.npmrc`, token, version pinning, and
+workflow details. `packages/node-middleware` and runtime collectors such as
 `packages/vercel-middleware`, `packages/netlify-edge`, `packages/cloudfront-aws`,
 and `packages/fastly-compute` reuse the shared core classifier, privacy
 normalization helpers, and ingest client for implemented local paths.

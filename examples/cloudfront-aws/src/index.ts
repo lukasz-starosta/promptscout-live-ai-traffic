@@ -3,4 +3,4 @@ export {
   cloudFrontAwsImplementationDecision,
   handlePromptScoutCloudFrontAwsKinesisEvent,
   recommendedCloudFrontRealtimeLogFields,
-} from "@promptscout/live-ai-traffic-cloudfront-aws";
+} from "@lukasz-starosta/promptscout-live-ai-traffic-cloudfront-aws";

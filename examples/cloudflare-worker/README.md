@@ -52,7 +52,7 @@ Cloudflare secrets.
 Run Wrangler's local development server:
 
 ```bash
-yarn workspace @promptscout/live-ai-traffic-example-cloudflare-worker dev
+yarn workspace @lukasz-starosta/promptscout-live-ai-traffic-example-cloudflare-worker dev
 ```
 
 Use Wrangler's local URL to simulate an AI crawler request:
@@ -81,7 +81,7 @@ still comes from the forwarded origin path.
 Deploy with Wrangler after the route and secret are configured:
 
 ```bash
-yarn workspace @promptscout/live-ai-traffic-example-cloudflare-worker deploy
+yarn workspace @lukasz-starosta/promptscout-live-ai-traffic-example-cloudflare-worker deploy
 ```
 
 Equivalent raw Wrangler command:

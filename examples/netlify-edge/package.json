@@ -1,10 +1,10 @@
 {
-  "name": "@promptscout/live-ai-traffic-example-netlify-edge",
+  "name": "@lukasz-starosta/promptscout-live-ai-traffic-example-netlify-edge",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "dependencies": {
-    "@promptscout/live-ai-traffic-netlify-edge": "workspace:*"
+    "@lukasz-starosta/promptscout-live-ai-traffic-netlify-edge": "workspace:*"
   },
   "scripts": {
     "typecheck": "tsc -b"

@@ -39,10 +39,15 @@ describe("monorepo scaffold", () => {
       );
 
       assert.equal(
-        packageJson.dependencies["@promptscout/live-ai-traffic-core"],
+        packageJson.dependencies[
+          "@lukasz-starosta/promptscout-live-ai-traffic-core"
+        ],
         "workspace:*",
       );
-      assert.match(source, /@promptscout\/live-ai-traffic-core/);
+      assert.match(
+        source,
+        /@lukasz-starosta\/promptscout-live-ai-traffic-core/,
+      );
     }
   });
 
@@ -61,12 +66,14 @@ describe("monorepo scaffold", () => {
       );
 
       assert.equal(
-        examplePackage.dependencies[`@promptscout/live-ai-traffic-${provider}`],
+        examplePackage.dependencies[
+          `@lukasz-starosta/promptscout-live-ai-traffic-${provider}`
+        ],
         "workspace:*",
       );
       assert.match(
         source,
-        new RegExp(`@promptscout/live-ai-traffic-${provider}`),
+        new RegExp(`@lukasz-starosta/promptscout-live-ai-traffic-${provider}`),
       );
       if (provider === "vercel") {
         assert.match(integrationDoc, /trackPromptScoutAiTraffic/);

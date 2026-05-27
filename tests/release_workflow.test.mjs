@@ -6,6 +6,18 @@ import { describe, it } from "node:test";
 const releaseWorkflowPath = ".github/workflows/release.yml";
 const releaseDocsPath = "docs/release.md";
 const changelogPath = "CHANGELOG.md";
+const privatePackageScope = "@lukasz-starosta";
+const githubPackagesRegistry = "https://npm.pkg.github.com";
+const privatePackageNamePattern = new RegExp(
+  `^${privatePackageScope}/promptscout-live-ai-traffic-`,
+);
+const privateExampleNamePattern = new RegExp(
+  `^${privatePackageScope}/promptscout-live-ai-traffic-example-`,
+);
+const publishedPackageDirectories = [
+  "packages/core",
+  "packages/vercel-middleware",
+];
 
 async function readJson(filePath) {
   return JSON.parse(await readFile(filePath, "utf8"));
@@ -61,24 +73,35 @@ describe("release workflow", () => {
     assert.match(workflow, /^ {6}dry_run:\s*$/m);
     assert.match(workflow, /default:\s*true/);
     assert.match(workflow, /yarn pack --dry-run/);
-    assert.match(workflow, /yarn npm publish --access public$/m);
-    assert.match(workflow, /NPM_TOKEN/);
+    assert.match(workflow, /registry-url:\s*https:\/\/npm\.pkg\.github\.com/);
+    assert.match(workflow, /scope:\s*"@lukasz-starosta"/);
+    assert.match(workflow, /packages:\s*write/);
+    assert.match(workflow, /secrets\.GITHUB_TOKEN/);
+    assert.match(workflow, /yarn npm publish --access restricted$/m);
+    assert.doesNotMatch(workflow, /registry\.npmjs\.org/);
+    assert.doesNotMatch(workflow, /NPM_TOKEN/);
+    assert.doesNotMatch(workflow, /--access public/);
   });
 
-  it("documents JS, WordPress, and Docker release paths", async () => {
+  it("documents private GitHub Packages consumption and defers public npm", async () => {
     const docs = await readFile(releaseDocsPath, "utf8");
     const changelog = await readFile(changelogPath, "utf8");
 
     for (const expected of [
-      "JavaScript packages",
-      "WordPress artifacts",
-      "Docker images",
+      "GitHub Packages",
+      "@lukasz-starosta",
+      "npm.pkg.github.com",
+      ".npmrc",
+      "GITHUB_PACKAGES_TOKEN",
+      "read:packages",
+      "version pin",
+      "GITHUB_TOKEN",
+      "packages: write",
       "./scripts/verify",
       "dry run",
-      "not publishing npm packages",
+      "public npm",
       "0.0.0",
       "dry_run: false",
-      "deferred",
     ]) {
       assert.match(docs, new RegExp(expected));
     }
@@ -87,30 +110,80 @@ describe("release workflow", () => {
     assert.match(changelog, /release workflow/i);
   });
 
-  it("keeps package and example versioning consistent", async () => {
+  it("keeps package names scoped to GitHub Packages", async () => {
     const rootPackage = await readJson("package.json");
+    const npmrc = await readFile(".npmrc", "utf8");
+    const yarnrc = await readFile(".yarnrc.yml", "utf8");
 
     for (const directory of await packageDirectories()) {
       const packageJson = await readJson(`${directory}/package.json`);
 
       assert.equal(packageJson.version, rootPackage.version);
+      assert.match(packageJson.name, privatePackageNamePattern);
       assert.notEqual(
         packageJson.private,
         true,
-        `${directory} must be publishable by the release workflow`,
+        `${directory} must keep publishable package metadata`,
       );
-      assert.deepEqual(packageJson.publishConfig, { access: "public" });
+      assert.deepEqual(packageJson.repository, {
+        type: "git",
+        url: "https://github.com/lukasz-starosta/promptscout-live-ai-traffic.git",
+      });
+      assert.deepEqual(packageJson.publishConfig, {
+        access: "restricted",
+        registry: githubPackagesRegistry,
+      });
     }
 
     for (const directory of await exampleDirectories()) {
       const packageJson = await readJson(`${directory}/package.json`);
 
       assert.equal(packageJson.version, rootPackage.version);
+      assert.match(packageJson.name, privateExampleNamePattern);
       assert.equal(
         packageJson.private,
         true,
         `${directory} is a runnable example and must not be published`,
       );
     }
+
+    assert.match(
+      npmrc,
+      /@lukasz-starosta:registry=https:\/\/npm\.pkg\.github\.com/,
+    );
+    assert.match(yarnrc, /lukasz-starosta:/);
+    assert.match(
+      yarnrc,
+      /npmPublishRegistry: "https:\/\/npm\.pkg\.github\.com"/,
+    );
+    assert.match(
+      yarnrc,
+      /npmRegistryServer: "https:\/\/npm\.pkg\.github\.com"/,
+    );
+  });
+
+  it("publishes only the Vercel middleware and required shared package", async () => {
+    const workflow = await readFile(releaseWorkflowPath, "utf8");
+
+    for (const directory of publishedPackageDirectories) {
+      const packageJson = await readJson(`${directory}/package.json`);
+
+      assert.match(workflow, new RegExp(`${directory.replace("/", "\\/")}`));
+      assert.deepEqual(packageJson.files, ["dist"]);
+      assert.equal(packageJson.main, "./dist/index.js");
+      assert.equal(packageJson.types, "./dist/index.d.ts");
+      assert.deepEqual(packageJson.exports, {
+        ".": {
+          types: "./dist/index.d.ts",
+          default: "./dist/index.js",
+        },
+      });
+    }
+
+    assert.doesNotMatch(
+      workflow,
+      /for manifest in packages\/\*\/package\.json/,
+    );
+    assert.doesNotMatch(workflow, /examples\/\*/);
   });
 });

@@ -11,10 +11,14 @@ on:
 
 permissions:
   contents: read
+  packages: write
+
+env:
+  PUBLISH_PACKAGE_DIRS: packages/core packages/vercel-middleware
 
 jobs:
   release:
-    name: Release packages
+    name: Release private packages
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -26,7 +30,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          registry-url: https://registry.npmjs.org
+          registry-url: https://npm.pkg.github.com
+          scope: "@lukasz-starosta"
 
       - name: Enable Corepack
         run: corepack enable
@@ -49,43 +54,29 @@ jobs:
       - name: Build packages
         run: yarn build
 
-      - name: Block placeholder version for real publishes
-        if: ${{ !inputs.dry_run }}
-        run: |
-          node --input-type=module <<'NODE'
-          import { readFile } from "node:fs/promises";
-
-          const rootPackage = JSON.parse(await readFile("package.json", "utf8"));
-          if (rootPackage.version === "0.0.0") {
-            throw new Error("Set a real release version before publishing.");
-          }
-          NODE
-
       - name: Dry-run package contents
         if: ${{ inputs.dry_run }}
         run: |
-          for manifest in packages/*/package.json; do
-            package_dir="${manifest%/package.json}"
+          for package_dir in $PUBLISH_PACKAGE_DIRS; do
             echo "Dry-run packing ${package_dir}"
             (cd "$package_dir" && yarn pack --dry-run)
           done
 
-      - name: Publish npm packages
+      - name: Publish private GitHub Packages
         if: ${{ !inputs.dry_run }}
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          YARN_NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [[ -z "${NODE_AUTH_TOKEN:-}" ]]; then
-            echo "NPM_TOKEN is required for real publishes" >&2
+            echo "GITHUB_TOKEN is required for real publishes" >&2
             exit 1
           fi
 
-          for manifest in packages/*/package.json; do
-            package_dir="${manifest%/package.json}"
+          for package_dir in $PUBLISH_PACKAGE_DIRS; do
             echo "Publishing ${package_dir}"
             current_dir="$PWD"
             cd "$package_dir"
-            yarn npm publish --access public
+            yarn npm publish --access restricted
             cd "$current_dir"
           done

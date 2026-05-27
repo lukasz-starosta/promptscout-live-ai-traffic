@@ -1,10 +1,10 @@
 {
-  "name": "@promptscout/live-ai-traffic-example-nginx-log-forwarder",
+  "name": "@lukasz-starosta/promptscout-live-ai-traffic-example-nginx-log-forwarder",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "dependencies": {
-    "@promptscout/live-ai-traffic-nginx-log-forwarder": "workspace:*"
+    "@lukasz-starosta/promptscout-live-ai-traffic-nginx-log-forwarder": "workspace:*"
   },
   "scripts": {
     "typecheck": "tsc -b"

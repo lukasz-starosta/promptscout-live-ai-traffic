@@ -1,5 +1,5 @@
 {
-  "name": "@promptscout/live-ai-traffic-example-vercel-nextjs",
+  "name": "@lukasz-starosta/promptscout-live-ai-traffic-example-vercel-nextjs",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -7,7 +7,7 @@
     "smoke": "node smoke-test.mjs"
   },
   "dependencies": {
-    "@promptscout/live-ai-traffic-vercel-middleware": "workspace:*"
+    "@lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware": "workspace:*"
   },
   "peerDependencies": {
     "next": ">=16.0.0",

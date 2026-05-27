@@ -9,7 +9,7 @@ import {
   type LiveAiTrafficSourceProvider,
   normalizeLiveAiTrafficEvent,
   toLiveAiTrafficProviderClassification,
-} from "@promptscout/live-ai-traffic-core";
+} from "@lukasz-starosta/promptscout-live-ai-traffic-core";
 
 declare const URL: {
   new (

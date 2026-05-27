@@ -10,7 +10,7 @@ import {
   normalizeLiveAiTrafficEvent,
   parseLiveAiTrafficEvent,
   toLiveAiTrafficProviderClassification,
-} from "@promptscout/live-ai-traffic-core";
+} from "@lukasz-starosta/promptscout-live-ai-traffic-core";
 
 declare const Buffer: {
   from(

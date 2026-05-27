@@ -1,4 +1,4 @@
 export {
   createPromptScoutNetlifyEdgeHandler,
   handlePromptScoutNetlifyEdgeRequest,
-} from "@promptscout/live-ai-traffic-netlify-edge";
+} from "@lukasz-starosta/promptscout-live-ai-traffic-netlify-edge";

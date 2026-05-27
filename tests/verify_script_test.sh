@@ -67,7 +67,7 @@ JSON
   printf '{ "extends": "../../tsconfig.base.json" }\n' >"$repo/packages/core/tsconfig.json"
   cat >"$repo/packages/core/package.json" <<'JSON'
 {
-  "name": "@promptscout/live-ai-traffic-core",
+  "name": "@lukasz-starosta/promptscout-live-ai-traffic-core",
   "version": "0.0.0"
 }
 JSON
@@ -75,27 +75,27 @@ JSON
 
   for provider in "${providers[@]}"; do
     mkdir -p "$repo/packages/$provider/src" "$repo/examples/$provider/src"
-    printf 'import "@promptscout/live-ai-traffic-core";\n' >"$repo/packages/$provider/src/index.ts"
+    printf 'import "@lukasz-starosta/promptscout-live-ai-traffic-core";\n' >"$repo/packages/$provider/src/index.ts"
     cat >"$repo/packages/$provider/package.json" <<JSON
 {
-  "name": "@promptscout/live-ai-traffic-$provider",
+  "name": "@lukasz-starosta/promptscout-live-ai-traffic-$provider",
   "version": "0.0.0",
   "dependencies": {
-    "@promptscout/live-ai-traffic-core": "workspace:*"
+    "@lukasz-starosta/promptscout-live-ai-traffic-core": "workspace:*"
   }
 }
 JSON
     printf '{ "extends": "../../tsconfig.base.json" }\n' >"$repo/packages/$provider/tsconfig.json"
     cat >"$repo/examples/$provider/package.json" <<JSON
 {
-  "name": "@promptscout/live-ai-traffic-example-$provider",
+  "name": "@lukasz-starosta/promptscout-live-ai-traffic-example-$provider",
   "version": "0.0.0",
   "dependencies": {
-    "@promptscout/live-ai-traffic-$provider": "workspace:*"
+    "@lukasz-starosta/promptscout-live-ai-traffic-$provider": "workspace:*"
   }
 }
 JSON
-    printf 'import "@promptscout/live-ai-traffic-%s";\n' "$provider" >"$repo/examples/$provider/src/index.ts"
+    printf 'import "@lukasz-starosta/promptscout-live-ai-traffic-%s";\n' "$provider" >"$repo/examples/$provider/src/index.ts"
     printf '{ "extends": "../../tsconfig.base.json" }\n' >"$repo/examples/$provider/tsconfig.json"
     printf '# %s example\n' "$provider" >"$repo/examples/$provider/README.md"
     printf '# %s integration\n' "$provider" >"$repo/docs/integrations/$provider.md"

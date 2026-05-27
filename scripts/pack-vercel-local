@@ -69,11 +69,11 @@ print_promptscout_install() {
 
   cat <<EOF
 PromptScout checkout command:
-yarn add @promptscout/live-ai-traffic-core@$core_path @promptscout/live-ai-traffic-vercel-middleware@$middleware_path
+yarn add @lukasz-starosta/promptscout-live-ai-traffic-core@$core_path @lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware@$middleware_path
 
 PromptScout package.json dependency entries:
-"@promptscout/live-ai-traffic-core": "$core_path"
-"@promptscout/live-ai-traffic-vercel-middleware": "$middleware_path"
+"@lukasz-starosta/promptscout-live-ai-traffic-core": "$core_path"
+"@lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware": "$middleware_path"
 
 No npm publish is required.
 EOF
@@ -94,7 +94,7 @@ const [packageJsonPath, coreTarballPath] = process.argv.slice(2);
 const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf8"));
 
 packageJson.dependencies ??= {};
-packageJson.dependencies["@promptscout/live-ai-traffic-core"] = `file:${coreTarballPath}`;
+packageJson.dependencies["@lukasz-starosta/promptscout-live-ai-traffic-core"] = `file:${coreTarballPath}`;
 
 writeFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
 NODE
@@ -108,8 +108,8 @@ NODE
 if [[ "$DRY_RUN" -eq 1 ]]; then
   cat <<EOF
 yarn tsc -b packages/core packages/vercel-middleware
-yarn workspace @promptscout/live-ai-traffic-core pack --out $(display_path "$CORE_TARBALL")
-yarn workspace @promptscout/live-ai-traffic-vercel-middleware pack --out $(display_path "$MIDDLEWARE_TARBALL")
+yarn workspace @lukasz-starosta/promptscout-live-ai-traffic-core pack --out $(display_path "$CORE_TARBALL")
+yarn workspace @lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware pack --out $(display_path "$MIDDLEWARE_TARBALL")
 EOF
   print_promptscout_install
   exit 0
@@ -118,8 +118,8 @@ fi
 mkdir -p "$ARTIFACT_DIR"
 
 yarn tsc -b packages/core packages/vercel-middleware
-yarn workspace @promptscout/live-ai-traffic-core pack --out "$CORE_TARBALL"
-yarn workspace @promptscout/live-ai-traffic-vercel-middleware pack --out "$MIDDLEWARE_TARBALL"
+yarn workspace @lukasz-starosta/promptscout-live-ai-traffic-core pack --out "$CORE_TARBALL"
+yarn workspace @lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware pack --out "$MIDDLEWARE_TARBALL"
 rewrite_middleware_core_dependency
 
 cat <<EOF

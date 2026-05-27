@@ -6,9 +6,9 @@ runs.
 
 ## Install
 
-For PromptScout dogfooding before npm packages are published, build local
-tarballs from this repository and install both the core package and the
-Vercel/Next.js middleware package into the local PromptScout checkout:
+For local PromptScout dogfooding, build local tarballs from this repository and
+install both the core package and the Vercel/Next.js middleware package into the
+local PromptScout checkout:
 
 ```bash
 yarn pack:vercel-local
@@ -32,35 +32,35 @@ dependencies:
 
 ```bash
 LIVE_AI_TRAFFIC_REPO=/absolute/path/to/promptscout-live-ai-traffic
-yarn add @promptscout/live-ai-traffic-core@file:$LIVE_AI_TRAFFIC_REPO/.promptscout-local-packages/promptscout-live-ai-traffic-core-v0.0.0.tgz @promptscout/live-ai-traffic-vercel-middleware@file:$LIVE_AI_TRAFFIC_REPO/.promptscout-local-packages/promptscout-live-ai-traffic-vercel-middleware-v0.0.0.tgz
+yarn add @lukasz-starosta/promptscout-live-ai-traffic-core@file:$LIVE_AI_TRAFFIC_REPO/.promptscout-local-packages/promptscout-live-ai-traffic-core-v0.0.0.tgz @lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware@file:$LIVE_AI_TRAFFIC_REPO/.promptscout-local-packages/promptscout-live-ai-traffic-vercel-middleware-v0.0.0.tgz
 ```
 
 Equivalent `package.json` entries:
 
 ```json
 {
-  "@promptscout/live-ai-traffic-core": "file:/absolute/path/to/promptscout-live-ai-traffic/.promptscout-local-packages/promptscout-live-ai-traffic-core-v0.0.0.tgz",
-  "@promptscout/live-ai-traffic-vercel-middleware": "file:/absolute/path/to/promptscout-live-ai-traffic/.promptscout-local-packages/promptscout-live-ai-traffic-vercel-middleware-v0.0.0.tgz"
+  "@lukasz-starosta/promptscout-live-ai-traffic-core": "file:/absolute/path/to/promptscout-live-ai-traffic/.promptscout-local-packages/promptscout-live-ai-traffic-core-v0.0.0.tgz",
+  "@lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware": "file:/absolute/path/to/promptscout-live-ai-traffic/.promptscout-local-packages/promptscout-live-ai-traffic-vercel-middleware-v0.0.0.tgz"
 }
 ```
 
 No npm publish is required.
 
 Package version `0.0.0` is intentional for this local-first phase. Replace
-these tarball installs with published semver only after PromptScout approves the
-first public package release.
+these tarball installs with exact private GitHub Packages versions only after
+PromptScout approves a private publish.
 
-After the first public package release, new applications can install the same
-middleware package name from npm:
+After private GitHub Packages publication, configure the consuming app auth from
+[release.md](../release.md), then install exact versions:
 
 ```bash
-yarn add @promptscout/live-ai-traffic-vercel-middleware
+yarn add @lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware@0.0.0
 ```
 
 ## Next.js 16 `proxy.ts`
 
 ```ts
-import { trackPromptScoutAiTraffic } from "@promptscout/live-ai-traffic-vercel-middleware";
+import { trackPromptScoutAiTraffic } from "@lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware";
 import { NextResponse, type NextProxy } from "next/server";
 
 export const proxy: NextProxy = (request, event) => {

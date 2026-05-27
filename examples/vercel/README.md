@@ -1,17 +1,17 @@
 # Vercel Example
 
 The Vercel runtime implementation lives in
-`@promptscout/live-ai-traffic-vercel-middleware`.
+`@lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware`.
 
-This repository is not publishing npm packages yet. Use the local tarball
-install flow in `docs/integrations/vercel.md` or the current
-`examples/vercel-nextjs` README when testing the middleware in a real Next.js
-app.
+This repository publishes private GitHub Packages only through the manual
+release workflow. Use the local tarball install flow in
+`docs/integrations/vercel.md` or the current `examples/vercel-nextjs` README
+when testing the middleware before a private version is available.
 
 Use `proxy.ts` in Next.js 16:
 
 ```ts
-import { trackPromptScoutAiTraffic } from "@promptscout/live-ai-traffic-vercel-middleware";
+import { trackPromptScoutAiTraffic } from "@lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware";
 import { NextResponse, type NextProxy } from "next/server";
 
 export const proxy: NextProxy = (request, event) => {

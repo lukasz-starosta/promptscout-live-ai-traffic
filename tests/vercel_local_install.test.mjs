@@ -25,8 +25,8 @@ describe("Vercel middleware local PromptScout install path", () => {
 
     for (const expected of [
       "yarn tsc -b packages/core packages/vercel-middleware",
-      "@promptscout/live-ai-traffic-core",
-      "@promptscout/live-ai-traffic-vercel-middleware",
+      "@lukasz-starosta/promptscout-live-ai-traffic-core",
+      "@lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware",
       ".promptscout-local-packages/promptscout-live-ai-traffic-core-v0.0.0.tgz",
       ".promptscout-local-packages/promptscout-live-ai-traffic-vercel-middleware-v0.0.0.tgz",
       "No npm publish is required",
@@ -38,7 +38,7 @@ describe("Vercel middleware local PromptScout install path", () => {
     assert.match(exampleReadme, /pack:vercel-local/);
     assert.doesNotMatch(
       `${guide}\n${exampleReadme}`,
-      /@promptscout\/live-ai-traffic-vercel(?!-middleware)/,
+      /@lukasz-starosta\/promptscout-live-ai-traffic-vercel(?!-middleware)/,
     );
   });
 
@@ -90,7 +90,7 @@ describe("Vercel middleware local PromptScout install path", () => {
         "yarn",
         [
           "add",
-          `@promptscout/live-ai-traffic-vercel-middleware@file:${middlewareTarball}`,
+          `@lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware@file:${middlewareTarball}`,
         ],
         {
           cwd: projectDir,
@@ -108,7 +108,7 @@ describe("Vercel middleware local PromptScout install path", () => {
         [
           "--input-type=module",
           "-e",
-          "await import('@promptscout/live-ai-traffic-vercel-middleware')",
+          "await import('@lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware')",
         ],
         {
           cwd: projectDir,

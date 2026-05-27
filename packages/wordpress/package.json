@@ -1,5 +1,5 @@
 {
-  "name": "@promptscout/live-ai-traffic-wordpress",
+  "name": "@lukasz-starosta/promptscout-live-ai-traffic-wordpress",
   "version": "0.0.0",
   "description": "Placeholder WordPress integration for PromptScout live AI traffic.",
   "license": "Apache-2.0",
@@ -16,12 +16,17 @@
     "dist"
   ],
   "dependencies": {
-    "@promptscout/live-ai-traffic-core": "workspace:*"
+    "@lukasz-starosta/promptscout-live-ai-traffic-core": "workspace:*"
   },
   "scripts": {
     "build": "tsc -b"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "restricted",
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lukasz-starosta/promptscout-live-ai-traffic.git"
   }
 }

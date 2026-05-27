@@ -1,3 +1,3 @@
-import { integration } from "@promptscout/live-ai-traffic-netlify";
+import { integration } from "@lukasz-starosta/promptscout-live-ai-traffic-netlify";
 
 export { integration };

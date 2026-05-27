@@ -10,8 +10,7 @@ You do not need to configure a separate brand ID or team-site ID in the app.
 
 ## Install
 
-For PromptScout dogfooding before npm packages are published, create local
-tarballs from this repository:
+For local PromptScout dogfooding, create local tarballs from this repository:
 
 ```bash
 yarn pack:vercel-local
@@ -21,20 +20,20 @@ Then install both local tarballs from the PromptScout checkout:
 
 ```bash
 LIVE_AI_TRAFFIC_REPO=/absolute/path/to/promptscout-live-ai-traffic
-yarn add @promptscout/live-ai-traffic-core@file:$LIVE_AI_TRAFFIC_REPO/.promptscout-local-packages/promptscout-live-ai-traffic-core-v0.0.0.tgz @promptscout/live-ai-traffic-vercel-middleware@file:$LIVE_AI_TRAFFIC_REPO/.promptscout-local-packages/promptscout-live-ai-traffic-vercel-middleware-v0.0.0.tgz
+yarn add @lukasz-starosta/promptscout-live-ai-traffic-core@file:$LIVE_AI_TRAFFIC_REPO/.promptscout-local-packages/promptscout-live-ai-traffic-core-v0.0.0.tgz @lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware@file:$LIVE_AI_TRAFFIC_REPO/.promptscout-local-packages/promptscout-live-ai-traffic-vercel-middleware-v0.0.0.tgz
 ```
 
 No npm publish is required.
 
 Version `0.0.0` is intentional while this repository is local-first. Replace the
-tarballs with a published semver install only after PromptScout starts public
-package publishing.
+tarballs with exact private GitHub Packages versions only after PromptScout
+approves a private publish.
 
-After package publication, install the same middleware package name from your
-Next.js app:
+After private package publication, configure auth from `docs/release.md`, then
+install the same middleware package name from your Next.js app:
 
 ```bash
-npm install @promptscout/live-ai-traffic-vercel-middleware
+npm install @lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware@0.0.0
 ```
 
 Copy `.env.example` to `.env.local` and set the token and ingest URL from
@@ -54,7 +53,7 @@ Copy `proxy.ts` to the root of your Next.js app, next to `app` or `pages`. If
 your app uses a `src` directory, place it at `src/proxy.ts`.
 
 ```ts
-import { trackPromptScoutAiTraffic } from "@promptscout/live-ai-traffic-vercel-middleware";
+import { trackPromptScoutAiTraffic } from "@lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware";
 import { NextResponse, type NextProxy } from "next/server";
 
 export const proxy: NextProxy = (request, event) => {
@@ -86,7 +85,7 @@ For older `middleware.ts` setups, keep the same body in `middleware.ts` and
 export `middleware`:
 
 ```ts
-import { trackPromptScoutAiTraffic } from "@promptscout/live-ai-traffic-vercel-middleware";
+import { trackPromptScoutAiTraffic } from "@lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware";
 import { NextResponse, type NextFetchEvent, type NextRequest } from "next/server";
 
 export function middleware(request: NextRequest, event: NextFetchEvent) {

@@ -7,7 +7,7 @@ Use `createExpressLiveAiTrafficMiddleware(options)` before application routes:
 
 ```ts
 import express from "express";
-import { createExpressLiveAiTrafficMiddleware } from "@promptscout/live-ai-traffic-node-middleware";
+import { createExpressLiveAiTrafficMiddleware } from "@lukasz-starosta/promptscout-live-ai-traffic-node-middleware";
 
 const app = express();
 

@@ -1,3 +1,3 @@
-import { integration } from "@promptscout/live-ai-traffic-nginx-log-forwarder";
+import { integration } from "@lukasz-starosta/promptscout-live-ai-traffic-nginx-log-forwarder";
 
 export { integration };

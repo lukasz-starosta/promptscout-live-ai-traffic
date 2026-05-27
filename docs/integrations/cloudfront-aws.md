@@ -25,7 +25,7 @@ operational blast radius.
 4. Deliver real-time logs to Kinesis Data Streams.
 5. Run a regional Lambda or Kinesis consumer that imports
    `handlePromptScoutCloudFrontAwsKinesisEvent` from
-   `@promptscout/live-ai-traffic-cloudfront-aws`.
+   `@lukasz-starosta/promptscout-live-ai-traffic-cloudfront-aws`.
 6. Store the site-scoped PromptScout ingest token in the regional runtime secret
    store and forward events in batches.
 
@@ -41,7 +41,7 @@ the shared ingest client.
 import {
   handlePromptScoutCloudFrontAwsKinesisEvent,
   recommendedCloudFrontRealtimeLogFields,
-} from "@promptscout/live-ai-traffic-cloudfront-aws";
+} from "@lukasz-starosta/promptscout-live-ai-traffic-cloudfront-aws";
 
 export async function handler(event: unknown) {
   return handlePromptScoutCloudFrontAwsKinesisEvent(

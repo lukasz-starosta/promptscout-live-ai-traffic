@@ -12,7 +12,7 @@ const requiredProviders = [
   "WordPress plugin",
   "Node/Express",
   "CloudFront/AWS",
-  "Fastly",
+  "Fastly Compute",
 ];
 const currentInstallPaths = [
   "Vercel middleware",
@@ -21,8 +21,17 @@ const currentInstallPaths = [
   "Netlify Edge",
   "nginx logs",
   "WordPress plugin",
+  "Node/Express",
+  "Fastly Compute",
 ];
-const deferredInstallPaths = ["Node/Express", "Fastly"];
+const deferredPlaceholderShells = [
+  "packages/vercel",
+  "packages/cloudflare",
+  "packages/netlify",
+  "packages/node-express",
+  "packages/fastly",
+  "packages/wordpress",
+];
 
 async function collectMarkdownFiles(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -62,8 +71,8 @@ describe("install matrix docs", () => {
   it("separates current install choices from placeholder adapters", async () => {
     const guide = await readFile(guidePath, "utf8");
 
-    assert.match(guide, /Current customer install paths/i);
-    assert.match(guide, /Future placeholder paths/i);
+    assert.match(guide, /Current local or customer install paths/i);
+    assert.match(guide, /Deferred placeholder shells/i);
     assert.match(
       guide,
       /runtime implementation and customer install instructions are\s+intentionally deferred/i,
@@ -73,28 +82,28 @@ describe("install matrix docs", () => {
       assert.match(
         guide,
         new RegExp(
-          `\\| ${provider.replace("/", "\\/")} \\| Current(?: AWS path)? \\|`,
+          `\\| ${provider.replace("/", "\\/")} \\| Current(?: local dogfood target| local adapter| AWS path)? \\|`,
         ),
       );
     }
 
-    for (const provider of deferredInstallPaths) {
-      assert.match(
-        guide,
-        new RegExp(
-          `\\| ${provider.replace("/", "\\/")} \\| Future placeholder \\|`,
-        ),
-      );
+    for (const shell of deferredPlaceholderShells) {
+      assert.match(guide, new RegExp(shell.replace("/", "\\/")));
     }
   });
 
   it("does not ask customers for a separate site identifier in docs", async () => {
-    const docs = await collectMarkdownFiles("docs");
+    const docs = [
+      ...(await collectMarkdownFiles("docs")),
+      ...(await collectMarkdownFiles("examples")),
+    ];
 
     for (const path of docs) {
       const source = await readFile(path, "utf8");
       assert.doesNotMatch(source, /PROMPTSCOUT_SITE_ID/);
       assert.doesNotMatch(source, /siteId:\s*process\.env/);
+      assert.doesNotMatch(source, /siteId:\s*["']/);
+      assert.doesNotMatch(source, /placeholder token and site ID/i);
     }
   });
 

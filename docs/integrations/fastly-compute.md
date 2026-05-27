@@ -27,7 +27,6 @@ const handler = createFastlyComputeHandler({
   ingestBackend: "promptscout_ingest",
   ingestEndpoint: "https://ingest.promptscout.com/live-ai-traffic",
   ingestToken: "...",
-  siteId: "...",
 });
 ```
 
@@ -62,6 +61,7 @@ fastly service backend create --name origin --address www.example.com --port 443
 fastly service backend create --name promptscout_ingest --address ingest.promptscout.com --port 443 --version latest
 ```
 
-Load the PromptScout ingest token and site ID from Fastly configuration or
-secret storage in production. The checked-in example keeps placeholders so that
-tokens are not committed.
+Load the PromptScout ingest token from Fastly configuration or secret storage
+in production. The ingest token resolves the PromptScout site source, so do not
+configure a separate brand ID, team-site ID, or site ID in the Compute service.
+The checked-in example keeps placeholders so that tokens are not committed.

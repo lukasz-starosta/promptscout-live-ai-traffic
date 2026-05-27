@@ -75,6 +75,10 @@ describe("release workflow", () => {
       "Docker images",
       "./scripts/verify",
       "dry run",
+      "not publishing npm packages",
+      "0.0.0",
+      "dry_run: false",
+      "deferred",
     ]) {
       assert.match(docs, new RegExp(expected));
     }

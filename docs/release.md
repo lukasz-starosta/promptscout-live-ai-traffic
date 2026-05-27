@@ -1,43 +1,61 @@
 # Release
 
 This repository uses one version across the root package, every package under
-`packages/*`, and every runnable example under `examples/*`. Published packages
-use the `@promptscout/live-ai-traffic-*` npm scope. Examples stay private so
-they can pin stable package versions in docs without being published.
+`packages/*`, and every runnable example under `examples/*`.
+
+PromptScout is not publishing npm packages from this repository yet. Version
+`0.0.0` is intentional while the repo is in local-first dogfood mode. The
+manual release workflow is available for dry-run package validation, but
+`dry_run: false` is deferred until the public release gate below is satisfied.
+Examples stay private so they can pin stable package versions in docs without
+being published.
 
 ## Required Checks
 
-Run the repo-owned verifier before preparing or publishing a release:
+Run the repo-owned verifier before preparing a release candidate:
 
 ```bash
 ./scripts/verify
 ```
 
 The GitHub release workflow also runs install, lint, typecheck, unit tests,
-`./scripts/verify`, and `yarn build` before any publish command.
+`./scripts/verify`, and `yarn build` before any package dry run or future
+publish command.
 
 ## JavaScript packages
 
-Provider packages under `packages/*` are the npm publishing unit. A release
-starts by updating the shared version in the root package, all provider package
-manifests, all example manifests, and `CHANGELOG.md`.
+Provider packages under `packages/*` are the future npm publishing unit under
+the `@promptscout/live-ai-traffic-*` scope. They are not public packages today.
 
-Use GitHub Actions `Release` workflow with `dry_run` set to `true` for release
-candidate validation. The dry run builds package `dist` output and runs
+Use GitHub Actions `Release` workflow with `dry_run` set to `true` only for
+release-candidate validation. The dry run builds package `dist` output and runs
 `yarn pack --dry-run` for every provider package.
 
-After the dry run passes and the version is no longer `0.0.0`, run the same
-workflow with `dry_run` set to `false`. Real publishes require the repository
-secret `NPM_TOKEN`. The workflow publishes every package under `packages/*` with
-`yarn npm publish --access public` so Yarn can resolve workspace dependencies
-into publishable package versions.
+Do not treat a passing dry run as approval to publish. A real package release
+requires all of the following:
+
+1. The root, package, example, and changelog versions have moved off `0.0.0`.
+2. The implemented local install targets have copyable customer docs that no
+   longer depend on workspace-only assumptions.
+3. Placeholder package shells are either implemented, excluded from publishing,
+   or explicitly documented as non-customer packages for that release.
+4. The install matrix identifies current package names, deferred placeholders,
+   and token-scoped source binding for every public path.
+5. Release ownership has approved `dry_run: false` and configured the
+   repository `NPM_TOKEN` secret.
+
+Only after those gates are true should the release workflow run with
+`dry_run: false`. The future publish step uses `yarn npm publish --access
+public` for packages under `packages/*` so Yarn can resolve workspace
+dependencies into publishable package versions.
 
 ## WordPress artifacts
 
-The current WordPress workspace is a JavaScript placeholder package, not a
-ship-ready WordPress plugin zip. When the WordPress runtime lands, build the
-plugin artifact from the same committed version as the npm packages, attach the
-zip to the GitHub release, and document its checksum in this changelog.
+The generic `packages/wordpress` workspace is a JavaScript placeholder package.
+The implemented plugin lives in `packages/wordpress-plugin`, but this repo is
+not publishing a public plugin zip yet. For a future public release, build the
+plugin artifact from the same committed version as the package release, attach
+the zip to the GitHub release, and document its checksum in this changelog.
 
 Do not publish browser-visible secrets, ingest tokens, local `.env` files, or
 customer configuration in the WordPress artifact. The artifact must be generated
@@ -57,5 +75,5 @@ and keep dry-run validation available before pushing an image tag.
 
 Docs and examples may reference `@promptscout/live-ai-traffic-*` packages by
 published semver after the first non-placeholder release. Until then, examples
-use workspace dependencies so local development and verification remain
-deterministic.
+use workspace dependencies and local tarballs so local development and
+verification remain deterministic.

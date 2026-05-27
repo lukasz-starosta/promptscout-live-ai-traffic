@@ -6,9 +6,30 @@ runs.
 
 ## Install
 
+No public npm package is published yet. During dogfooding, build and install
+local tarballs for both `packages/core` and `packages/vercel-middleware`.
+
+From this repository checkout:
+
 ```bash
-yarn add @promptscout/live-ai-traffic-vercel-middleware
+corepack enable
+yarn install --immutable
+yarn tsc -b packages/core packages/vercel-middleware
+(cd packages/core && yarn pack --out /tmp/promptscout-live-ai-traffic-core-0.0.0.tgz)
+(cd packages/vercel-middleware && yarn pack --out /tmp/promptscout-live-ai-traffic-vercel-middleware-0.0.0.tgz)
 ```
+
+From the Next.js app:
+
+```bash
+npm install \
+  /tmp/promptscout-live-ai-traffic-core-0.0.0.tgz \
+  /tmp/promptscout-live-ai-traffic-vercel-middleware-0.0.0.tgz
+```
+
+Package version `0.0.0` is intentional for this local-first phase. Replace
+these tarball installs with published semver only after PromptScout approves the
+first public package release.
 
 ## Next.js 16 `proxy.ts`
 

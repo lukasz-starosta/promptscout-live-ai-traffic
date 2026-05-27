@@ -3,6 +3,11 @@
 The Vercel runtime implementation lives in
 `@promptscout/live-ai-traffic-vercel-middleware`.
 
+This repository is not publishing npm packages yet. Use the local tarball
+install flow in `docs/integrations/vercel.md` or the current
+`examples/vercel-nextjs` README when testing the middleware in a real Next.js
+app.
+
 Use `proxy.ts` in Next.js 16:
 
 ```ts

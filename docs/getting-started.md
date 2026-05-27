@@ -2,11 +2,47 @@
 
 This repository uses Yarn workspaces with packages under `packages/*` and runnable shells under `examples/*`.
 
-The current scaffold is intentionally minimal:
+The repository is local-first during dogfooding. PromptScout is not publishing
+npm packages from this repo yet, and version `0.0.0` is intentional until the
+first public package release is approved. Install implemented collectors from a
+local checkout or local tarballs while testing.
+
+## Local Next.js/Vercel Dogfood
+
+Build and pack the first supported local install target:
+
+```bash
+corepack enable
+yarn install --immutable
+yarn tsc -b packages/core packages/vercel-middleware
+(cd packages/core && yarn pack --out /tmp/promptscout-live-ai-traffic-core-0.0.0.tgz)
+(cd packages/vercel-middleware && yarn pack --out /tmp/promptscout-live-ai-traffic-vercel-middleware-0.0.0.tgz)
+```
+
+Install both tarballs in the Next.js app being tested:
+
+```bash
+npm install \
+  /tmp/promptscout-live-ai-traffic-core-0.0.0.tgz \
+  /tmp/promptscout-live-ai-traffic-vercel-middleware-0.0.0.tgz
+```
+
+Then copy the `proxy.ts` or `middleware.ts` setup from
+[integrations/vercel.md](integrations/vercel.md). Configure the ingest endpoint
+and site-scoped ingest token only. The token resolves the PromptScout
+brand-owned site source; do not add a separate brand ID or team-site ID to the
+app.
+
+## Implemented And Placeholder Paths
+
+The current scaffold is intentionally small:
 
 - `packages/core` owns shared placeholder types, helper exports, and the
   canonical live AI traffic event contract.
 - Provider packages import `@promptscout/live-ai-traffic-core` through workspace dependencies.
+- `packages/vercel-middleware` provides the current Next.js/Vercel Proxy and
+  Middleware collector. `examples/vercel-nextjs` is the copyable dogfood
+  reference.
 - `packages/node-middleware` provides generic Node helpers and Express-style
   middleware that classify requests, normalize privacy-sensitive fields, and
   send matching events asynchronously.
@@ -17,11 +53,12 @@ The current scaffold is intentionally minimal:
   Lambda or Kinesis consumer.
 - `packages/netlify-edge` provides the Netlify Edge Function collector for
   Netlify-hosted routes.
+- `packages/fastly-compute` provides the Fastly JavaScript Compute collector.
 - Examples are workspace packages that import their matching provider or
-  adapter package. The Express example can run with mocked ingest for local
-  smoke checks.
+  adapter package. The Vercel Next.js and Express examples can run with mocked
+  ingest for local smoke checks.
 - Runtime behavior, provider credentials, and deployment instructions for the
-  remaining placeholder providers are intentionally deferred to later
+  generic placeholder provider shells are intentionally deferred to later
   implementation issues.
 
 Run the repo-owned verifier before handing off changes:
@@ -42,5 +79,5 @@ See [privacy-security-operations.md](privacy-security-operations.md) for the
 default privacy posture, site-scoped ingest token handling, failure modes, and
 security FAQ.
 
-See [release.md](release.md) for package versioning, release verification, npm
-publishing, WordPress artifact, and Docker image guidance.
+See [release.md](release.md) for package versioning, release verification,
+deferred npm publishing, WordPress artifact, and Docker image guidance.

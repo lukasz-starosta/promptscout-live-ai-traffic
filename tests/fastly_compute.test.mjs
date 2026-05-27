@@ -87,9 +87,12 @@ describe("Fastly Compute collector", () => {
       },
       now: () => new Date("2026-05-26T10:50:00.000Z"),
     });
-    const request = new Request("https://www.example.com/docs", {
-      headers: { "user-agent": "GPTBot/1.3" },
-    });
+    const request = new Request(
+      "https://www.example.com/docs?token=raw-secret&email=user@example.com",
+      {
+        headers: { "user-agent": "GPTBot/1.3" },
+      },
+    );
 
     const response = await handler({
       request,
@@ -101,6 +104,10 @@ describe("Fastly Compute collector", () => {
     assert.equal(scheduled.length, 1);
     assert.equal(fetchCalls.length, 2);
     assert.equal(fetchCalls[0].resource, request);
+    assert.equal(
+      fetchCalls[0].resource.url,
+      "https://www.example.com/docs?token=raw-secret&email=user@example.com",
+    );
     assert.deepEqual(fetchCalls[0].init, { backend: "customer_origin" });
     assert.equal(
       fetchCalls[1].resource,
@@ -118,6 +125,9 @@ describe("Fastly Compute collector", () => {
     assert.equal(body.events.length, 1);
     assert.equal(body.events[0].sourceProvider, "fastly");
     assert.equal(body.events[0].integration.name, "fastly-compute");
+    assert.equal(Object.hasOwn(body.events[0].request, "search"), false);
+    assert.equal(fetchCalls[1].init.body.includes("token=raw-secret"), false);
+    assert.equal(fetchCalls[1].init.body.includes("user@example.com"), false);
     assert.equal(
       body.events[0].providerClassification.provider,
       "openai_gptbot",

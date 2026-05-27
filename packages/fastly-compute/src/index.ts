@@ -6,6 +6,7 @@ import {
   type LiveAiTrafficFetchInit,
   type LiveAiTrafficIngestResult,
   type LiveAiTrafficRetryOptions,
+  normalizeLiveAiTrafficEvent,
   toLiveAiTrafficProviderClassification,
 } from "@promptscout/live-ai-traffic-core";
 
@@ -144,14 +145,15 @@ export function createFastlyComputeHandler<TResponse = unknown>(
   });
 
   return async (event) => {
-    const ingestPromise = ingestClient.send(
+    const ingestPromise = normalizeLiveAiTrafficEvent(
       normalizeFastlyComputeRequest(event.request, {
         now: options.now,
         country: event.country,
         region: event.region,
         requestId: event.requestId,
       }),
-    );
+      { query: { mode: "omit" } },
+    ).then((normalizedEvent) => ingestClient.send(normalizedEvent));
 
     if (event.waitUntil === undefined) {
       void ingestPromise.catch(() => undefined);

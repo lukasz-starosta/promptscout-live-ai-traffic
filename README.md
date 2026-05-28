@@ -60,8 +60,8 @@ This repository uses Yarn workspaces:
 The manual release workflow publishes only the root
 `@promptscout/live-ai-traffic` package. Internal workspaces and examples keep
 the same version for traceability, but remain private and are not published. See
-[docs/release.md](docs/release.md) for npm token, version pinning, and workflow
-details. `packages/node-middleware` and runtime collectors such as
+[docs/release.md](docs/release.md) for npm trusted publishing, version pinning,
+and workflow details. `packages/node-middleware` and runtime collectors such as
 `packages/vercel-middleware`, `packages/netlify-edge`, `packages/cloudfront-aws`,
 and `packages/fastly-compute` reuse the shared core classifier, privacy
 normalization helpers, and ingest client for implemented paths.

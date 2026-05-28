@@ -53,7 +53,7 @@ runtime surface.
 
 GitHub Actions also exposes a manual `Release` workflow. It runs the same
 install, lint, typecheck, unit test, and `./scripts/verify` checks before any
-package dry run or private publish command. The workflow defaults to a dry run
+package dry run or public publish command. The workflow defaults to a dry run
 so release candidates can validate package contents without publishing. The real
 publish path targets the public npm registry for `@promptscout/live-ai-traffic`.
 

@@ -105,6 +105,10 @@ describe("public package install path", () => {
       "examples/vercel-nextjs/README.md",
       "utf8",
     );
+    const vercelExampleReadme = await readFile(
+      "examples/vercel/README.md",
+      "utf8",
+    );
 
     assert.equal(packageJson.scripts["pack:vercel-local"], undefined);
 
@@ -116,7 +120,10 @@ describe("public package install path", () => {
       "promptscout-live-ai-traffic-core-v0.0.0.tgz",
       "promptscout-live-ai-traffic-vercel-middleware-v0.0.0.tgz",
     ]) {
-      assert.doesNotMatch(`${guide}\n${exampleReadme}`, new RegExp(obsolete));
+      assert.doesNotMatch(
+        `${guide}\n${exampleReadme}\n${vercelExampleReadme}`,
+        new RegExp(obsolete),
+      );
     }
   });
 });

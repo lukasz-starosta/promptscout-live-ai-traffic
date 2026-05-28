@@ -31,15 +31,18 @@ describe("release workflow", () => {
     assert.match(workflow, /default:\s*true/);
     assert.match(workflow, /npm pack --dry-run/);
     assert.match(workflow, /registry-url:\s*https:\/\/registry\.npmjs\.org/);
-    assert.match(workflow, /secrets\.NPM_TOKEN/);
+    assert.match(workflow, /id-token:\s*write/);
+    assert.match(workflow, /^ {4}environment:\s*npm$/m);
     assert.match(workflow, /npm publish --access public/);
     assert.doesNotMatch(workflow, /npm\.pkg\.github\.com/);
     assert.doesNotMatch(workflow, /packages:\s*write/);
     assert.doesNotMatch(workflow, /secrets\.GITHUB_TOKEN/);
+    assert.doesNotMatch(workflow, /secrets\.NPM_TOKEN/);
+    assert.doesNotMatch(workflow, /NODE_AUTH_TOKEN/);
     assert.doesNotMatch(workflow, /--access restricted/);
   });
 
-  it("documents public npm consumption and removes GitHub Packages auth", async () => {
+  it("documents public npm consumption and trusted publishing", async () => {
     const docs = await readFile(releaseDocsPath, "utf8");
     const changelog = await readFile(changelogPath, "utf8");
 
@@ -48,7 +51,9 @@ describe("release workflow", () => {
       "@promptscout/live-ai-traffic/core",
       "@promptscout/live-ai-traffic/vercel-middleware",
       "registry.npmjs.org",
-      "NPM_TOKEN",
+      "Trusted Publishing",
+      "id-token: write",
+      "npm",
       "./scripts/verify",
       "dry run",
       "0.1.0",
@@ -61,6 +66,8 @@ describe("release workflow", () => {
       "@lukasz-starosta",
       "npm.pkg.github.com",
       "GITHUB_PACKAGES_TOKEN",
+      "NPM_TOKEN",
+      "NODE_AUTH_TOKEN",
       "read:packages",
       "packages: write",
       "--access restricted",

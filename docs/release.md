@@ -46,10 +46,10 @@ registry at `https://registry.npmjs.org` with:
 npm publish --access public
 ```
 
-The workflow expects `NPM_TOKEN` to be configured as a repository secret. A
-granular npm automation or publishing token is preferred. If npm trusted
-publishing is adopted later, keep the same verify and dry-run gates before the
-real publish step.
+The real publish path uses npm Trusted Publishing through GitHub Actions OIDC.
+The workflow grants `id-token: write`, runs in the protected GitHub environment
+named `npm`, and does not require npm registry token secrets. Keep the same
+verify and dry-run gates before the real publish step.
 
 ## Package Contents
 

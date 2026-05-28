@@ -52,7 +52,6 @@ jobs:
         run: yarn build
 
       - name: Dry-run package contents
-        if: ${{ inputs.dry_run }}
         run: npm pack --dry-run
 
       - name: Publish public npm package

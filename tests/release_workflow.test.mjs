@@ -26,10 +26,19 @@ describe("release workflow", () => {
 
   it("supports dry-run and real public npm publish modes", async () => {
     const workflow = await readFile(releaseWorkflowPath, "utf8");
+    const dryRunStep = workflow.match(
+      /^ {6}- name: Dry-run package contents\n(?<body>(?:^ {8}.+\n?)*)/m,
+    );
 
     assert.match(workflow, /^ {6}dry_run:\s*$/m);
     assert.match(workflow, /default:\s*true/);
     assert.match(workflow, /npm pack --dry-run/);
+    assert.ok(dryRunStep?.groups?.body);
+    assert.doesNotMatch(
+      dryRunStep.groups.body,
+      /^\s+if:/m,
+      "package dry-run must run before both dry-run and real publish modes",
+    );
     assert.match(workflow, /registry-url:\s*https:\/\/registry\.npmjs\.org/);
     assert.match(workflow, /id-token:\s*write/);
     assert.match(workflow, /^ {4}environment:\s*npm$/m);

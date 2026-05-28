@@ -19,6 +19,13 @@ rules, redirect loops, cache behavior, or origin uptime.
 Use [`../../examples/cloudflare-worker`](../../examples/cloudflare-worker) for
 the runnable Wrangler example.
 
+## Package Status
+
+The import below uses `promptscout-live-ai-traffic-cloudflare-worker`, a
+repo-local private workspace package. It is not published as a separate npm
+package and is not exported from `@promptscout/live-ai-traffic` yet. Treat this
+guide as a repository-local example until a public collector subpath is added.
+
 ## Worker Bindings
 
 Configure these bindings in Wrangler or the Cloudflare dashboard:

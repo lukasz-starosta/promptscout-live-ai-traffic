@@ -126,4 +126,28 @@ describe("public package install path", () => {
       );
     }
   });
+
+  it("marks non-Vercel collector imports as repo-local private workspace examples", async () => {
+    const repoLocalImportDocs = [
+      "docs/integrations/cloudflare-worker.md",
+      "docs/integrations/cloudfront-aws.md",
+      "docs/integrations/express.md",
+      "docs/integrations/fastly-compute.md",
+      "docs/integrations/netlify-edge.md",
+      "docs/integrations/nginx-log-forwarder.md",
+      "examples/cloudflare-worker/README.md",
+      "examples/fastly-compute/README.md",
+    ];
+
+    for (const path of repoLocalImportDocs) {
+      const contents = await readFile(path, "utf8");
+
+      assert.match(contents, /repo-local\s+private workspace/i, path);
+      assert.doesNotMatch(
+        contents,
+        /@promptscout\/live-ai-traffic\/(?:cloudflare|cloudflare-worker|cloudfront|cloudfront-aws|express|fastly|fastly-compute|netlify|netlify-edge|nginx-log-forwarder|node-middleware)/,
+        path,
+      );
+    }
+  });
 });

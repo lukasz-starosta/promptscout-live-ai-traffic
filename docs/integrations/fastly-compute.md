@@ -4,6 +4,11 @@ The Fastly Compute collector is implemented in
 `promptscout-live-ai-traffic-fastly-compute` with an example in
 `examples/fastly-compute`.
 
+This collector import is a repo-local private workspace package. It is not
+published as a separate npm package and is not exported from
+`@promptscout/live-ai-traffic` yet. Treat this guide as a repository-local
+example until a public collector subpath is added.
+
 Fastly JavaScript Compute dispatches incoming requests through a fetch event.
 The collector creates a PromptScout live AI traffic event from the original
 request headers and URL, schedules ingest delivery, and forwards the unchanged

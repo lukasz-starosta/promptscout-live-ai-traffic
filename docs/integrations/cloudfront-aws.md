@@ -6,6 +6,11 @@ PromptScout supports AWS CloudFront collection through CloudFront real-time
 access logs delivered to Kinesis Data Streams, then a regional Lambda or Kinesis
 consumer forwards normalized live AI traffic events to PromptScout.
 
+The import below uses `promptscout-live-ai-traffic-cloudfront-aws`, a
+repo-local private workspace package. It is not published as a separate npm
+package and is not exported from `@promptscout/live-ai-traffic` yet. Treat this
+guide as a repository-local example until a public collector subpath is added.
+
 Do not use CloudFront Functions for PromptScout delivery. CloudFront Functions
 are suitable for lightweight request/response mutation, but they cannot perform
 the outbound network POST required for PromptScout ingest. Lambda@Edge can make

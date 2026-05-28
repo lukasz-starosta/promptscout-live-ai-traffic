@@ -6,6 +6,11 @@ traffic with `packages/core`, sends a request observation to PromptScout in the
 background with `context.waitUntil()` when available, and returns
 `context.next()` so the normal Netlify request chain continues.
 
+The import below uses `promptscout-live-ai-traffic-netlify-edge`, a repo-local
+private workspace package. It is not published as a separate npm package and is
+not exported from `@promptscout/live-ai-traffic` yet. Treat this guide as a
+repository-local example until a public collector subpath is added.
+
 ## Environment Variables
 
 Configure these variables in Netlify with a Functions runtime scope:

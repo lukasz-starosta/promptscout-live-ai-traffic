@@ -10,6 +10,10 @@ the background, and forwards the original request to the existing origin.
 PromptScout does not host the site, terminate the origin connection, or fix
 Cloudflare DNS/origin failures.
 
+This example depends on `promptscout-live-ai-traffic-cloudflare-worker`, a
+repo-local private workspace package. It is not published as a separate npm
+package and is not exported from `@promptscout/live-ai-traffic` yet.
+
 ## Files
 
 - `src/index.ts` exports the packaged Worker handler.

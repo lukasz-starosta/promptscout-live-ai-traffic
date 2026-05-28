@@ -6,6 +6,11 @@ It parses common or JSON nginx access logs, classifies requests with
 `packages/core`, batches PromptScout events, and stores byte-offset checkpoints
 so restarts do not resend the whole log.
 
+The forwarder uses `promptscout-live-ai-traffic-nginx-log-forwarder`, a
+repo-local private workspace package. It is not published as a separate npm
+package and is not exported from `@promptscout/live-ai-traffic` yet. Treat this
+guide as a repository-local example until a public collector subpath is added.
+
 ## Supported Log Formats
 
 The parser accepts:

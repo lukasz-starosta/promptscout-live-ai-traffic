@@ -1,10 +1,15 @@
 # Netlify Edge Collector
 
-`@lukasz-starosta/promptscout-live-ai-traffic-netlify-edge` is a customer-owned edge collector
+`promptscout-live-ai-traffic-netlify-edge` is a customer-owned edge collector
 for Netlify-hosted sites. It observes each matching edge request, classifies
 traffic with `packages/core`, sends a request observation to PromptScout in the
 background with `context.waitUntil()` when available, and returns
 `context.next()` so the normal Netlify request chain continues.
+
+The import below uses `promptscout-live-ai-traffic-netlify-edge`, a repo-local
+private workspace package. It is not published as a separate npm package and is
+not exported from `@promptscout/live-ai-traffic` yet. Treat this guide as a
+repository-local example until a public collector subpath is added.
 
 ## Environment Variables
 
@@ -30,7 +35,7 @@ the brand-owned site source attached to the site-scoped ingest token.
 ## Minimal Edge Function
 
 ```ts
-import { handlePromptScoutNetlifyEdgeRequest } from "@lukasz-starosta/promptscout-live-ai-traffic-netlify-edge";
+import { handlePromptScoutNetlifyEdgeRequest } from "promptscout-live-ai-traffic-netlify-edge";
 
 export default async function promptScoutLiveAiTraffic(request, context) {
   return handlePromptScoutNetlifyEdgeRequest(request, context);

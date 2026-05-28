@@ -5,6 +5,10 @@ Compute. It classifies each incoming request at the edge, schedules PromptScout
 ingest through a named Fastly backend, and forwards the original request to the
 customer origin backend.
 
+This example depends on `promptscout-live-ai-traffic-fastly-compute`, a
+repo-local private workspace package. It is not published as a separate npm
+package and is not exported from `@promptscout/live-ai-traffic` yet.
+
 ## Backend names
 
 The example expects two Fastly backends:
@@ -32,7 +36,7 @@ npm create @fastly/compute@latest
 ```
 
 Copy `src/index.ts` from this example into that project or depend on
-`@lukasz-starosta/promptscout-live-ai-traffic-fastly-compute` from this workspace. Configure
+`promptscout-live-ai-traffic-fastly-compute` from this workspace. Configure
 local backend mappings for `origin` and `promptscout_ingest`, then run:
 
 ```bash

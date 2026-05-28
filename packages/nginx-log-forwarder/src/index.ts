@@ -7,7 +7,7 @@ import {
   type LiveAiTrafficIngestClient,
   type LiveAiTrafficIngestResult,
   toLiveAiTrafficProviderClassification,
-} from "@lukasz-starosta/promptscout-live-ai-traffic-core";
+} from "@promptscout/live-ai-traffic/core";
 
 export type NginxLogFormat = "common" | "json";
 

@@ -10,6 +10,10 @@ the background, and forwards the original request to the existing origin.
 PromptScout does not host the site, terminate the origin connection, or fix
 Cloudflare DNS/origin failures.
 
+This example depends on `promptscout-live-ai-traffic-cloudflare-worker`, a
+repo-local private workspace package. It is not published as a separate npm
+package and is not exported from `@promptscout/live-ai-traffic` yet.
+
 ## Files
 
 - `src/index.ts` exports the packaged Worker handler.
@@ -52,7 +56,7 @@ Cloudflare secrets.
 Run Wrangler's local development server:
 
 ```bash
-yarn workspace @lukasz-starosta/promptscout-live-ai-traffic-example-cloudflare-worker dev
+yarn workspace promptscout-live-ai-traffic-example-cloudflare-worker dev
 ```
 
 Use Wrangler's local URL to simulate an AI crawler request:
@@ -81,7 +85,7 @@ still comes from the forwarded origin path.
 Deploy with Wrangler after the route and secret are configured:
 
 ```bash
-yarn workspace @lukasz-starosta/promptscout-live-ai-traffic-example-cloudflare-worker deploy
+yarn workspace promptscout-live-ai-traffic-example-cloudflare-worker deploy
 ```
 
 Equivalent raw Wrangler command:

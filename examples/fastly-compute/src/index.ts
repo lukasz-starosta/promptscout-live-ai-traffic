@@ -1,7 +1,7 @@
 import {
   createFastlyComputeHandler,
   type FastlyComputeFetchEventLike,
-} from "@lukasz-starosta/promptscout-live-ai-traffic-fastly-compute";
+} from "promptscout-live-ai-traffic-fastly-compute";
 
 type FastlyComputeFetchEvent = FastlyComputeFetchEventLike & {
   respondWith(response: Promise<unknown>): void;

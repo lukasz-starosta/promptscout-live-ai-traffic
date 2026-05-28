@@ -92,6 +92,24 @@ describe("install matrix docs", () => {
     }
   });
 
+  it("points Vercel customers at the public package and subpath export", async () => {
+    const guide = await readFile(guidePath, "utf8");
+
+    assert.match(guide, /npm install @promptscout\/live-ai-traffic@0\.1\.0/);
+    assert.match(
+      guide,
+      /@promptscout\/live-ai-traffic\/vercel-middleware/,
+    );
+    assert.doesNotMatch(
+      guide,
+      /Vercel middleware[\s\S]{0,220}(?:local checkout|local tarballs|packed\s+tarballs)[\s\S]{0,120}until public packages exist/i,
+    );
+    assert.match(
+      guide,
+      /(?:a\s+)?local checkout\s+or (?:generated )?tarballs only for (?:repository|repo) development workflows/i,
+    );
+  });
+
   it("does not ask customers for a separate site identifier in docs", async () => {
     const docs = [
       ...(await collectMarkdownFiles("docs")),

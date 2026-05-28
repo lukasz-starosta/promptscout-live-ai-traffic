@@ -2,30 +2,10 @@
 
 This repository uses Yarn workspaces with packages under `packages/*` and runnable shells under `examples/*`.
 
-The repository supports local tarball dogfooding and private GitHub Packages
-publishing for PromptScout consumption. Public npm publishing remains out of
-scope. Install implemented collectors from a local checkout or local tarballs
-while testing, or use the private GitHub Packages flow in
-[release.md](release.md) once a private version is published.
-
-## Local Next.js/Vercel Dogfood
-
-Build and pack the first supported local install target:
+The public install contract is one npm package with subpath exports:
 
 ```bash
-corepack enable
-yarn install --immutable
-yarn tsc -b packages/core packages/vercel-middleware
-(cd packages/core && yarn pack --out /tmp/promptscout-live-ai-traffic-core-0.0.0.tgz)
-(cd packages/vercel-middleware && yarn pack --out /tmp/promptscout-live-ai-traffic-vercel-middleware-0.0.0.tgz)
-```
-
-Install both tarballs in the Next.js app being tested:
-
-```bash
-npm install \
-  /tmp/promptscout-live-ai-traffic-core-0.0.0.tgz \
-  /tmp/promptscout-live-ai-traffic-vercel-middleware-0.0.0.tgz
+npm install @promptscout/live-ai-traffic@0.1.0
 ```
 
 Then copy the `proxy.ts` or `middleware.ts` setup from
@@ -41,8 +21,7 @@ The current scaffold is intentionally small:
 - `packages/core` owns shared placeholder types, helper exports, and the
   canonical live AI traffic event contract.
 - Provider packages import
-  `@lukasz-starosta/promptscout-live-ai-traffic-core` through workspace
-  dependencies.
+  `@promptscout/live-ai-traffic/core` through the root workspace dependency.
 - `packages/vercel-middleware` provides the current Next.js/Vercel Proxy and
   Middleware collector. `examples/vercel-nextjs` is the copyable dogfood
   reference.
@@ -82,6 +61,5 @@ See [privacy-security-operations.md](privacy-security-operations.md) for the
 default privacy posture, site-scoped ingest token handling, failure modes, and
 security FAQ.
 
-See [release.md](release.md) for package versioning, private GitHub Packages
-publishing, PromptScout install auth, WordPress artifact, and Docker image
-guidance.
+See [release.md](release.md) for package versioning, public npm publishing,
+WordPress artifact, and Docker image guidance.

@@ -1,28 +1,22 @@
 # Release
 
-This repository uses one version across the root package, every package under
-`packages/*`, and every runnable example under `examples/*`.
+This repository publishes one public npm package:
 
-The current release path is private GitHub Packages publishing for PromptScout
-consumption. Public npm publishing remains out of scope: packages are scoped to
-the GitHub account that owns this repository, publish to `npm.pkg.github.com`,
-and use restricted access.
+- `@promptscout/live-ai-traffic`
 
-## Chosen Private Path
+The public import contract uses subpath exports from that single package:
 
-The publishable private package scope is `@lukasz-starosta`. GitHub Packages
-requires scoped npm package names to use the account or organization namespace,
-and this repository is owned by `lukasz-starosta/promptscout-live-ai-traffic`.
+- `@promptscout/live-ai-traffic`
+- `@promptscout/live-ai-traffic/core`
+- `@promptscout/live-ai-traffic/vercel-middleware`
 
-The manual `Release` workflow publishes only the packages required by the
-Next.js/Vercel install path:
+Internal workspace packages remain private implementation units. They are not
+published as separate npm packages.
 
-- `@lukasz-starosta/promptscout-live-ai-traffic-core`
-- `@lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware`
+## Version
 
-Other provider package manifests are also configured for GitHub Packages, but
-the workflow intentionally does not publish placeholder or unrelated packages.
-Examples remain private workspaces and are never published.
+The first public npm version is `0.1.0`. Do not publish `0.0.0`; npm versions
+cannot be replaced after publication.
 
 ## Required Checks
 
@@ -33,103 +27,93 @@ Run the repo-owned verifier before preparing a release candidate:
 ```
 
 The GitHub release workflow also runs install, lint, typecheck, unit tests,
-`./scripts/verify`, and `yarn build` before any package dry run or private
-publish command.
+`./scripts/verify`, and `yarn build` before any package dry run or publish
+command.
 
 ## Manual Workflow
 
+Before the first public publish, the npm org owner must confirm that the
+`@promptscout` scope exists, the account can publish to it, and the account has
+2FA or npm publishing auth ready.
+
+From the repository root, the owner should run the first publish manually:
+
+```bash
+npm login --registry=https://registry.npmjs.org
+npm whoami --registry=https://registry.npmjs.org
+npm publish --access public --registry=https://registry.npmjs.org
+npm view @promptscout/live-ai-traffic version --registry=https://registry.npmjs.org
+```
+
+Then grant team access if needed:
+
+```bash
+npm access grant read-write @promptscout:maintainers @promptscout/live-ai-traffic --registry=https://registry.npmjs.org
+npm access ls-collaborators @promptscout/live-ai-traffic --registry=https://registry.npmjs.org
+```
+
+After that first publish succeeds, configure npm Trusted Publishing for future
+GitHub Actions releases:
+
+```bash
+npm trust github @promptscout/live-ai-traffic \
+  --repo lukasz-starosta/promptscout-live-ai-traffic \
+  --file release.yml \
+  --env npm \
+  --allow-publish \
+  --registry=https://registry.npmjs.org
+```
+
 Use GitHub Actions `Release` workflow with `dry_run` set to `true` first. The
-dry run builds package `dist` output and runs `yarn pack --dry-run` for the core
-and Vercel middleware packages so tarball contents are inspectable before
-publishing.
-
-When `dry_run: false` is selected, the workflow uses the repository
-`GITHUB_TOKEN` with:
-
-```yaml
-permissions:
-  contents: read
-  packages: write
-```
-
-The publish command is `yarn npm publish --access restricted`, and package
-manifests set `publishConfig.registry` to `https://npm.pkg.github.com`. The
-workflow does not use `NPM_TOKEN`, `registry.npmjs.org`, or `--access public`.
-That keeps public npm publishing out of this private consumption path.
-
-GitHub Packages creates npm packages as private on first publish. Because each
-published package includes a `repository` field pointing at this repository, the
-package can inherit repository access and the repository workflow can publish
-with `GITHUB_TOKEN`.
-
-## PromptScout Install Auth
-
-For local PromptScout consumption, create or update the consuming app's
-`.npmrc` without committing a real token:
-
-```ini
-@lukasz-starosta:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}
-always-auth=true
-```
-
-`GITHUB_PACKAGES_TOKEN` should be a classic GitHub personal access token with
-`read:packages` and read access to `lukasz-starosta/promptscout-live-ai-traffic`
-or to the private package. If the package is later granted direct repository
-access to the PromptScout repo, GitHub Actions in that repo may use its own
-`GITHUB_TOKEN` for installs.
-
-For Yarn 4 consumers, prefer `.yarnrc.yml` token wiring because modern Yarn uses
-Yarn config for npm auth:
-
-```yaml
-npmScopes:
-  lukasz-starosta:
-    npmAlwaysAuth: true
-    npmRegistryServer: "https://npm.pkg.github.com"
-npmRegistries:
-  //npm.pkg.github.com:
-    npmAuthToken: "${GITHUB_PACKAGES_TOKEN}"
-```
-
-Install pinned package versions rather than floating ranges:
+dry run builds package `dist` output and runs:
 
 ```bash
-yarn add \
-  @lukasz-starosta/promptscout-live-ai-traffic-core@0.0.0 \
-  @lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware@0.0.0
+npm pack --dry-run
 ```
 
-For npm:
+When `dry_run: false` is selected, the workflow publishes to the public npm
+registry at `https://registry.npmjs.org` with:
 
 ```bash
-npm install \
-  @lukasz-starosta/promptscout-live-ai-traffic-core@0.0.0 \
-  @lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware@0.0.0
+npm publish --access public --provenance --registry=https://registry.npmjs.org
 ```
 
-Keep the version pin exact in PromptScout until the package promotion process is
-formalized. Each new private publish must move to a new semver version because
-the npm registry does not allow replacing an already-published version.
+The real publish path uses npm Trusted Publishing through GitHub Actions OIDC.
+The workflow grants `id-token: write`, runs in the protected GitHub environment
+named `npm`, and does not require npm registry token secrets. Keep the same
+verify and dry-run gates before the real publish step.
 
 ## Package Contents
 
-Published JavaScript packages include only `dist` through each package
-manifest's `files` allowlist. Runtime entrypoints and types are exported from:
+The public package manifest allows only these package contents:
 
-- `./dist/index.js`
-- `./dist/index.d.ts`
+- `dist`
+- `README.md`
+- `LICENSE`
+- package metadata automatically included by npm
 
-Examples, tests, docs, fixtures, local `.env` files, and secrets are excluded
-from the package tarballs.
+The `exports` map points `.` and `./core` to the compiled shared core entrypoint,
+and `./vercel-middleware` to the compiled Next.js/Vercel collector entrypoint.
+Examples, tests, docs, fixtures, local environment files, and secrets are not
+published.
 
-## Non-JS Artifacts
+## Consumer Install
 
-The implemented WordPress plugin lives in `packages/wordpress-plugin`, but this
-issue does not publish a plugin zip. If a future private release needs one,
-build the zip from the same committed version after `./scripts/verify` passes
-and attach it to a GitHub release with a checksum.
+Install the public package from npm and pin the exact version in production
+apps:
 
-This repository does not publish Docker images today. If a collector or
-forwarder later needs an image, add an explicit dry-run/build gate before
-pushing an image tag.
+```bash
+npm install @promptscout/live-ai-traffic@0.1.0
+```
+
+Use the Vercel helper through its subpath export:
+
+```ts
+import { trackPromptScoutAiTraffic } from "@promptscout/live-ai-traffic/vercel-middleware";
+```
+
+Use shared event contracts and classifiers through:
+
+```ts
+import { classifyAiTraffic } from "@promptscout/live-ai-traffic/core";
+```

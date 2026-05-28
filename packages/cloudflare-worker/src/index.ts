@@ -10,7 +10,7 @@ import {
   normalizeLiveAiTrafficEvent,
   parseLiveAiTrafficEvent,
   toLiveAiTrafficProviderClassification,
-} from "@lukasz-starosta/promptscout-live-ai-traffic-core";
+} from "@promptscout/live-ai-traffic/core";
 
 export type PromptScoutCloudflareWorkerEnv = {
   PROMPTSCOUT_INGEST_TOKEN: string;

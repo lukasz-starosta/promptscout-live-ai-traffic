@@ -27,7 +27,7 @@ describe("monorepo scaffold", () => {
 
     assert.equal(rootPackage.packageManager, "yarn@4.9.2");
     assert.deepEqual(rootPackage.workspaces, ["packages/*", "examples/*"]);
-    assert.match(lockfile, /promptscout-live-ai-traffic@workspace:\./);
+    assert.match(lockfile, /@promptscout\/live-ai-traffic@workspace:\./);
   });
 
   it("lets every provider package import the shared core package", async () => {
@@ -39,15 +39,10 @@ describe("monorepo scaffold", () => {
       );
 
       assert.equal(
-        packageJson.dependencies[
-          "@lukasz-starosta/promptscout-live-ai-traffic-core"
-        ],
+        packageJson.dependencies["@promptscout/live-ai-traffic"],
         "workspace:*",
       );
-      assert.match(
-        source,
-        /@lukasz-starosta\/promptscout-live-ai-traffic-core/,
-      );
+      assert.match(source, /@promptscout\/live-ai-traffic\/core/);
     }
   });
 
@@ -66,14 +61,12 @@ describe("monorepo scaffold", () => {
       );
 
       assert.equal(
-        examplePackage.dependencies[
-          `@lukasz-starosta/promptscout-live-ai-traffic-${provider}`
-        ],
+        examplePackage.dependencies[`promptscout-live-ai-traffic-${provider}`],
         "workspace:*",
       );
       assert.match(
         source,
-        new RegExp(`@lukasz-starosta/promptscout-live-ai-traffic-${provider}`),
+        new RegExp(`promptscout-live-ai-traffic-${provider}`),
       );
       if (provider === "vercel") {
         assert.match(integrationDoc, /trackPromptScoutAiTraffic/);

@@ -14,12 +14,12 @@
     "verbatimModuleSyntax": true,
     "baseUrl": ".",
     "paths": {
-      "@lukasz-starosta/promptscout-live-ai-traffic-core": [
-        "packages/core/src/index.ts"
+      "@promptscout/live-ai-traffic": ["packages/core/src/index.ts"],
+      "@promptscout/live-ai-traffic/core": ["packages/core/src/index.ts"],
+      "@promptscout/live-ai-traffic/vercel-middleware": [
+        "packages/vercel-middleware/src/index.ts"
       ],
-      "@lukasz-starosta/promptscout-live-ai-traffic-*": [
-        "packages/*/src/index.ts"
-      ]
+      "promptscout-live-ai-traffic-*": ["packages/*/src/index.ts"]
     }
   }
 }

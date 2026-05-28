@@ -3,11 +3,16 @@
 `packages/node-middleware` exports generic Node helpers and Express-compatible
 middleware for server-side AI traffic detection before route handlers run.
 
+The import below uses `promptscout-live-ai-traffic-node-middleware`, a
+repo-local private workspace package. It is not published as a separate npm
+package and is not exported from `@promptscout/live-ai-traffic` yet. Treat this
+guide as a repository-local example until a public collector subpath is added.
+
 Use `createExpressLiveAiTrafficMiddleware(options)` before application routes:
 
 ```ts
 import express from "express";
-import { createExpressLiveAiTrafficMiddleware } from "@lukasz-starosta/promptscout-live-ai-traffic-node-middleware";
+import { createExpressLiveAiTrafficMiddleware } from "promptscout-live-ai-traffic-node-middleware";
 
 const app = express();
 

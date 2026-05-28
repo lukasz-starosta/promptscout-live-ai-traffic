@@ -5,7 +5,7 @@ import {
   parseNginxLogCheckpoint,
   runNginxLogForwarderPass,
   serializeNginxLogCheckpoint,
-} from "@lukasz-starosta/promptscout-live-ai-traffic-nginx-log-forwarder";
+} from "promptscout-live-ai-traffic-nginx-log-forwarder";
 
 const endpoint =
   process.env.PROMPTSCOUT_INGEST_ENDPOINT ??

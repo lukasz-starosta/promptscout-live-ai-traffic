@@ -33,7 +33,10 @@ describe("release workflow", () => {
     assert.match(workflow, /registry-url:\s*https:\/\/registry\.npmjs\.org/);
     assert.match(workflow, /id-token:\s*write/);
     assert.match(workflow, /^ {4}environment:\s*npm$/m);
-    assert.match(workflow, /npm publish --access public/);
+    assert.match(
+      workflow,
+      /npm publish --access public --provenance --registry=https:\/\/registry\.npmjs\.org/,
+    );
     assert.doesNotMatch(workflow, /npm\.pkg\.github\.com/);
     assert.doesNotMatch(workflow, /packages:\s*write/);
     assert.doesNotMatch(workflow, /secrets\.GITHUB_TOKEN/);
@@ -54,6 +57,16 @@ describe("release workflow", () => {
       "Trusted Publishing",
       "id-token: write",
       "npm",
+      "npm login --registry=https://registry.npmjs.org",
+      "npm whoami --registry=https://registry.npmjs.org",
+      "npm publish --access public --registry=https://registry.npmjs.org",
+      "npm view @promptscout/live-ai-traffic version --registry=https://registry.npmjs.org",
+      "npm access grant read-write @promptscout:maintainers @promptscout/live-ai-traffic --registry=https://registry.npmjs.org",
+      "npm trust github @promptscout/live-ai-traffic",
+      "--repo lukasz-starosta/promptscout-live-ai-traffic",
+      "--file release.yml",
+      "--env npm",
+      "--allow-publish",
       "./scripts/verify",
       "dry run",
       "0.1.0",

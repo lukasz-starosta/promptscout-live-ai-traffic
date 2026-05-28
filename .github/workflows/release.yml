@@ -57,4 +57,4 @@ jobs:
 
       - name: Publish public npm package
         if: ${{ !inputs.dry_run }}
-        run: npm publish --access public
+        run: npm publish --access public --provenance --registry=https://registry.npmjs.org

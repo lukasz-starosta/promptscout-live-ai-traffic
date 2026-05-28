@@ -32,6 +32,38 @@ command.
 
 ## Manual Workflow
 
+Before the first public publish, the npm org owner must confirm that the
+`@promptscout` scope exists, the account can publish to it, and the account has
+2FA or npm publishing auth ready.
+
+From the repository root, the owner should run the first publish manually:
+
+```bash
+npm login --registry=https://registry.npmjs.org
+npm whoami --registry=https://registry.npmjs.org
+npm publish --access public --registry=https://registry.npmjs.org
+npm view @promptscout/live-ai-traffic version --registry=https://registry.npmjs.org
+```
+
+Then grant team access if needed:
+
+```bash
+npm access grant read-write @promptscout:maintainers @promptscout/live-ai-traffic --registry=https://registry.npmjs.org
+npm access ls-collaborators @promptscout/live-ai-traffic --registry=https://registry.npmjs.org
+```
+
+After that first publish succeeds, configure npm Trusted Publishing for future
+GitHub Actions releases:
+
+```bash
+npm trust github @promptscout/live-ai-traffic \
+  --repo lukasz-starosta/promptscout-live-ai-traffic \
+  --file release.yml \
+  --env npm \
+  --allow-publish \
+  --registry=https://registry.npmjs.org
+```
+
 Use GitHub Actions `Release` workflow with `dry_run` set to `true` first. The
 dry run builds package `dist` output and runs:
 
@@ -43,7 +75,7 @@ When `dry_run: false` is selected, the workflow publishes to the public npm
 registry at `https://registry.npmjs.org` with:
 
 ```bash
-npm publish --access public
+npm publish --access public --provenance --registry=https://registry.npmjs.org
 ```
 
 The real publish path uses npm Trusted Publishing through GitHub Actions OIDC.

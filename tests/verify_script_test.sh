@@ -36,8 +36,8 @@ write_minimal_scaffold() {
 
   cat >"$repo/package.json" <<'JSON'
 {
-  "name": "promptscout-live-ai-traffic",
-  "private": true,
+  "name": "@promptscout/live-ai-traffic",
+  "version": "0.1.0",
   "workspaces": [
     "packages/*",
     "examples/*"
@@ -56,6 +56,11 @@ JSON
   }
 }
 JSON
+  cat >"$repo/tsconfig.package.json" <<'JSON'
+{
+  "extends": "./tsconfig.base.json"
+}
+JSON
   cat >"$repo/biome.json" <<'JSON'
 {
   "$schema": "https://biomejs.dev/schemas/2.0.0/schema.json"
@@ -67,35 +72,38 @@ JSON
   printf '{ "extends": "../../tsconfig.base.json" }\n' >"$repo/packages/core/tsconfig.json"
   cat >"$repo/packages/core/package.json" <<'JSON'
 {
-  "name": "@lukasz-starosta/promptscout-live-ai-traffic-core",
-  "version": "0.0.0"
+  "name": "promptscout-live-ai-traffic-core",
+  "version": "0.1.0",
+  "private": true
 }
 JSON
   printf 'getting started\n' >"$repo/docs/getting-started.md"
 
   for provider in "${providers[@]}"; do
     mkdir -p "$repo/packages/$provider/src" "$repo/examples/$provider/src"
-    printf 'import "@lukasz-starosta/promptscout-live-ai-traffic-core";\n' >"$repo/packages/$provider/src/index.ts"
+    printf 'import "@promptscout/live-ai-traffic/core";\n' >"$repo/packages/$provider/src/index.ts"
     cat >"$repo/packages/$provider/package.json" <<JSON
 {
-  "name": "@lukasz-starosta/promptscout-live-ai-traffic-$provider",
-  "version": "0.0.0",
+  "name": "promptscout-live-ai-traffic-$provider",
+  "version": "0.1.0",
+  "private": true,
   "dependencies": {
-    "@lukasz-starosta/promptscout-live-ai-traffic-core": "workspace:*"
+    "@promptscout/live-ai-traffic": "workspace:*"
   }
 }
 JSON
     printf '{ "extends": "../../tsconfig.base.json" }\n' >"$repo/packages/$provider/tsconfig.json"
     cat >"$repo/examples/$provider/package.json" <<JSON
 {
-  "name": "@lukasz-starosta/promptscout-live-ai-traffic-example-$provider",
-  "version": "0.0.0",
+  "name": "promptscout-live-ai-traffic-example-$provider",
+  "version": "0.1.0",
+  "private": true,
   "dependencies": {
-    "@lukasz-starosta/promptscout-live-ai-traffic-$provider": "workspace:*"
+    "promptscout-live-ai-traffic-$provider": "workspace:*"
   }
 }
 JSON
-    printf 'import "@lukasz-starosta/promptscout-live-ai-traffic-%s";\n' "$provider" >"$repo/examples/$provider/src/index.ts"
+    printf 'import "promptscout-live-ai-traffic-%s";\n' "$provider" >"$repo/examples/$provider/src/index.ts"
     printf '{ "extends": "../../tsconfig.base.json" }\n' >"$repo/examples/$provider/tsconfig.json"
     printf '# %s example\n' "$provider" >"$repo/examples/$provider/README.md"
     printf '# %s integration\n' "$provider" >"$repo/docs/integrations/$provider.md"

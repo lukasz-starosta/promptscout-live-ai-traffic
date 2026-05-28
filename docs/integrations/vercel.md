@@ -6,61 +6,25 @@ runs.
 
 ## Install
 
-For local PromptScout dogfooding, build local tarballs from this repository and
-install both the core package and the Vercel/Next.js middleware package into the
-local PromptScout checkout:
+Install the public package from npm:
 
 ```bash
-yarn pack:vercel-local
+npm install @promptscout/live-ai-traffic@0.1.0
 ```
 
-The command runs:
+For Yarn:
 
 ```bash
-yarn tsc -b packages/core packages/vercel-middleware
+yarn add @promptscout/live-ai-traffic@0.1.0
 ```
 
-It writes these local artifacts:
-
-```text
-.promptscout-local-packages/promptscout-live-ai-traffic-core-v0.0.0.tgz
-.promptscout-local-packages/promptscout-live-ai-traffic-vercel-middleware-v0.0.0.tgz
-```
-
-From the PromptScout checkout, install the local tarballs with `file:`
-dependencies:
-
-```bash
-LIVE_AI_TRAFFIC_REPO=/absolute/path/to/promptscout-live-ai-traffic
-yarn add @lukasz-starosta/promptscout-live-ai-traffic-core@file:$LIVE_AI_TRAFFIC_REPO/.promptscout-local-packages/promptscout-live-ai-traffic-core-v0.0.0.tgz @lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware@file:$LIVE_AI_TRAFFIC_REPO/.promptscout-local-packages/promptscout-live-ai-traffic-vercel-middleware-v0.0.0.tgz
-```
-
-Equivalent `package.json` entries:
-
-```json
-{
-  "@lukasz-starosta/promptscout-live-ai-traffic-core": "file:/absolute/path/to/promptscout-live-ai-traffic/.promptscout-local-packages/promptscout-live-ai-traffic-core-v0.0.0.tgz",
-  "@lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware": "file:/absolute/path/to/promptscout-live-ai-traffic/.promptscout-local-packages/promptscout-live-ai-traffic-vercel-middleware-v0.0.0.tgz"
-}
-```
-
-No npm publish is required.
-
-Package version `0.0.0` is intentional for this local-first phase. Replace
-these tarball installs with exact private GitHub Packages versions only after
-PromptScout approves a private publish.
-
-After private GitHub Packages publication, configure the consuming app auth from
-[release.md](../release.md), then install exact versions:
-
-```bash
-yarn add @lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware@0.0.0
-```
+Pin exact versions in production apps. The Vercel collector is imported from
+the package subpath; it is not a separate npm package.
 
 ## Next.js 16 `proxy.ts`
 
 ```ts
-import { trackPromptScoutAiTraffic } from "@lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware";
+import { trackPromptScoutAiTraffic } from "@promptscout/live-ai-traffic/vercel-middleware";
 import { NextResponse, type NextProxy } from "next/server";
 
 export const proxy: NextProxy = (request, event) => {

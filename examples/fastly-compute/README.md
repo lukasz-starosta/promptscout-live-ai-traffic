@@ -32,7 +32,7 @@ npm create @fastly/compute@latest
 ```
 
 Copy `src/index.ts` from this example into that project or depend on
-`@lukasz-starosta/promptscout-live-ai-traffic-fastly-compute` from this workspace. Configure
+`promptscout-live-ai-traffic-fastly-compute` from this workspace. Configure
 local backend mappings for `origin` and `promptscout_ingest`, then run:
 
 ```bash

@@ -20,7 +20,7 @@ describe("WordPress plugin collector", () => {
 
     assert.equal(
       packageJson.name,
-      "@lukasz-starosta/promptscout-live-ai-traffic-wordpress-plugin",
+      "promptscout-live-ai-traffic-wordpress-plugin",
     );
     assert.match(plugin, /Plugin Name:\s*PromptScout Live AI Traffic/);
     assert.match(plugin, /promptscout_live_ai_traffic_bootstrap/);

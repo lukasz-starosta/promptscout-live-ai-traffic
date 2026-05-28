@@ -10,31 +10,20 @@ You do not need to configure a separate brand ID or team-site ID in the app.
 
 ## Install
 
-For local PromptScout dogfooding, create local tarballs from this repository:
+Install the public package:
 
 ```bash
-yarn pack:vercel-local
+npm install @promptscout/live-ai-traffic@0.1.0
 ```
 
-Then install both local tarballs from the PromptScout checkout:
+For Yarn:
 
 ```bash
-LIVE_AI_TRAFFIC_REPO=/absolute/path/to/promptscout-live-ai-traffic
-yarn add @lukasz-starosta/promptscout-live-ai-traffic-core@file:$LIVE_AI_TRAFFIC_REPO/.promptscout-local-packages/promptscout-live-ai-traffic-core-v0.0.0.tgz @lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware@file:$LIVE_AI_TRAFFIC_REPO/.promptscout-local-packages/promptscout-live-ai-traffic-vercel-middleware-v0.0.0.tgz
+yarn add @promptscout/live-ai-traffic@0.1.0
 ```
 
-No npm publish is required.
-
-Version `0.0.0` is intentional while this repository is local-first. Replace the
-tarballs with exact private GitHub Packages versions only after PromptScout
-approves a private publish.
-
-After private package publication, configure auth from `docs/release.md`, then
-install the same middleware package name from your Next.js app:
-
-```bash
-npm install @lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware@0.0.0
-```
+The middleware helper is exposed through
+`@promptscout/live-ai-traffic/vercel-middleware`.
 
 Copy `.env.example` to `.env.local` and set the token and ingest URL from
 PromptScout:
@@ -53,7 +42,7 @@ Copy `proxy.ts` to the root of your Next.js app, next to `app` or `pages`. If
 your app uses a `src` directory, place it at `src/proxy.ts`.
 
 ```ts
-import { trackPromptScoutAiTraffic } from "@lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware";
+import { trackPromptScoutAiTraffic } from "@promptscout/live-ai-traffic/vercel-middleware";
 import { NextResponse, type NextProxy } from "next/server";
 
 export const proxy: NextProxy = (request, event) => {
@@ -85,7 +74,7 @@ For older `middleware.ts` setups, keep the same body in `middleware.ts` and
 export `middleware`:
 
 ```ts
-import { trackPromptScoutAiTraffic } from "@lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware";
+import { trackPromptScoutAiTraffic } from "@promptscout/live-ai-traffic/vercel-middleware";
 import { NextResponse, type NextFetchEvent, type NextRequest } from "next/server";
 
 export function middleware(request: NextRequest, event: NextFetchEvent) {

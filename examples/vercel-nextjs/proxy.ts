@@ -1,4 +1,4 @@
-import { trackPromptScoutAiTraffic } from "@lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware";
+import { trackPromptScoutAiTraffic } from "@promptscout/live-ai-traffic/vercel-middleware";
 import { type NextProxy, NextResponse } from "next/server";
 
 export const proxy: NextProxy = (request, event) => {

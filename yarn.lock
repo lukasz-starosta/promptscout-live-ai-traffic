@@ -96,121 +96,130 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lukasz-starosta/promptscout-live-ai-traffic-cloudflare-worker@workspace:*, @lukasz-starosta/promptscout-live-ai-traffic-cloudflare-worker@workspace:packages/cloudflare-worker":
+"@promptscout/live-ai-traffic@workspace:*, @promptscout/live-ai-traffic@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-cloudflare-worker@workspace:packages/cloudflare-worker"
+  resolution: "@promptscout/live-ai-traffic@workspace:."
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-core": "workspace:*"
+    "@biomejs/biome": "npm:2.3.11"
+    typescript: "npm:5.8.3"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-cloudflare@workspace:*, @lukasz-starosta/promptscout-live-ai-traffic-cloudflare@workspace:packages/cloudflare":
+"promptscout-live-ai-traffic-cloudflare-worker@workspace:*, promptscout-live-ai-traffic-cloudflare-worker@workspace:packages/cloudflare-worker":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-cloudflare@workspace:packages/cloudflare"
+  resolution: "promptscout-live-ai-traffic-cloudflare-worker@workspace:packages/cloudflare-worker"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-core": "workspace:*"
+    "@promptscout/live-ai-traffic": "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-cloudfront-aws@workspace:*, @lukasz-starosta/promptscout-live-ai-traffic-cloudfront-aws@workspace:packages/cloudfront-aws":
+"promptscout-live-ai-traffic-cloudflare@workspace:*, promptscout-live-ai-traffic-cloudflare@workspace:packages/cloudflare":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-cloudfront-aws@workspace:packages/cloudfront-aws"
+  resolution: "promptscout-live-ai-traffic-cloudflare@workspace:packages/cloudflare"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-core": "workspace:*"
+    "@promptscout/live-ai-traffic": "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-core@workspace:*, @lukasz-starosta/promptscout-live-ai-traffic-core@workspace:packages/core":
+"promptscout-live-ai-traffic-cloudfront-aws@workspace:*, promptscout-live-ai-traffic-cloudfront-aws@workspace:packages/cloudfront-aws":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-core@workspace:packages/core"
+  resolution: "promptscout-live-ai-traffic-cloudfront-aws@workspace:packages/cloudfront-aws"
+  dependencies:
+    "@promptscout/live-ai-traffic": "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-example-cloudflare-worker@workspace:examples/cloudflare-worker":
+"promptscout-live-ai-traffic-core@workspace:packages/core":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-example-cloudflare-worker@workspace:examples/cloudflare-worker"
-  dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-cloudflare-worker": "workspace:*"
+  resolution: "promptscout-live-ai-traffic-core@workspace:packages/core"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-example-cloudflare@workspace:examples/cloudflare":
+"promptscout-live-ai-traffic-example-cloudflare-worker@workspace:examples/cloudflare-worker":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-example-cloudflare@workspace:examples/cloudflare"
+  resolution: "promptscout-live-ai-traffic-example-cloudflare-worker@workspace:examples/cloudflare-worker"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-cloudflare": "workspace:*"
+    promptscout-live-ai-traffic-cloudflare-worker: "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-example-cloudfront-aws@workspace:examples/cloudfront-aws":
+"promptscout-live-ai-traffic-example-cloudflare@workspace:examples/cloudflare":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-example-cloudfront-aws@workspace:examples/cloudfront-aws"
+  resolution: "promptscout-live-ai-traffic-example-cloudflare@workspace:examples/cloudflare"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-cloudfront-aws": "workspace:*"
+    promptscout-live-ai-traffic-cloudflare: "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-example-express@workspace:examples/express":
+"promptscout-live-ai-traffic-example-cloudfront-aws@workspace:examples/cloudfront-aws":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-example-express@workspace:examples/express"
+  resolution: "promptscout-live-ai-traffic-example-cloudfront-aws@workspace:examples/cloudfront-aws"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-node-middleware": "workspace:*"
+    promptscout-live-ai-traffic-cloudfront-aws: "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-example-fastly-compute@workspace:examples/fastly-compute":
+"promptscout-live-ai-traffic-example-express@workspace:examples/express":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-example-fastly-compute@workspace:examples/fastly-compute"
+  resolution: "promptscout-live-ai-traffic-example-express@workspace:examples/express"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-fastly-compute": "workspace:*"
+    promptscout-live-ai-traffic-node-middleware: "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-example-fastly@workspace:examples/fastly":
+"promptscout-live-ai-traffic-example-fastly-compute@workspace:examples/fastly-compute":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-example-fastly@workspace:examples/fastly"
+  resolution: "promptscout-live-ai-traffic-example-fastly-compute@workspace:examples/fastly-compute"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-fastly": "workspace:*"
+    promptscout-live-ai-traffic-fastly-compute: "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-example-netlify-edge@workspace:examples/netlify-edge":
+"promptscout-live-ai-traffic-example-fastly@workspace:examples/fastly":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-example-netlify-edge@workspace:examples/netlify-edge"
+  resolution: "promptscout-live-ai-traffic-example-fastly@workspace:examples/fastly"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-netlify-edge": "workspace:*"
+    promptscout-live-ai-traffic-fastly: "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-example-netlify@workspace:examples/netlify":
+"promptscout-live-ai-traffic-example-netlify-edge@workspace:examples/netlify-edge":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-example-netlify@workspace:examples/netlify"
+  resolution: "promptscout-live-ai-traffic-example-netlify-edge@workspace:examples/netlify-edge"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-netlify": "workspace:*"
+    promptscout-live-ai-traffic-netlify-edge: "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-example-nginx-log-forwarder@workspace:examples/nginx-log-forwarder":
+"promptscout-live-ai-traffic-example-netlify@workspace:examples/netlify":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-example-nginx-log-forwarder@workspace:examples/nginx-log-forwarder"
+  resolution: "promptscout-live-ai-traffic-example-netlify@workspace:examples/netlify"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-nginx-log-forwarder": "workspace:*"
+    promptscout-live-ai-traffic-netlify: "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-example-node-express@workspace:examples/node-express":
+"promptscout-live-ai-traffic-example-nginx-log-forwarder@workspace:examples/nginx-log-forwarder":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-example-node-express@workspace:examples/node-express"
+  resolution: "promptscout-live-ai-traffic-example-nginx-log-forwarder@workspace:examples/nginx-log-forwarder"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-node-express": "workspace:*"
+    promptscout-live-ai-traffic-nginx-log-forwarder: "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-example-vercel-nextjs@workspace:examples/vercel-nextjs":
+"promptscout-live-ai-traffic-example-node-express@workspace:examples/node-express":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-example-vercel-nextjs@workspace:examples/vercel-nextjs"
+  resolution: "promptscout-live-ai-traffic-example-node-express@workspace:examples/node-express"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware": "workspace:*"
+    promptscout-live-ai-traffic-node-express: "workspace:*"
+  languageName: unknown
+  linkType: soft
+
+"promptscout-live-ai-traffic-example-vercel-nextjs@workspace:examples/vercel-nextjs":
+  version: 0.0.0-use.local
+  resolution: "promptscout-live-ai-traffic-example-vercel-nextjs@workspace:examples/vercel-nextjs"
+  dependencies:
+    "@promptscout/live-ai-traffic": "workspace:*"
   peerDependencies:
     next: ">=16.0.0"
     react: ">=19.2.0"
@@ -218,114 +227,105 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-example-vercel@workspace:examples/vercel":
+"promptscout-live-ai-traffic-example-vercel@workspace:examples/vercel":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-example-vercel@workspace:examples/vercel"
+  resolution: "promptscout-live-ai-traffic-example-vercel@workspace:examples/vercel"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-vercel": "workspace:*"
+    promptscout-live-ai-traffic-vercel: "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-example-wordpress@workspace:examples/wordpress":
+"promptscout-live-ai-traffic-example-wordpress@workspace:examples/wordpress":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-example-wordpress@workspace:examples/wordpress"
+  resolution: "promptscout-live-ai-traffic-example-wordpress@workspace:examples/wordpress"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-wordpress": "workspace:*"
+    promptscout-live-ai-traffic-wordpress: "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-fastly-compute@workspace:*, @lukasz-starosta/promptscout-live-ai-traffic-fastly-compute@workspace:packages/fastly-compute":
+"promptscout-live-ai-traffic-fastly-compute@workspace:*, promptscout-live-ai-traffic-fastly-compute@workspace:packages/fastly-compute":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-fastly-compute@workspace:packages/fastly-compute"
+  resolution: "promptscout-live-ai-traffic-fastly-compute@workspace:packages/fastly-compute"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-core": "workspace:*"
+    "@promptscout/live-ai-traffic": "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-fastly@workspace:*, @lukasz-starosta/promptscout-live-ai-traffic-fastly@workspace:packages/fastly":
+"promptscout-live-ai-traffic-fastly@workspace:*, promptscout-live-ai-traffic-fastly@workspace:packages/fastly":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-fastly@workspace:packages/fastly"
+  resolution: "promptscout-live-ai-traffic-fastly@workspace:packages/fastly"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-core": "workspace:*"
+    "@promptscout/live-ai-traffic": "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-netlify-edge@workspace:*, @lukasz-starosta/promptscout-live-ai-traffic-netlify-edge@workspace:packages/netlify-edge":
+"promptscout-live-ai-traffic-netlify-edge@workspace:*, promptscout-live-ai-traffic-netlify-edge@workspace:packages/netlify-edge":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-netlify-edge@workspace:packages/netlify-edge"
+  resolution: "promptscout-live-ai-traffic-netlify-edge@workspace:packages/netlify-edge"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-core": "workspace:*"
+    "@promptscout/live-ai-traffic": "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-netlify@workspace:*, @lukasz-starosta/promptscout-live-ai-traffic-netlify@workspace:packages/netlify":
+"promptscout-live-ai-traffic-netlify@workspace:*, promptscout-live-ai-traffic-netlify@workspace:packages/netlify":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-netlify@workspace:packages/netlify"
+  resolution: "promptscout-live-ai-traffic-netlify@workspace:packages/netlify"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-core": "workspace:*"
+    "@promptscout/live-ai-traffic": "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-nginx-log-forwarder@workspace:*, @lukasz-starosta/promptscout-live-ai-traffic-nginx-log-forwarder@workspace:packages/nginx-log-forwarder":
+"promptscout-live-ai-traffic-nginx-log-forwarder@workspace:*, promptscout-live-ai-traffic-nginx-log-forwarder@workspace:packages/nginx-log-forwarder":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-nginx-log-forwarder@workspace:packages/nginx-log-forwarder"
+  resolution: "promptscout-live-ai-traffic-nginx-log-forwarder@workspace:packages/nginx-log-forwarder"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-core": "workspace:*"
+    "@promptscout/live-ai-traffic": "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-node-express@workspace:*, @lukasz-starosta/promptscout-live-ai-traffic-node-express@workspace:packages/node-express":
+"promptscout-live-ai-traffic-node-express@workspace:*, promptscout-live-ai-traffic-node-express@workspace:packages/node-express":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-node-express@workspace:packages/node-express"
+  resolution: "promptscout-live-ai-traffic-node-express@workspace:packages/node-express"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-core": "workspace:*"
+    "@promptscout/live-ai-traffic": "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-node-middleware@workspace:*, @lukasz-starosta/promptscout-live-ai-traffic-node-middleware@workspace:packages/node-middleware":
+"promptscout-live-ai-traffic-node-middleware@workspace:*, promptscout-live-ai-traffic-node-middleware@workspace:packages/node-middleware":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-node-middleware@workspace:packages/node-middleware"
+  resolution: "promptscout-live-ai-traffic-node-middleware@workspace:packages/node-middleware"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-core": "workspace:*"
+    "@promptscout/live-ai-traffic": "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware@workspace:*, @lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware@workspace:packages/vercel-middleware":
+"promptscout-live-ai-traffic-vercel-middleware@workspace:packages/vercel-middleware":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-vercel-middleware@workspace:packages/vercel-middleware"
+  resolution: "promptscout-live-ai-traffic-vercel-middleware@workspace:packages/vercel-middleware"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-core": "workspace:*"
+    "@promptscout/live-ai-traffic": "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-vercel@workspace:*, @lukasz-starosta/promptscout-live-ai-traffic-vercel@workspace:packages/vercel":
+"promptscout-live-ai-traffic-vercel@workspace:*, promptscout-live-ai-traffic-vercel@workspace:packages/vercel":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-vercel@workspace:packages/vercel"
+  resolution: "promptscout-live-ai-traffic-vercel@workspace:packages/vercel"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-core": "workspace:*"
+    "@promptscout/live-ai-traffic": "workspace:*"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-wordpress-plugin@workspace:packages/wordpress-plugin":
+"promptscout-live-ai-traffic-wordpress-plugin@workspace:packages/wordpress-plugin":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-wordpress-plugin@workspace:packages/wordpress-plugin"
+  resolution: "promptscout-live-ai-traffic-wordpress-plugin@workspace:packages/wordpress-plugin"
   languageName: unknown
   linkType: soft
 
-"@lukasz-starosta/promptscout-live-ai-traffic-wordpress@workspace:*, @lukasz-starosta/promptscout-live-ai-traffic-wordpress@workspace:packages/wordpress":
+"promptscout-live-ai-traffic-wordpress@workspace:*, promptscout-live-ai-traffic-wordpress@workspace:packages/wordpress":
   version: 0.0.0-use.local
-  resolution: "@lukasz-starosta/promptscout-live-ai-traffic-wordpress@workspace:packages/wordpress"
+  resolution: "promptscout-live-ai-traffic-wordpress@workspace:packages/wordpress"
   dependencies:
-    "@lukasz-starosta/promptscout-live-ai-traffic-core": "workspace:*"
-  languageName: unknown
-  linkType: soft
-
-"promptscout-live-ai-traffic@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "promptscout-live-ai-traffic@workspace:."
-  dependencies:
-    "@biomejs/biome": "npm:2.3.11"
-    typescript: "npm:5.8.3"
+    "@promptscout/live-ai-traffic": "workspace:*"
   languageName: unknown
   linkType: soft
 

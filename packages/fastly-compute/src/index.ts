@@ -8,7 +8,7 @@ import {
   type LiveAiTrafficRetryOptions,
   normalizeLiveAiTrafficEvent,
   toLiveAiTrafficProviderClassification,
-} from "@lukasz-starosta/promptscout-live-ai-traffic-core";
+} from "@promptscout/live-ai-traffic/core";
 
 export type FastlyComputeHeadersLike =
   | {

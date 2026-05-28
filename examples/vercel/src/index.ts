@@ -1,3 +1,3 @@
-import { integration } from "@lukasz-starosta/promptscout-live-ai-traffic-vercel";
+import { integration } from "promptscout-live-ai-traffic-vercel";
 
 export { integration };

@@ -1,10 +1,10 @@
 {
-  "name": "@lukasz-starosta/promptscout-live-ai-traffic-example-express",
-  "version": "0.0.0",
+  "name": "promptscout-live-ai-traffic-example-express",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "dependencies": {
-    "@lukasz-starosta/promptscout-live-ai-traffic-node-middleware": "workspace:*"
+    "promptscout-live-ai-traffic-node-middleware": "workspace:*"
   },
   "scripts": {
     "typecheck": "tsc -b",

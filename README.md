@@ -1,37 +1,24 @@
 # PromptScout Live AI Traffic
 
-Repository for the PromptScout live AI traffic packages and examples.
+Repository for the PromptScout live AI traffic package, provider integrations,
+and examples.
 
 ## Current Release Status
 
-This repo supports local tarball dogfooding and private GitHub Packages
-publishing for PromptScout consumption. Public npm publishing is out of scope.
-Package version `0.0.0` is intentional until a private version bump is approved.
-
-The first local install target is the Next.js/Vercel middleware in
-`packages/vercel-middleware`, with the runnable reference app in
-`examples/vercel-nextjs`.
-
-## Local Next.js/Vercel Install
-
-From this repository checkout, build and pack the shared core package and the
-Vercel middleware package:
+This repo publishes one public npm package:
 
 ```bash
-corepack enable
-yarn install --immutable
-yarn tsc -b packages/core packages/vercel-middleware
-(cd packages/core && yarn pack --out /tmp/promptscout-live-ai-traffic-core-0.0.0.tgz)
-(cd packages/vercel-middleware && yarn pack --out /tmp/promptscout-live-ai-traffic-vercel-middleware-0.0.0.tgz)
+npm install @promptscout/live-ai-traffic@0.1.0
 ```
 
-Then install both local tarballs in the Next.js app you are dogfooding:
+The durable public import contract uses subpath exports from that package:
 
-```bash
-npm install \
-  /tmp/promptscout-live-ai-traffic-core-0.0.0.tgz \
-  /tmp/promptscout-live-ai-traffic-vercel-middleware-0.0.0.tgz
+```ts
+import { classifyAiTraffic } from "@promptscout/live-ai-traffic/core";
+import { trackPromptScoutAiTraffic } from "@promptscout/live-ai-traffic/vercel-middleware";
 ```
+
+The first public version is `0.1.0`.
 
 Add the `proxy.ts` or `middleware.ts` shown in
 [docs/integrations/vercel.md](docs/integrations/vercel.md). Configure only the
@@ -45,8 +32,9 @@ This repository uses Yarn workspaces:
 
 - `packages/core` contains shared event contracts, classification helpers,
   privacy normalization helpers, and the PromptScout ingest client.
-- `packages/*` contains provider package shells plus implemented runtime
-  adapters such as `packages/vercel-middleware` and `packages/node-middleware`.
+- `packages/*` contains private provider implementation workspaces plus
+  implemented runtime adapters such as `packages/vercel-middleware` and
+  `packages/node-middleware`.
 - `packages/vercel-middleware` contains the Next.js/Vercel Proxy and Middleware
   collector used by the local dogfood path.
 - `packages/cloudflare-worker` contains the Cloudflare Worker runtime collector
@@ -69,18 +57,14 @@ This repository uses Yarn workspaces:
 - `docs/install-matrix-and-signal-quality.md` explains how customers should
   choose an install path and how to interpret collector signal quality.
 
-Provider packages are configured for private GitHub Packages metadata, but the
-manual release workflow publishes only `packages/core` and
-`packages/vercel-middleware` for the current PromptScout consumption path. Some
-generic provider directories remain placeholders until their runtime
-implementation work lands in later issues. Future published provider packages
-will use the shared repository version. Example workspaces keep the same version
-for traceability, but remain private and are not published. See
-[docs/release.md](docs/release.md) for `.npmrc`, token, version pinning, and
-workflow details. `packages/node-middleware` and runtime collectors such as
+The manual release workflow publishes only the root
+`@promptscout/live-ai-traffic` package. Internal workspaces and examples keep
+the same version for traceability, but remain private and are not published. See
+[docs/release.md](docs/release.md) for npm token, version pinning, and workflow
+details. `packages/node-middleware` and runtime collectors such as
 `packages/vercel-middleware`, `packages/netlify-edge`, `packages/cloudfront-aws`,
 and `packages/fastly-compute` reuse the shared core classifier, privacy
-normalization helpers, and ingest client for implemented local paths.
+normalization helpers, and ingest client for implemented paths.
 CloudFront/AWS is implemented through real-time access logs delivered to Kinesis
 Data Streams, not CloudFront Functions. `examples/fastly-compute` shows how to
 wire Fastly JavaScript Compute to customer origin and PromptScout ingest

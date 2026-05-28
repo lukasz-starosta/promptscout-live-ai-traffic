@@ -1,6 +1,6 @@
 # nginx Log Forwarder Integration
 
-`@lukasz-starosta/promptscout-live-ai-traffic-nginx-log-forwarder` supports customers who can
+`promptscout-live-ai-traffic-nginx-log-forwarder` supports customers who can
 read origin nginx access logs but do not want a request-path proxy integration.
 It parses common or JSON nginx access logs, classifies requests with
 `packages/core`, batches PromptScout events, and stores byte-offset checkpoints

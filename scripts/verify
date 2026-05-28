@@ -144,6 +144,7 @@ require_path package.json
 require_path biome.json
 require_path tsconfig.json
 require_path tsconfig.base.json
+require_path tsconfig.package.json
 require_path docs/getting-started.md
 require_path docs/integrations
 require_path packages/core/package.json
@@ -153,13 +154,13 @@ require_path packages/core/src/index.ts
 for provider in "${PROVIDERS[@]}"; do
   require_path "packages/$provider/package.json"
   require_path "packages/$provider/tsconfig.json"
-  require_file_contains "packages/$provider/src/index.ts" "@lukasz-starosta/promptscout-live-ai-traffic-core"
-  require_file_contains "packages/$provider/package.json" "\"@lukasz-starosta/promptscout-live-ai-traffic-core\": \"workspace:*\""
+  require_file_contains "packages/$provider/src/index.ts" "@promptscout/live-ai-traffic/core"
+  require_file_contains "packages/$provider/package.json" "\"@promptscout/live-ai-traffic\": \"workspace:*\""
 
   require_path "examples/$provider/package.json"
   require_path "examples/$provider/tsconfig.json"
-  require_file_contains "examples/$provider/src/index.ts" "@lukasz-starosta/promptscout-live-ai-traffic-$provider"
-  require_file_contains "examples/$provider/package.json" "\"@lukasz-starosta/promptscout-live-ai-traffic-$provider\": \"workspace:*\""
+  require_file_contains "examples/$provider/src/index.ts" "promptscout-live-ai-traffic-$provider"
+  require_file_contains "examples/$provider/package.json" "\"promptscout-live-ai-traffic-$provider\": \"workspace:*\""
   require_path "examples/$provider/README.md"
 
   require_path "docs/integrations/$provider.md"

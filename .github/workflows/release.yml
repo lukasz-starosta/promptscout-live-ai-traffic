@@ -11,14 +11,10 @@ on:
 
 permissions:
   contents: read
-  packages: write
-
-env:
-  PUBLISH_PACKAGE_DIRS: packages/core packages/vercel-middleware
 
 jobs:
   release:
-    name: Release private packages
+    name: Release public npm package
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -30,8 +26,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          registry-url: https://npm.pkg.github.com
-          scope: "@lukasz-starosta"
+          registry-url: https://registry.npmjs.org
 
       - name: Enable Corepack
         run: corepack enable
@@ -51,32 +46,21 @@ jobs:
       - name: Repo verification
         run: ./scripts/verify
 
-      - name: Build packages
+      - name: Build package
         run: yarn build
 
       - name: Dry-run package contents
         if: ${{ inputs.dry_run }}
-        run: |
-          for package_dir in $PUBLISH_PACKAGE_DIRS; do
-            echo "Dry-run packing ${package_dir}"
-            (cd "$package_dir" && yarn pack --dry-run)
-          done
+        run: npm pack --dry-run
 
-      - name: Publish private GitHub Packages
+      - name: Publish public npm package
         if: ${{ !inputs.dry_run }}
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          YARN_NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           if [[ -z "${NODE_AUTH_TOKEN:-}" ]]; then
-            echo "GITHUB_TOKEN is required for real publishes" >&2
+            echo "NPM_TOKEN is required for real publishes" >&2
             exit 1
           fi
 
-          for package_dir in $PUBLISH_PACKAGE_DIRS; do
-            echo "Publishing ${package_dir}"
-            current_dir="$PWD"
-            cd "$package_dir"
-            yarn npm publish --access restricted
-            cd "$current_dir"
-          done
+          npm publish --access public

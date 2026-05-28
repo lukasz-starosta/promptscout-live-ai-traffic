@@ -10,7 +10,7 @@ import {
   normalizeLiveAiTrafficEvent,
   toLiveAiTrafficProviderClassification,
   type WebCryptoLike,
-} from "@lukasz-starosta/promptscout-live-ai-traffic-core";
+} from "@promptscout/live-ai-traffic/core";
 
 type RuntimeUrl = {
   hostname: string;

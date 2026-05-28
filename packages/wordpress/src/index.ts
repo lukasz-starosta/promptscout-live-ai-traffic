@@ -1,4 +1,4 @@
-import { createPlaceholderIntegration } from "@lukasz-starosta/promptscout-live-ai-traffic-core";
+import { createPlaceholderIntegration } from "@promptscout/live-ai-traffic/core";
 
 export const integration = createPlaceholderIntegration("wordpress");
 export default integration;

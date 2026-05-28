@@ -1,6 +1,6 @@
 # Cloudflare Worker Collector
 
-`@lukasz-starosta/promptscout-live-ai-traffic-cloudflare-worker` is a customer-owned edge
+`promptscout-live-ai-traffic-cloudflare-worker` is a customer-owned edge
 collector for sites already proxied through Cloudflare. It observes each
 matching request, classifies the traffic with `packages/core`, sends a request
 observation to PromptScout in the background with `ctx.waitUntil`, and forwards
@@ -61,7 +61,7 @@ PROMPTSCOUT_DEBUG = "false"
 ## Minimal Worker
 
 ```ts
-import worker from "@lukasz-starosta/promptscout-live-ai-traffic-cloudflare-worker";
+import worker from "promptscout-live-ai-traffic-cloudflare-worker";
 
 export default worker;
 ```
@@ -90,7 +90,7 @@ From the repository root:
 
 ```bash
 yarn install --immutable
-yarn workspace @lukasz-starosta/promptscout-live-ai-traffic-example-cloudflare-worker dev
+yarn workspace promptscout-live-ai-traffic-example-cloudflare-worker dev
 ```
 
 Then simulate an AI crawler request:
@@ -111,7 +111,7 @@ gets the forwarded origin response.
 After setting the route and secret:
 
 ```bash
-yarn workspace @lukasz-starosta/promptscout-live-ai-traffic-example-cloudflare-worker deploy
+yarn workspace promptscout-live-ai-traffic-example-cloudflare-worker deploy
 ```
 
 Equivalent raw Wrangler command:

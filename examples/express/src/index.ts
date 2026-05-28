@@ -1,14 +1,14 @@
 import type {
   LiveAiTrafficEvent,
   LiveAiTrafficIngestClient,
-} from "@lukasz-starosta/promptscout-live-ai-traffic-core";
+} from "@promptscout/live-ai-traffic/core";
 import {
   createExpressLiveAiTrafficMiddleware,
   type ExpressNext,
   type ExpressRequestLike,
   type ExpressResponseLike,
   type LiveAiTrafficNodeMiddlewareOptions,
-} from "@lukasz-starosta/promptscout-live-ai-traffic-node-middleware";
+} from "promptscout-live-ai-traffic-node-middleware";
 
 declare const process:
   | {

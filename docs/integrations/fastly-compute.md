@@ -1,7 +1,7 @@
 # Fastly Compute Integration
 
 The Fastly Compute collector is implemented in
-`@lukasz-starosta/promptscout-live-ai-traffic-fastly-compute` with an example in
+`promptscout-live-ai-traffic-fastly-compute` with an example in
 `examples/fastly-compute`.
 
 Fastly JavaScript Compute dispatches incoming requests through a fetch event.

@@ -25,6 +25,7 @@ describe("GitHub Actions verification workflow", () => {
       "yarn install --immutable",
       "yarn lint",
       "yarn typecheck",
+      "yarn build",
       "yarn test",
       "./scripts/verify",
     ]) {

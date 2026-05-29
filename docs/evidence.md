@@ -51,6 +51,10 @@ answer or citation. A GPTBot request shows that GPTBot requested the page. A
 ChatGPT-User request shows a user-triggered fetch from ChatGPT. A referer from an
 assistant surface suggests follow-on browser traffic from that surface, but it is
 weaker than a documented crawler user agent.
+Landing URL source parameters, such as `utm_source=chatgpt.com`, are also
+advisory referral signals. They can identify the source family when a browser
+omits `Referer`, but they do not prove the contents of an individual AI
+conversation.
 
 ## High-Confidence Signals
 
@@ -71,15 +75,18 @@ source URL and the classifier rule that matched it.
 
 Weak or advisory signals are useful for context but should not override a
 higher-confidence user-agent match. Referers can be absent, stripped, rewritten,
-or copied by browsers and intermediaries. The fixture names in
-`packages/core/fixtures/classifier/known-referrers.json` keep these cases
-reproducible while marking them as advisory.
+or copied by browsers and intermediaries. Landing-page query parameters are
+customer-controlled URL data and can also be copied or rewritten. The fixture
+names in `packages/core/fixtures/classifier/known-referrers.json` and
+`packages/core/fixtures/classifier/known-query-attribution.json` keep these
+cases reproducible while marking them as advisory.
 
 | Signal source | Fixture examples | How to interpret it |
 | --- | --- | --- |
 | `referer` | `chatgpt-share-referral`, `claude-referral`, `perplexity-search-referral` | Likely browser traffic from an AI assistant surface. |
 | `referer` | `gemini-referral`, `copilot-referral`, `bing-chat-referral`, `meta-ai-referral` | Assistant-surface traffic, useful for attribution but not crawler proof. |
 | `referer` | `google-search-referral` | Conventional search referral baseline, not AI crawler traffic. |
+| `query` | `chatgpt-utm-source-domain`, `chatgpt-utm-source-name`, `chatgpt-source-name`, `chatgpt-legacy-openai-host` | Source-level landing URL attribution when `Referer` is absent or stripped. |
 
 ## AI Referral Research Notes
 
@@ -101,17 +108,21 @@ guarantee. Browsers and in-app surfaces can omit or rewrite `Referer`, and some
 AI products also append query parameters such as UTM tags. The core privacy
 helpers therefore strip referer query strings and fragments, and AI referral
 visit events omit the landing-page query string before storage or forwarding.
+The classifier may inspect safe source keys such as `utm_source` and `source`
+for classification before that omission happens.
 
 Explicit non-goals:
 
-- Do not infer AI referral traffic from arbitrary `utm_source` values without a
-  matching provider-owned referer.
+- Do not infer AI referral traffic from arbitrary query values; only closed,
+  source-style keys and known provider values should be used.
 - Do not classify Google Search or AI Overview clicks as Gemini traffic when the
   referer is only a normal Google Search URL.
 - Do not treat referral visits as crawler, training, or user-triggered fetch
   events.
-- Do not store raw prompts, raw query strings, or UTM parameters from referers or
-  referral landing-page URLs.
+- Do not store raw prompts, raw query strings, or unsafe UTM parameters from
+  referers or referral landing-page URLs.
+- Do not claim individual ChatGPT conversation attribution unless the landing
+  URL contains a customer-controlled, safe campaign or content identifier.
 
 ## Validation Fixtures
 
@@ -119,8 +130,8 @@ Classifier fixture tests load named JSON records instead of prose-only
 assumptions. Each record includes:
 
 - `name`: stable fixture identifier used in assertion messages.
-- `signalSource`: signal kind used by the classifier, such as `user_agent` or
-  `referer`.
+- `signalSource`: signal kind used by the classifier, such as `user_agent`,
+  `referer`, or `query`.
 - `confidenceLabel`: `high` for documented user-agent matches or `advisory` for
   referral-only matches.
 - `sourceUrl`: public source for the signal family.

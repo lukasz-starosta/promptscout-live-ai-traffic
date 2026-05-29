@@ -1,0 +1,46 @@
+[
+  {
+    "name": "chatgpt-utm-source-domain",
+    "landingUrl": "https://example.com/pricing?utm_source=chatgpt.com&utm_medium=referral",
+    "provider": "openai_chatgpt_referral",
+    "agentType": "ai_referral_visit",
+    "matchedRule": "query:openai:chatgpt",
+    "docsUrl": "https://help.openai.com/en/articles/10984597-chatgpt-generated-links",
+    "confidenceLabel": "advisory",
+    "signalSource": "query",
+    "sourceUrl": "https://help.openai.com/en/articles/10984597-chatgpt-generated-links"
+  },
+  {
+    "name": "chatgpt-utm-source-name",
+    "landingUrl": "https://example.com/docs?utm_source=chatgpt",
+    "provider": "openai_chatgpt_referral",
+    "agentType": "ai_referral_visit",
+    "matchedRule": "query:openai:chatgpt",
+    "docsUrl": "https://help.openai.com/en/articles/10984597-chatgpt-generated-links",
+    "confidenceLabel": "advisory",
+    "signalSource": "query",
+    "sourceUrl": "https://help.openai.com/en/articles/10984597-chatgpt-generated-links"
+  },
+  {
+    "name": "chatgpt-source-name",
+    "landingUrl": "https://example.com/blog?source=chatgpt",
+    "provider": "openai_chatgpt_referral",
+    "agentType": "ai_referral_visit",
+    "matchedRule": "query:openai:chatgpt",
+    "docsUrl": "https://help.openai.com/en/articles/10984597-chatgpt-generated-links",
+    "confidenceLabel": "advisory",
+    "signalSource": "query",
+    "sourceUrl": "https://help.openai.com/en/articles/10984597-chatgpt-generated-links"
+  },
+  {
+    "name": "chatgpt-legacy-openai-host",
+    "landingUrl": "https://example.com/blog?utm_source=chat.openai.com",
+    "provider": "openai_chatgpt_referral",
+    "agentType": "ai_referral_visit",
+    "matchedRule": "query:openai:chatgpt",
+    "docsUrl": "https://help.openai.com/en/articles/10984597-chatgpt-generated-links",
+    "confidenceLabel": "advisory",
+    "signalSource": "query",
+    "sourceUrl": "https://help.openai.com/en/articles/10984597-chatgpt-generated-links"
+  }
+]

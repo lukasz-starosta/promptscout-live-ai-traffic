@@ -167,6 +167,7 @@ export const liveAiTrafficHttpMethods = [
 export const liveAiTrafficMatchKinds = [
   "user_agent",
   "referer",
+  "query",
   "host",
   "path",
   "manual",
@@ -215,6 +216,10 @@ export type AiTrafficRequestLike = {
   userAgent?: unknown;
   referer?: unknown;
   referrer?: unknown;
+  search?: unknown;
+  query?: unknown;
+  url?: unknown;
+  landingUrl?: unknown;
   headers?: unknown;
 };
 
@@ -477,6 +482,19 @@ const refererRules: readonly ClassificationRule[] = [
   },
 ] as const;
 
+const landingQueryAttributionRules: readonly ClassificationRule[] = [
+  {
+    id: "query:openai:chatgpt",
+    provider: "openai_chatgpt_referral",
+    agentType: "ai_referral_visit",
+    confidence: 0.68,
+    docsUrl: chatGptGeneratedLinksDocsUrl,
+    patterns: [/^(?:chatgpt|chatgptcom|chatopenaicom)$/i],
+  },
+] as const;
+
+const landingQueryAttributionKeys = new Set(["utm_source", "source"]);
+
 export function classifyUserAgent(userAgent: unknown): AiTrafficClassification {
   const normalizedUserAgent = normalizeHeaderValue(userAgent);
 
@@ -507,6 +525,36 @@ export function classifyReferer(referer: unknown): AiTrafficClassification {
   );
 }
 
+export function classifyLandingQuery(
+  queryLike: unknown,
+): AiTrafficClassification {
+  const search = normalizeSearchValue(queryLike);
+
+  if (search === undefined) {
+    return unknownClassification("fallback:unknown-query");
+  }
+
+  for (const [key, value] of searchParams(search)) {
+    if (!landingQueryAttributionKeys.has(key.toLowerCase())) {
+      continue;
+    }
+
+    const normalizedValue = normalizeQueryAttributionValue(value);
+    const classification = classifyByRules(
+      normalizedValue,
+      landingQueryAttributionRules,
+      "query",
+      "fallback:unknown-query",
+    );
+
+    if (isKnownClassification(classification)) {
+      return classification;
+    }
+  }
+
+  return unknownClassification("fallback:unknown-query");
+}
+
 export function classifyAiTraffic(
   requestLike: AiTrafficRequestLike,
 ): AiTrafficClassification {
@@ -520,19 +568,26 @@ export function classifyAiTraffic(
     headerValue(requestLike, "referer"),
     headerValue(requestLike, "referrer"),
   );
+  const landingQuery = firstHeaderValue(
+    requestLike.search,
+    requestLike.query,
+    requestLike.url,
+    requestLike.landingUrl,
+  );
 
   const userAgentClassification = classifyUserAgent(userAgent);
   const refererClassification = classifyReferer(referer);
+  const queryClassification = classifyLandingQuery(landingQuery);
+  const knownClassifications = [
+    userAgentClassification,
+    refererClassification,
+    queryClassification,
+  ].filter(isKnownClassification);
 
-  if (
-    isKnownClassification(userAgentClassification) &&
-    userAgentClassification.confidence >= refererClassification.confidence
-  ) {
-    return userAgentClassification;
-  }
-
-  if (isKnownClassification(refererClassification)) {
-    return refererClassification;
+  if (knownClassifications.length > 0) {
+    return knownClassifications.reduce((selected, candidate) =>
+      candidate.confidence > selected.confidence ? candidate : selected,
+    );
   }
 
   return unknownClassification("fallback:unknown-request");
@@ -1000,12 +1055,70 @@ function normalizeHeaderValue(input: unknown): string | undefined {
     return normalizeHeaderValue(input[0]);
   }
 
+  if (isRecord(input) && typeof input.href === "string") {
+    return normalizeHeaderValue(input.href);
+  }
+
   if (typeof input !== "string") {
     return undefined;
   }
 
   const trimmed = input.trim();
   return trimmed.length > 0 ? trimmed : undefined;
+}
+
+function normalizeSearchValue(input: unknown): string | undefined {
+  const value = normalizeHeaderValue(input);
+
+  if (value === undefined) {
+    return undefined;
+  }
+
+  if (value.startsWith("?")) {
+    return value;
+  }
+
+  const queryIndex = value.indexOf("?");
+  if (queryIndex >= 0) {
+    return value.slice(queryIndex);
+  }
+
+  return `?${value}`;
+}
+
+function searchParams(search: string): [string, string][] {
+  const body = search.startsWith("?") ? search.slice(1) : search;
+  const params: [string, string][] = [];
+
+  for (const pair of body.split("&")) {
+    if (pair.length === 0) {
+      continue;
+    }
+
+    const equalsIndex = pair.indexOf("=");
+    const rawKey = equalsIndex >= 0 ? pair.slice(0, equalsIndex) : pair;
+    const rawValue = equalsIndex >= 0 ? pair.slice(equalsIndex + 1) : "";
+    params.push([decodeFormComponent(rawKey), decodeFormComponent(rawValue)]);
+  }
+
+  return params;
+}
+
+function normalizeQueryAttributionValue(value: string): string {
+  const trimmed = value.trim().toLowerCase();
+  const withoutProtocol = trimmed.replace(/^[a-z][a-z0-9+.-]*:\/\//, "");
+  const withoutWww = withoutProtocol.replace(/^www\./, "");
+  const hostLike = withoutWww.split(/[/?#]/, 1)[0] ?? withoutWww;
+
+  return hostLike.replace(/[^a-z0-9]+/g, "");
+}
+
+function decodeFormComponent(value: string): string {
+  try {
+    return decodeURIComponent(value.replace(/\+/g, " "));
+  } catch {
+    return value;
+  }
 }
 
 function firstHeaderValue(...inputs: unknown[]): string | undefined {

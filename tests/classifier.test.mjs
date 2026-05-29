@@ -103,6 +103,45 @@ describe("AI traffic classifier", () => {
     }
   });
 
+  it("classifies landing URL query attribution fixtures as advisory AI referral visits", async () => {
+    const { classifyAiTraffic } = await coreModule();
+    const cases = JSON.parse(
+      await readFile(
+        "packages/core/fixtures/classifier/known-query-attribution.json",
+        "utf8",
+      ),
+    );
+
+    for (const fixture of cases) {
+      const {
+        name,
+        landingUrl,
+        provider,
+        agentType,
+        matchedRule,
+        docsUrl,
+        confidenceLabel,
+        signalSource,
+        sourceUrl,
+      } = fixture;
+      const result = classifyAiTraffic({
+        userAgent: "Mozilla/5.0",
+        landingUrl,
+      });
+
+      assert.ok(name, "fixture must have a stable name");
+      assert.ok(sourceUrl, `${name}: fixture must cite a signal source URL`);
+      assert.equal(confidenceLabel, "advisory", `${name}: confidence label`);
+      assert.equal(signalSource, "query", `${name}: signal source`);
+      assert.equal(result.provider, provider, `${name}: provider`);
+      assert.equal(result.agentType, agentType, `${name}: agentType`);
+      assert.equal(result.matchedRule, matchedRule, `${name}: matchedRule`);
+      assert.deepEqual(result.matchedBy, ["query"], `${name}: matchedBy`);
+      assert.ok(result.confidence < 0.9, `${name}: confidence`);
+      assert.equal(result.docsUrl, docsUrl, `${name}: docsUrl`);
+    }
+  });
+
   it("documents request-level evidence and crawler source links", async () => {
     const evidence = await readFile("docs/evidence.md", "utf8");
 
@@ -156,6 +195,30 @@ describe("AI traffic classifier", () => {
     }
   });
 
+  it("uses explicit unknown fallbacks for empty, unsafe, and malformed landing query values", async () => {
+    const { classifyLandingQuery } = await coreModule();
+
+    for (const queryLike of [
+      undefined,
+      null,
+      "",
+      "   ",
+      42,
+      {},
+      "?",
+      "?q=chatgpt",
+      "?utm_source=%E0%A4%A",
+    ]) {
+      assert.deepEqual(classifyLandingQuery(queryLike), {
+        provider: "other",
+        agentType: "other",
+        confidence: 0,
+        matchedRule: "fallback:unknown-query",
+        matchedBy: ["other"],
+      });
+    }
+  });
+
   it("classifies AI referral visits without an AI bot user agent", async () => {
     const { classifyAiTraffic, classifyReferer } = await coreModule();
 
@@ -178,6 +241,21 @@ describe("AI traffic classifier", () => {
     assert.equal(result.agentType, "ai_referral_visit");
     assert.equal(result.matchedRule, "ref:perplexity");
     assert.deepEqual(result.matchedBy, ["referer"]);
+  });
+
+  it("classifies UTM-only ChatGPT visits without a referer header", async () => {
+    const { classifyAiTraffic } = await coreModule();
+
+    const result = classifyAiTraffic({
+      userAgent: "Mozilla/5.0",
+      search: "?utm_source=chatgpt.com&utm_medium=referral&prompt=private",
+    });
+
+    assert.equal(result.provider, "openai_chatgpt_referral");
+    assert.equal(result.agentType, "ai_referral_visit");
+    assert.equal(result.matchedRule, "query:openai:chatgpt");
+    assert.deepEqual(result.matchedBy, ["query"]);
+    assert.ok(result.confidence < 0.9);
   });
 
   it("classifies conservative Copilot and Bing chat referers as Microsoft AI referral visits", async () => {
@@ -210,6 +288,22 @@ describe("AI traffic classifier", () => {
     assert.equal(result.provider, "openai_gptbot");
     assert.equal(result.agentType, "ai_training_crawler");
     assert.equal(result.matchedRule, "ua:openai:gptbot");
+    assert.deepEqual(result.matchedBy, ["user_agent"]);
+  });
+
+  it("prefers higher-confidence AI bot user-agent signals over conflicting query attribution", async () => {
+    const { classifyAiTraffic } = await coreModule();
+
+    const result = classifyAiTraffic({
+      headers: {
+        "user-agent": "ClaudeBot/1.0",
+      },
+      search: "?utm_source=chatgpt.com",
+    });
+
+    assert.equal(result.provider, "anthropic_claudebot");
+    assert.equal(result.agentType, "ai_training_crawler");
+    assert.equal(result.matchedRule, "ua:anthropic:claudebot");
     assert.deepEqual(result.matchedBy, ["user_agent"]);
   });
 

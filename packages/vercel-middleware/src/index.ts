@@ -126,6 +126,7 @@ export async function buildPromptScoutVercelAiTrafficEvent(
   const classification = classifyAiTraffic({
     userAgent: normalizedRequest.userAgent,
     referer: normalizedRequest.referer,
+    search: normalizedRequest.search,
     headers: request.headers,
   });
   const event = createVercelEvent(
@@ -149,6 +150,7 @@ export function trackPromptScoutAiTraffic(
   const classification = classifyAiTraffic({
     userAgent: normalizedRequest.userAgent,
     referer: normalizedRequest.referer,
+    search: normalizedRequest.search,
     headers: request.headers,
   });
 
@@ -212,6 +214,7 @@ async function buildEventFromNormalizedRequest(
   const classification = classifyAiTraffic({
     userAgent: normalizedRequest.userAgent,
     referer: normalizedRequest.referer,
+    search: normalizedRequest.search,
     headers: request.headers,
   });
   const event = createVercelEvent(

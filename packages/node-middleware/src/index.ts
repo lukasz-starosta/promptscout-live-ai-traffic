@@ -117,18 +117,19 @@ export async function buildLiveAiTrafficNodeEvent(
   request: NodeRequestLike,
   options: LiveAiTrafficNodeMiddlewareOptions = {},
 ): Promise<LiveAiTrafficEvent | undefined> {
+  const parsedUrl = parseRequestUrl(request);
   const classification = classifyAiTraffic({
     headers: request.headers,
     userAgent: headerValue(request, "user-agent"),
     referer:
       headerValue(request, "referer") ?? headerValue(request, "referrer"),
+    search: parsedUrl.search,
   });
 
   if (!options.shouldSendUnknown && classification.provider === "other") {
     return undefined;
   }
 
-  const parsedUrl = parseRequestUrl(request);
   const userAgent = headerValue(request, "user-agent");
   const referer =
     headerValue(request, "referer") ?? headerValue(request, "referrer");

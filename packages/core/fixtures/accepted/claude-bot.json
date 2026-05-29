@@ -26,6 +26,7 @@
     "originalIpRetention": "discarded_after_hash"
   },
   "integration": {
+    "kind": "fastly_compute",
     "name": "fastly",
     "requestId": "fastly-claude-bot-001"
   }

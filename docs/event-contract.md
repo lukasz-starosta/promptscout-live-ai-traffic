@@ -30,8 +30,10 @@ fields without breaking older consumers.
   `perplexity_user`, `perplexity_referral`, `google_crawler`,
   `google_agent`, `google_notebooklm`, `google_gemini_referral`,
   `google_referral`, `microsoft_copilot_referral`,
-  `openai_chatgpt_referral`, `meta_external_agent`, `meta_external_fetcher`,
-  `bytedance_bytespider`, `ai_browser_referral`, or `other`.
+  `openai_chatgpt_referral`, `meta_ai_referral`, `meta_external_agent`,
+  `meta_external_fetcher`, `xai_grok_referral`,
+  `mistral_le_chat_referral`, `bytedance_bytespider`,
+  `ai_browser_referral`, or `other`.
 - `providerClassification.agentType`: known traffic class, such as
   `ai_search_crawler`, `ai_training_crawler`, `ai_browser_user`,
   `ai_referral_visit`, `link_preview`, `ai_assistant_referral`,
@@ -61,11 +63,73 @@ preserve any integration-specific raw details outside the canonical fields.
 
 ## Integration-Specific Fields
 
+- `integration.kind`: stable integration origin enum for display and grouping.
+  Official collectors should send one of `vercel_nextjs_middleware`,
+  `cloudflare_worker`, `netlify_edge`, `fastly_compute`,
+  `cloudfront_aws_realtime_logs`, `nginx_log_forwarder`,
+  `wordpress_plugin`, `node_express`, `manual`, or `other`.
 - `integration.name`: collector implementation name.
+- `integration.version`: collector package or plugin version when available.
 - `integration.requestId`: platform request identifier when available.
 - Future top-level extension fields are allowed for forward compatibility.
   Consumers must not treat those extension fields as part of the stable v1
   contract until they are promoted into `packages/core`.
+
+`sourceProvider` remains the coarse platform bucket. `integration.kind` is the
+customer-facing origin PromptScout can display without guessing package-internal
+implementation names. Neither field should contain tokens, raw IP addresses,
+query strings, or other private request data.
+
+Known integration origins are:
+
+| `integration.kind` | `sourceProvider` | Customer-facing label |
+| --- | --- | --- |
+| `vercel_nextjs_middleware` | `vercel` | Vercel / Next.js middleware |
+| `cloudflare_worker` | `cloudflare` | Cloudflare Worker |
+| `netlify_edge` | `netlify` | Netlify Edge Function |
+| `fastly_compute` | `fastly` | Fastly Compute |
+| `cloudfront_aws_realtime_logs` | `cloudfront_aws` | CloudFront / AWS real-time logs |
+| `nginx_log_forwarder` | `nginx_log_forwarder` | nginx log forwarder |
+| `wordpress_plugin` | `wordpress` | WordPress plugin |
+| `node_express` | `node_express` | Node / Express middleware |
+| `manual` | `manual` | Manual import |
+| `other` | `other` | Other |
+
+## Provider Buckets and Signal Families
+
+PromptScout dashboards should group provider classifications with the exported
+`getLiveAiTrafficProviderBucket(provider)` helper instead of hardcoding string
+prefixes. The stable bucket IDs and labels are:
+
+| Bucket ID | Label |
+| --- | --- |
+| `openai_chatgpt` | OpenAI / ChatGPT |
+| `anthropic_claude` | Anthropic / Claude |
+| `perplexity` | Perplexity |
+| `google_gemini` | Google / Gemini |
+| `microsoft_copilot` | Microsoft Copilot |
+| `meta_ai` | Meta AI |
+| `xai_grok` | xAI / Grok |
+| `mistral_le_chat` | Mistral / Le Chat |
+| `other` | Other |
+
+The bucket list is a taxonomy, not a data series. Customer-facing rows should be
+created from real parsed events only; do not invent empty provider rows just
+because a bucket exists.
+
+Use `getLiveAiTrafficSignalFamily(agentType)` to keep bot/fetcher traffic,
+AI assistant referral visits, and conventional search baselines separate:
+
+| Family ID | Includes |
+| --- | --- |
+| `ai_bot_visit` | AI crawler, training crawler, assistant fetcher, and link preview user-agent visits |
+| `ai_referral_visit` | Browser visits referred by accepted AI assistant surfaces |
+| `search_baseline` | Conventional search crawlers and search referrals |
+| `other` | Missing, malformed, unsupported, or intentionally unmapped traffic |
+
+Generic Google Search referrals stay in `search_baseline`, not
+`ai_referral_visit`. Accepted but unmapped AI signals should be grouped under
+the `other` provider bucket until the classifier has a documented provider rule.
 
 ## Implementation
 
@@ -81,6 +145,9 @@ preserve any integration-specific raw details outside the canonical fields.
 - `classifyUserAgent(userAgent)`
 - `classifyReferer(referer)`
 - `toLiveAiTrafficProviderClassification(classification)`
+- `getLiveAiTrafficProviderBucket(provider)`
+- `getLiveAiTrafficSignalFamily(agentType)`
+- `getLiveAiTrafficIntegrationOrigin(kind)`
 - `createLiveAiTrafficIngestClient(options)`
 - `normalizeLiveAiTrafficEvent(event, privacyOptions)`
 - `hashLiveAiTrafficIp(ipAddress, options)`

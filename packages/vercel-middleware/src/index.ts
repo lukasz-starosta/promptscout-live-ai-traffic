@@ -262,6 +262,7 @@ function createVercelEvent(
           },
         }),
     integration: {
+      kind: "vercel_nextjs_middleware",
       name: "vercel-middleware",
       ...(request.requestId === undefined
         ? {}

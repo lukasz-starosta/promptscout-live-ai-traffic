@@ -103,6 +103,7 @@ export function normalizeFastlyComputeRequest(
     providerClassification:
       toLiveAiTrafficProviderClassification(classification),
     integration: {
+      kind: "fastly_compute",
       name: "fastly-compute",
       ...(metadata.requestId === undefined
         ? {}

@@ -24,6 +24,7 @@
     "originalIpRetention": "discarded_after_hash"
   },
   "integration": {
+    "kind": "wordpress_plugin",
     "name": "wordpress",
     "requestId": "wp-google-001"
   }

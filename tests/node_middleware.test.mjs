@@ -101,6 +101,7 @@ describe("generic Node live AI traffic middleware", () => {
       originalIpRetention: "not_collected",
     });
     assert.deepEqual(event.integration, {
+      kind: "node_express",
       name: "node-middleware",
       requestId: "req_123",
     });

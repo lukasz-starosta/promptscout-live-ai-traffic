@@ -43,6 +43,7 @@ class PromptScout_Live_AI_Traffic_Event_Builder {
 				'matchedBy'  => $classification['matchedBy'],
 			],
 			'integration'            => [
+				'kind' => 'wordpress_plugin',
 				'name' => 'wordpress-plugin',
 			],
 		];

@@ -32,6 +32,19 @@ export const liveAiTrafficSourceProviders = [
   "other",
 ] as const;
 
+export const liveAiTrafficIntegrationKinds = [
+  "vercel_nextjs_middleware",
+  "cloudflare_worker",
+  "netlify_edge",
+  "fastly_compute",
+  "cloudfront_aws_realtime_logs",
+  "nginx_log_forwarder",
+  "wordpress_plugin",
+  "node_express",
+  "manual",
+  "other",
+] as const;
+
 export const liveAiTrafficClassifiedProviders = [
   "openai_search_bot",
   "openai_gptbot",
@@ -50,8 +63,11 @@ export const liveAiTrafficClassifiedProviders = [
   "google_referral",
   "microsoft_copilot_referral",
   "openai_chatgpt_referral",
+  "meta_ai_referral",
   "meta_external_agent",
   "meta_external_fetcher",
+  "xai_grok_referral",
+  "mistral_le_chat_referral",
   "bytedance_bytespider",
   "ai_browser_referral",
   "other",
@@ -68,6 +84,74 @@ export const liveAiTrafficAgentTypes = [
   "search_referral",
   "other",
 ] as const;
+
+export const liveAiTrafficProviderBuckets = [
+  { id: "openai_chatgpt", label: "OpenAI / ChatGPT" },
+  { id: "anthropic_claude", label: "Anthropic / Claude" },
+  { id: "perplexity", label: "Perplexity" },
+  { id: "google_gemini", label: "Google / Gemini" },
+  { id: "microsoft_copilot", label: "Microsoft Copilot" },
+  { id: "meta_ai", label: "Meta AI" },
+  { id: "xai_grok", label: "xAI / Grok" },
+  { id: "mistral_le_chat", label: "Mistral / Le Chat" },
+  { id: "other", label: "Other" },
+] as const;
+
+export const liveAiTrafficSignalFamilies = [
+  { id: "ai_bot_visit", label: "AI bot or fetcher visit" },
+  { id: "ai_referral_visit", label: "AI assistant referral visit" },
+  { id: "search_baseline", label: "Search baseline" },
+  { id: "other", label: "Other" },
+] as const;
+
+export const liveAiTrafficIntegrationOrigins = [
+  {
+    kind: "vercel_nextjs_middleware",
+    sourceProvider: "vercel",
+    label: "Vercel / Next.js middleware",
+  },
+  {
+    kind: "cloudflare_worker",
+    sourceProvider: "cloudflare",
+    label: "Cloudflare Worker",
+  },
+  {
+    kind: "netlify_edge",
+    sourceProvider: "netlify",
+    label: "Netlify Edge Function",
+  },
+  {
+    kind: "fastly_compute",
+    sourceProvider: "fastly",
+    label: "Fastly Compute",
+  },
+  {
+    kind: "cloudfront_aws_realtime_logs",
+    sourceProvider: "cloudfront_aws",
+    label: "CloudFront / AWS real-time logs",
+  },
+  {
+    kind: "nginx_log_forwarder",
+    sourceProvider: "nginx_log_forwarder",
+    label: "nginx log forwarder",
+  },
+  {
+    kind: "wordpress_plugin",
+    sourceProvider: "wordpress",
+    label: "WordPress plugin",
+  },
+  {
+    kind: "node_express",
+    sourceProvider: "node_express",
+    label: "Node / Express middleware",
+  },
+  { kind: "manual", sourceProvider: "manual", label: "Manual import" },
+  { kind: "other", sourceProvider: "other", label: "Other" },
+] as const satisfies readonly {
+  kind: LiveAiTrafficIntegrationKind;
+  sourceProvider: LiveAiTrafficSourceProvider;
+  label: string;
+}[];
 
 export const liveAiTrafficHttpMethods = [
   "GET",
@@ -97,9 +181,15 @@ export const liveAiTrafficIpHashAlgorithms = [
 
 export type LiveAiTrafficSourceProvider =
   (typeof liveAiTrafficSourceProviders)[number];
+export type LiveAiTrafficIntegrationKind =
+  (typeof liveAiTrafficIntegrationKinds)[number];
 export type LiveAiTrafficClassifiedProvider =
   (typeof liveAiTrafficClassifiedProviders)[number];
 export type LiveAiTrafficAgentType = (typeof liveAiTrafficAgentTypes)[number];
+export type LiveAiTrafficProviderBucket =
+  (typeof liveAiTrafficProviderBuckets)[number]["id"];
+export type LiveAiTrafficSignalFamily =
+  (typeof liveAiTrafficSignalFamilies)[number]["id"];
 export type LiveAiTrafficHttpMethod = (typeof liveAiTrafficHttpMethods)[number];
 export type LiveAiTrafficMatchKind = (typeof liveAiTrafficMatchKinds)[number];
 export type LiveAiTrafficIpHashAlgorithm =
@@ -156,6 +246,9 @@ const microsoftCopilotDocsUrl =
   "https://support.microsoft.com/en-us/microsoft-365-copilot/what-s-the-difference-between-microsoft-copilot-free-and-copilot-in-microsoft-365";
 const metaCrawlerDocsUrl =
   "https://developers.facebook.com/docs/sharing/webmasters/crawler";
+const metaAiDocsUrl = "https://www.meta.ai/";
+const xaiGrokDocsUrl = "https://x.ai/grok";
+const mistralLeChatDocsUrl = "https://docs.mistral.ai/le-chat";
 
 const userAgentRules: readonly ClassificationRule[] = [
   {
@@ -351,11 +444,27 @@ const refererRules: readonly ClassificationRule[] = [
   },
   {
     id: "ref:meta:ai",
-    provider: "ai_browser_referral",
+    provider: "meta_ai_referral",
     agentType: "ai_referral_visit",
     confidence: 0.68,
-    docsUrl: metaCrawlerDocsUrl,
+    docsUrl: metaAiDocsUrl,
     patterns: [/^https?:\/\/(?:www\.)?meta\.ai(?:\/|$)/i],
+  },
+  {
+    id: "ref:xai:grok",
+    provider: "xai_grok_referral",
+    agentType: "ai_referral_visit",
+    confidence: 0.68,
+    docsUrl: xaiGrokDocsUrl,
+    patterns: [/^https?:\/\/(?:[^/]+\.)?grok\.com(?:\/|$)/i],
+  },
+  {
+    id: "ref:mistral:le-chat",
+    provider: "mistral_le_chat_referral",
+    agentType: "ai_referral_visit",
+    confidence: 0.68,
+    docsUrl: mistralLeChatDocsUrl,
+    patterns: [/^https?:\/\/chat\.mistral\.ai(?:\/|$)/i],
   },
   {
     id: "ref:generic-ai",
@@ -440,6 +549,78 @@ export function toLiveAiTrafficProviderClassification(
   };
 }
 
+export function getLiveAiTrafficProviderBucket(
+  provider: LiveAiTrafficClassifiedProvider,
+): LiveAiTrafficProviderBucket {
+  switch (provider) {
+    case "openai_search_bot":
+    case "openai_gptbot":
+    case "openai_chatgpt_user":
+    case "openai_chatgpt_referral":
+      return "openai_chatgpt";
+    case "anthropic_claudebot":
+    case "anthropic_claude_search_bot":
+    case "anthropic_claude_user":
+    case "anthropic_claude_referral":
+      return "anthropic_claude";
+    case "perplexitybot":
+    case "perplexity_user":
+    case "perplexity_referral":
+      return "perplexity";
+    case "google_agent":
+    case "google_notebooklm":
+    case "google_gemini_referral":
+      return "google_gemini";
+    case "microsoft_copilot_referral":
+      return "microsoft_copilot";
+    case "meta_ai_referral":
+    case "meta_external_agent":
+    case "meta_external_fetcher":
+      return "meta_ai";
+    case "xai_grok_referral":
+      return "xai_grok";
+    case "mistral_le_chat_referral":
+      return "mistral_le_chat";
+    default:
+      return "other";
+  }
+}
+
+export function getLiveAiTrafficSignalFamily(
+  agentType: LiveAiTrafficAgentType,
+): LiveAiTrafficSignalFamily {
+  switch (agentType) {
+    case "ai_search_crawler":
+    case "ai_training_crawler":
+    case "ai_browser_user":
+    case "link_preview":
+      return "ai_bot_visit";
+    case "ai_referral_visit":
+    case "ai_assistant_referral":
+      return "ai_referral_visit";
+    case "search_crawler":
+    case "search_referral":
+      return "search_baseline";
+    default:
+      return "other";
+  }
+}
+
+export function getLiveAiTrafficIntegrationOrigin(
+  kind: unknown,
+): (typeof liveAiTrafficIntegrationOrigins)[number] {
+  if (typeof kind !== "string") {
+    return liveAiTrafficIntegrationOrigins[
+      liveAiTrafficIntegrationOrigins.length - 1
+    ];
+  }
+
+  return (
+    liveAiTrafficIntegrationOrigins.find((origin) => origin.kind === kind) ??
+    liveAiTrafficIntegrationOrigins[liveAiTrafficIntegrationOrigins.length - 1]
+  );
+}
+
 export type LiveAiTrafficEvent = {
   schemaVersion: number;
   eventKind: "request_observation";
@@ -466,7 +647,9 @@ export type LiveAiTrafficEvent = {
     originalIpRetention?: "not_collected" | "discarded_after_hash";
   };
   integration?: {
+    kind?: LiveAiTrafficIntegrationKind;
     name: string;
+    version?: string;
     requestId?: string;
   };
 };
@@ -570,7 +753,9 @@ export const liveAiTrafficEventJsonSchema = {
       required: ["name"],
       additionalProperties: false,
       properties: {
+        kind: { type: "string", enum: liveAiTrafficIntegrationKinds },
         name: { type: "string", minLength: 1 },
+        version: { type: "string", minLength: 1 },
         requestId: { type: "string", minLength: 1 },
       },
     },
@@ -756,8 +941,17 @@ function validateIntegration(input: unknown, issues: string[]): void {
     return;
   }
 
-  rejectUnknownProperties(input, "integration", ["name", "requestId"], issues);
+  rejectUnknownProperties(
+    input,
+    "integration",
+    ["kind", "name", "version", "requestId"],
+    issues,
+  );
+  if (input.kind !== undefined) {
+    requireEnum(input, "kind", liveAiTrafficIntegrationKinds, issues);
+  }
   requireString(input, "name", issues);
+  requireOptionalNonEmptyString(input, "version", issues);
   requireOptionalNonEmptyString(input, "requestId", issues);
 }
 

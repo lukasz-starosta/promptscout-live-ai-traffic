@@ -151,6 +151,7 @@ export async function buildLiveAiTrafficNodeEvent(
     providerClassification:
       toLiveAiTrafficProviderClassification(classification),
     integration: {
+      kind: "node_express",
       name: options.integrationName ?? defaultIntegrationName,
       ...(requestId === undefined ? {} : { requestId }),
     },

@@ -79,12 +79,34 @@
   {
     "name": "meta-ai-referral",
     "referer": "https://www.meta.ai/c/abc",
-    "provider": "ai_browser_referral",
+    "provider": "meta_ai_referral",
     "agentType": "ai_referral_visit",
     "matchedRule": "ref:meta:ai",
-    "docsUrl": "https://developers.facebook.com/docs/sharing/webmasters/crawler",
+    "docsUrl": "https://www.meta.ai/",
     "confidenceLabel": "advisory",
     "signalSource": "referer",
-    "sourceUrl": "https://developers.facebook.com/docs/sharing/webmasters/crawler"
+    "sourceUrl": "https://www.meta.ai/"
+  },
+  {
+    "name": "grok-referral",
+    "referer": "https://grok.com/share/abc",
+    "provider": "xai_grok_referral",
+    "agentType": "ai_referral_visit",
+    "matchedRule": "ref:xai:grok",
+    "docsUrl": "https://x.ai/grok",
+    "confidenceLabel": "advisory",
+    "signalSource": "referer",
+    "sourceUrl": "https://x.ai/grok"
+  },
+  {
+    "name": "mistral-le-chat-referral",
+    "referer": "https://chat.mistral.ai/chat/abc",
+    "provider": "mistral_le_chat_referral",
+    "agentType": "ai_referral_visit",
+    "matchedRule": "ref:mistral:le-chat",
+    "docsUrl": "https://docs.mistral.ai/le-chat",
+    "confidenceLabel": "advisory",
+    "signalSource": "referer",
+    "sourceUrl": "https://docs.mistral.ai/le-chat"
   }
 ]

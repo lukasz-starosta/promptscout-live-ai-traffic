@@ -171,6 +171,7 @@ export function createNginxLogEvent(
     providerClassification:
       toLiveAiTrafficProviderClassification(classification),
     integration: {
+      kind: "nginx_log_forwarder",
       name: "nginx-log-forwarder",
     },
   };

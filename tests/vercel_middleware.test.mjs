@@ -148,6 +148,59 @@ describe("Vercel middleware collector", () => {
     });
   });
 
+  it("tracks UTM-only ChatGPT referral visits without forwarding the raw query", async () => {
+    const { trackPromptScoutAiTraffic } = await vercelMiddlewareModule();
+    const waitUntilPromises = [];
+    const calls = [];
+
+    const result = trackPromptScoutAiTraffic(
+      nextRequestLike({
+        url: "https://example.com/pricing?utm_source=chatgpt.com&prompt=private",
+        nextUrl: {
+          hostname: "example.com",
+          pathname: "/pricing",
+          search: "?utm_source=chatgpt.com&prompt=private",
+        },
+        headers: new Headers({
+          "user-agent": "Mozilla/5.0",
+          "x-vercel-id": "iad1::iad1::utm-only",
+        }),
+      }),
+      {
+        waitUntil(promise) {
+          waitUntilPromises.push(promise);
+        },
+      },
+      {
+        endpoint: "https://promptscout.example/ingest/live-ai-traffic",
+        ingestToken: "test-token",
+        fetch: async (url, init) => {
+          calls.push({ url, init });
+          return response(202);
+        },
+        privacy: {
+          query: { mode: "omit" },
+          ip: { mode: "disabled" },
+        },
+      },
+    );
+
+    assert.deepEqual(result, { mode: "waitUntil", tracked: true });
+    assert.equal(waitUntilPromises.length, 1);
+    await waitUntilPromises[0];
+
+    const event = JSON.parse(calls[0].init.body).events[0];
+    assert.deepEqual(event.providerClassification, {
+      provider: "openai_chatgpt_referral",
+      agentType: "ai_referral_visit",
+      confidence: 0.68,
+      matchedBy: ["query"],
+    });
+    assert.equal(event.request.search, undefined);
+    assert.equal(calls[0].init.body.includes("utm_source"), false);
+    assert.equal(calls[0].init.body.includes("prompt=private"), false);
+  });
+
   it("skips unknown traffic by default", async () => {
     const { trackPromptScoutAiTraffic } = await vercelMiddlewareModule();
     const waitUntilPromises = [];
@@ -155,6 +208,12 @@ describe("Vercel middleware collector", () => {
 
     const result = trackPromptScoutAiTraffic(
       nextRequestLike({
+        url: "https://example.com/pricing",
+        nextUrl: {
+          hostname: "example.com",
+          pathname: "/pricing",
+          search: "",
+        },
         headers: new Headers({
           "user-agent": "Mozilla/5.0",
           referer: "https://example.org/",

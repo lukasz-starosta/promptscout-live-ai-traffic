@@ -85,6 +85,7 @@ export function normalizeFastlyComputeRequest(
   const classification = classifyAiTraffic({
     userAgent,
     referer,
+    search: parsedUrl.search,
     headers: request.headers,
   });
   const event: LiveAiTrafficEvent = {

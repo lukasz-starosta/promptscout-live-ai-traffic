@@ -143,6 +143,36 @@ describe("live AI traffic event contract", () => {
     assert.deepEqual(event.providerClassification.matchedBy, ["user_agent"]);
   });
 
+  it("accepts query as a first-class provider classification match signal", async () => {
+    const {
+      LIVE_AI_TRAFFIC_EVENT_SCHEMA_VERSION,
+      parseLiveAiTrafficEvent,
+      toLiveAiTrafficProviderClassification,
+    } = await coreModule();
+
+    const event = parseLiveAiTrafficEvent({
+      schemaVersion: LIVE_AI_TRAFFIC_EVENT_SCHEMA_VERSION,
+      eventKind: "request_observation",
+      sourceProvider: "vercel",
+      observedAt: "2026-05-29T09:15:00.000Z",
+      request: {
+        host: "example.com",
+        path: "/pricing",
+        method: "GET",
+        userAgent: "Mozilla/5.0",
+      },
+      providerClassification: toLiveAiTrafficProviderClassification({
+        provider: "openai_chatgpt_referral",
+        agentType: "ai_referral_visit",
+        confidence: 0.68,
+        matchedRule: "query:openai:chatgpt",
+        matchedBy: ["query"],
+      }),
+    });
+
+    assert.deepEqual(event.providerClassification.matchedBy, ["query"]);
+  });
+
   it("rejects invalid fixtures instead of silently mapping critical enums", async () => {
     const { parseLiveAiTrafficEvent } = await coreModule();
     const paths = await fixturePaths(rejectedFixtureDirectory);

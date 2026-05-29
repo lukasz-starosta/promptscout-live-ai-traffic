@@ -129,6 +129,7 @@ export async function createPromptScoutNetlifyEdgeEvent(
   const classification = classifyAiTraffic({
     userAgent,
     referer,
+    search: url.search,
   });
   const rawEvent = parseLiveAiTrafficEvent({
     schemaVersion: LIVE_AI_TRAFFIC_EVENT_SCHEMA_VERSION,

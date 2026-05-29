@@ -131,8 +131,12 @@ export async function buildPromptScoutCloudFrontAwsEventFromRealtimeLogRecord(
       : record;
   const userAgent = parsed["cs-user-agent"];
   const referer = parsed["cs-referer"];
-  const classification = classifyAiTraffic({ userAgent, referer });
   const requestUrl = requestUrlParts(parsed);
+  const classification = classifyAiTraffic({
+    userAgent,
+    referer,
+    search: requestUrl.search,
+  });
   const rawEvent = parseLiveAiTrafficEvent({
     schemaVersion: LIVE_AI_TRAFFIC_EVENT_SCHEMA_VERSION,
     eventKind: "request_observation",

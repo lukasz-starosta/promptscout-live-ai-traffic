@@ -128,6 +128,7 @@ describe("generic Node live AI traffic middleware", () => {
 
     middleware(
       request({
+        url: "/pricing",
         headers: {
           host: "example.com",
           "user-agent": "Mozilla/5.0",
@@ -145,6 +146,49 @@ describe("generic Node live AI traffic middleware", () => {
     assert.equal(response.statusCode, 204);
     assert.equal(response.body, "route handled");
     assert.equal(sentEvents.length, 0);
+  });
+
+  it("classifies UTM-only ChatGPT referral visits without storing the raw query", async () => {
+    const { observeLiveAiTrafficNodeRequest } = await nodeMiddlewareModule();
+    const sentEvents = [];
+
+    const event = await observeLiveAiTrafficNodeRequest(
+      request({
+        url: "/pricing?utm_source=chatgpt.com&prompt=private",
+        headers: {
+          host: "example.com",
+          "user-agent": "Mozilla/5.0",
+          "x-request-id": "req_utm_only",
+        },
+      }),
+      {
+        client: {
+          async send(sentEvent) {
+            sentEvents.push(sentEvent);
+            return {
+              ok: true,
+              status: 202,
+              attempts: 1,
+              retryable: false,
+              authFailure: false,
+            };
+          },
+        },
+        privacy: {
+          query: { mode: "omit" },
+          ip: { mode: "none" },
+        },
+      },
+    );
+
+    assert.equal(sentEvents.length, 1);
+    assert.deepEqual(event.providerClassification, {
+      provider: "openai_chatgpt_referral",
+      agentType: "ai_referral_visit",
+      confidence: 0.68,
+      matchedBy: ["query"],
+    });
+    assert.equal(event.request.search, undefined);
   });
 
   it("calls Express next before awaiting background delivery for AI requests", async () => {

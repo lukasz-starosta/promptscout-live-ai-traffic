@@ -38,8 +38,8 @@ fields without breaking older consumers.
   `search_crawler`, `search_referral`, or `other`.
 - `providerClassification.confidence`: number from `0` through `1`.
 - `providerClassification.matchedBy`: non-empty list of signals used to classify
-  the event, such as `user_agent`, `referer`, `host`, `path`, `manual`, or
-  `other`.
+  the event, such as `user_agent`, `referer`, `query`, `host`, `path`,
+  `manual`, or `other`.
 
 Unknown critical enum values must not be silently accepted. Collectors should
 map uncertain or unsupported values to `other` before sending the event, then
@@ -80,6 +80,7 @@ preserve any integration-specific raw details outside the canonical fields.
 - `classifyAiTraffic(requestLike)`
 - `classifyUserAgent(userAgent)`
 - `classifyReferer(referer)`
+- `classifyLandingQuery(queryLike)`
 - `toLiveAiTrafficProviderClassification(classification)`
 - `createLiveAiTrafficIngestClient(options)`
 - `normalizeLiveAiTrafficEvent(event, privacyOptions)`
@@ -98,9 +99,16 @@ explicitly allowed request headers before sending events.
 
 `classifyAiTraffic(requestLike)` is the shared classifier that provider
 packages should call before building a request observation event. It accepts a
-small request-like object with `userAgent`, `referer`/`referrer`, or a
-case-insensitive `headers` object. Provider packages should not duplicate crawler
-string matching.
+small request-like object with `userAgent`, `referer`/`referrer`,
+`search`/`query`/`url`/`landingUrl`, or a case-insensitive `headers` object.
+Provider packages should not duplicate crawler string matching.
+
+Landing URL query attribution is intentionally narrow. The classifier currently
+inspects source-style query keys such as `utm_source` and `source` for known
+ChatGPT source values such as `chatgpt.com`, `chatgpt`, `chat.openai.com`, and
+normalized equivalents. Query attribution returns `matchedBy: ["query"]`; it
+must not be reported as `referer`. It is an advisory referral signal and should
+not override higher-confidence bot or user-fetch user-agent matches.
 
 The lower-level helpers return the same shape:
 
@@ -108,7 +116,8 @@ The lower-level helpers return the same shape:
 - `agentType`: the traffic class.
 - `confidence`: a `0` through `1` score for the matched signal.
 - `matchedRule`: the registry rule identifier, such as
-  `ua:openai:oai-searchbot` or `ref:perplexity`.
+  `ua:openai:oai-searchbot`, `ref:perplexity`, or
+  `query:openai:chatgpt`.
 - `matchedBy`: the signal type used for classification.
 - `docsUrl`: provider documentation when the rule has a useful public source.
 

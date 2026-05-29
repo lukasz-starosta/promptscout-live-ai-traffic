@@ -101,12 +101,13 @@ that an AI assistant mentioned, cited, recommended, or summarized a brand.
 | --- | --- | --- |
 | AI crawler visit | A documented crawler or bot user agent requested a page, such as an AI search crawler or training crawler. | That the page appeared in a specific answer. |
 | AI user fetch | A user-triggered AI fetcher requested a page, such as `ChatGPT-User`, `Claude-User`, or similar provider fetchers. | What the user asked, what the assistant answered, or whether the page was cited. |
-| AI referral | A browser visit arrived with a referer from an AI assistant or AI search surface. | That the assistant crawled the page or mentioned the brand in an answer. |
+| AI referral | A browser visit arrived with a referer from an AI assistant or AI search surface, or with a safe landing URL source parameter such as `utm_source=chatgpt.com`. | That the assistant crawled the page, mentioned the brand in an answer, or came from a specific conversation. |
 | ChatGPT answer mention | PromptScout answer monitoring or another answer-level source observed the brand or page in a generated answer. | A collector event by itself cannot establish this; it is a separate evidence type. |
 
 For reporting, treat crawler and user-fetch user agents as stronger
 request-level evidence than referral-only signals. Treat referrals as advisory
-context because browsers and intermediaries can omit, rewrite, or copy referers.
+context because browsers and intermediaries can omit, rewrite, or copy referers
+and landing URL source parameters.
 
 ## Lowest-Risk Selection
 

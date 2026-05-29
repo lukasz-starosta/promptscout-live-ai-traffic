@@ -76,10 +76,24 @@ free-text input in them. The default guidance is:
 - never forward query keys such as `email`, `token`, `code`, `session`,
   `account`, `user`, `order`, `checkout`, `q`, or `search`.
 
+Collectors may inspect safe source-attribution keys before normalization so the
+classifier can detect AI referral visits when browsers omit `Referer`. The
+current classifier only uses source-style keys such as `utm_source` and
+`source`, and only for known provider values such as `chatgpt.com`, `chatgpt`,
+or `chat.openai.com`. This inspection should happen in memory at the collector
+boundary; full raw query strings remain omitted or allowlisted by default before
+delivery to PromptScout.
+
 Header forwarding must be allowlist-only. The classifier may read headers such
 as `user-agent` and `referer`, but collectors must not forward full header
 sets. Never send `cookie`, `authorization`, `x-api-key`, `set-cookie`, or
 platform-specific secret headers.
+
+PromptScout can count provider/source-level referrals from these parameters. It
+cannot identify an individual ChatGPT conversation unless the customer controls
+and includes a safe campaign or content identifier in the landing URL, and even
+then that identifier should be treated as customer-provided attribution rather
+than provider-confirmed conversation metadata.
 
 ## Ingest Tokens
 

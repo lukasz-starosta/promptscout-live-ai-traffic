@@ -152,6 +152,7 @@ export function createNginxLogEvent(
   const classification = classifyAiTraffic({
     userAgent: entry.userAgent,
     referer: entry.referer,
+    search: entry.search,
   });
   const request: LiveAiTrafficEvent["request"] = {
     host: entry.host ?? options.defaultHost ?? "unknown.local",

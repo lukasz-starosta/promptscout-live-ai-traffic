@@ -261,5 +261,19 @@
         }
       ]
     }
+  ],
+  "landingQueryAttributionKeys": ["utm_source", "source"],
+  "landingQueryAttributionRules": [
+    {
+      "id": "query:openai:chatgpt",
+      "provider": "openai_chatgpt_referral",
+      "agentType": "ai_referral_visit",
+      "confidence": 0.68,
+      "matchKind": "query",
+      "docsUrl": "https://help.openai.com/en/articles/10984597-chatgpt-generated-links",
+      "patterns": [
+        { "source": "^(?:chatgpt|chatgptcom|chatopenaicom)$", "flags": "i" }
+      ]
+    }
   ]
 }

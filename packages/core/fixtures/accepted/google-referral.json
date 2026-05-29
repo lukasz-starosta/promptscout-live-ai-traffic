@@ -29,6 +29,7 @@
     "originalIpRetention": "discarded_after_hash"
   },
   "integration": {
+    "kind": "netlify_edge",
     "name": "netlify",
     "requestId": "netlify-google-referral-001"
   }

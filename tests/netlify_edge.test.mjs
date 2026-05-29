@@ -118,6 +118,7 @@ describe("Netlify Edge collector", () => {
         originalIpRetention: "not_collected",
       },
       integration: {
+        kind: "netlify_edge",
         name: "netlify-edge",
         requestId: "netlify-edge-request-001",
       },

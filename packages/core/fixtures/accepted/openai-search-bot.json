@@ -28,6 +28,7 @@
     "originalIpRetention": "discarded_after_hash"
   },
   "integration": {
+    "kind": "cloudflare_worker",
     "name": "cloudflare",
     "requestId": "cf-openai-search-001"
   }

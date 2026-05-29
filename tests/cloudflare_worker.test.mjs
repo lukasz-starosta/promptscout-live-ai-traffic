@@ -115,6 +115,7 @@ describe("cloudflare worker collector", () => {
         originalIpRetention: "not_collected",
       },
       integration: {
+        kind: "cloudflare_worker",
         name: "cloudflare-worker",
         requestId: "abc123-WAW",
       },

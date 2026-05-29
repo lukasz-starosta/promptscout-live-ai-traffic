@@ -239,13 +239,35 @@
     },
     {
       "id": "ref:meta:ai",
-      "provider": "ai_browser_referral",
+      "provider": "meta_ai_referral",
       "agentType": "ai_referral_visit",
       "confidence": 0.68,
       "matchKind": "referer",
-      "docsUrl": "https://developers.facebook.com/docs/sharing/webmasters/crawler",
+      "docsUrl": "https://www.meta.ai/",
       "patterns": [
         { "source": "^https?://(?:www\\.)?meta\\.ai(?:/|$)", "flags": "i" }
+      ]
+    },
+    {
+      "id": "ref:xai:grok",
+      "provider": "xai_grok_referral",
+      "agentType": "ai_referral_visit",
+      "confidence": 0.68,
+      "matchKind": "referer",
+      "docsUrl": "https://x.ai/grok",
+      "patterns": [
+        { "source": "^https?://(?:[^/]+\\.)?grok\\.com(?:/|$)", "flags": "i" }
+      ]
+    },
+    {
+      "id": "ref:mistral:le-chat",
+      "provider": "mistral_le_chat_referral",
+      "agentType": "ai_referral_visit",
+      "confidence": 0.68,
+      "matchKind": "referer",
+      "docsUrl": "https://docs.mistral.ai/le-chat",
+      "patterns": [
+        { "source": "^https?://chat\\.mistral\\.ai(?:/|$)", "flags": "i" }
       ]
     },
     {

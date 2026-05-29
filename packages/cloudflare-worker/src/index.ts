@@ -120,6 +120,7 @@ export async function createCloudflareWorkerEvent(
       originalIpRetention: "not_collected",
     },
     integration: {
+      kind: "cloudflare_worker",
       name: "cloudflare-worker",
       ...cloudflareRequestId(request),
     },

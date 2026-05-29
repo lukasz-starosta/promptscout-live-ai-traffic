@@ -23,6 +23,7 @@
     "originalIpRetention": "discarded_after_hash"
   },
   "integration": {
+    "kind": "nginx_log_forwarder",
     "name": "nginx-log-forwarder",
     "requestId": "nginx-perplexity-001"
   }

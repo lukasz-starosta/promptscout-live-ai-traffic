@@ -87,6 +87,7 @@ describe("Vercel middleware collector", () => {
       region: "VA",
     });
     assert.equal(event.sourceProvider, "vercel");
+    assert.equal(event.integration.kind, "vercel_nextjs_middleware");
     assert.equal(event.integration.name, "vercel-middleware");
     assert.equal(event.integration.requestId, "iad1::iad1::promptscout-test");
     assert.equal(event.ipHash.algorithm, "hmac-sha256");

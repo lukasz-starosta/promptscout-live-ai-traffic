@@ -156,6 +156,7 @@ export async function buildPromptScoutCloudFrontAwsEventFromRealtimeLogRecord(
       originalIpRetention: "not_collected",
     },
     integration: {
+      kind: "cloudfront_aws_realtime_logs",
       name: "cloudfront-aws-realtime-logs",
       ...(parsed["x-edge-request-id"] === undefined
         ? {}

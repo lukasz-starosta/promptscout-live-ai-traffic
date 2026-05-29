@@ -59,6 +59,7 @@ describe("Fastly Compute collector", () => {
     });
     assert.deepEqual(event.location, { country: "US", region: "CA" });
     assert.deepEqual(event.integration, {
+      kind: "fastly_compute",
       name: "fastly-compute",
       requestId: "req-123",
     });
@@ -124,6 +125,7 @@ describe("Fastly Compute collector", () => {
     const body = JSON.parse(fetchCalls[1].init.body);
     assert.equal(body.events.length, 1);
     assert.equal(body.events[0].sourceProvider, "fastly");
+    assert.equal(body.events[0].integration.kind, "fastly_compute");
     assert.equal(body.events[0].integration.name, "fastly-compute");
     assert.equal(Object.hasOwn(body.events[0].request, "search"), false);
     assert.equal(fetchCalls[1].init.body.includes("token=raw-secret"), false);

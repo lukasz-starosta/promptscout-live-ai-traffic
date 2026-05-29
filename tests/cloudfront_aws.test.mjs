@@ -84,6 +84,7 @@ describe("CloudFront AWS real-time log collector", () => {
       originalIpRetention: "not_collected",
     });
     assert.deepEqual(event.integration, {
+      kind: "cloudfront_aws_realtime_logs",
       name: "cloudfront-aws-realtime-logs",
       requestId: "cloudfront-request-123",
     });

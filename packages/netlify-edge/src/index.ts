@@ -151,6 +151,7 @@ export async function createPromptScoutNetlifyEdgeEvent(
       originalIpRetention: "not_collected",
     },
     integration: {
+      kind: "netlify_edge",
       name: "netlify-edge",
       ...netlifyRequestId(context),
     },

@@ -102,7 +102,96 @@ describe("live AI traffic event contract", () => {
       assert.ok(event.request.path.startsWith("/"));
       assert.ok(event.providerClassification.confidence >= 0);
       assert.ok(event.providerClassification.confidence <= 1);
+      assert.ok(event.integration?.kind, `${path}: integration.kind`);
     }
+  });
+
+  it("exports dashboard-safe provider buckets and signal families", async () => {
+    const {
+      getLiveAiTrafficProviderBucket,
+      getLiveAiTrafficSignalFamily,
+      liveAiTrafficProviderBuckets,
+      liveAiTrafficSignalFamilies,
+    } = await coreModule();
+
+    assert.deepEqual(
+      liveAiTrafficProviderBuckets.map((bucket) => bucket.id),
+      [
+        "openai_chatgpt",
+        "anthropic_claude",
+        "perplexity",
+        "google_gemini",
+        "microsoft_copilot",
+        "meta_ai",
+        "xai_grok",
+        "mistral_le_chat",
+        "other",
+      ],
+    );
+    assert.deepEqual(
+      liveAiTrafficSignalFamilies.map((family) => family.id),
+      ["ai_bot_visit", "ai_referral_visit", "search_baseline", "other"],
+    );
+
+    assert.equal(
+      getLiveAiTrafficProviderBucket("openai_gptbot"),
+      "openai_chatgpt",
+    );
+    assert.equal(
+      getLiveAiTrafficProviderBucket("anthropic_claude_referral"),
+      "anthropic_claude",
+    );
+    assert.equal(getLiveAiTrafficProviderBucket("google_referral"), "other");
+    assert.equal(getLiveAiTrafficProviderBucket("other"), "other");
+
+    assert.equal(
+      getLiveAiTrafficSignalFamily("ai_search_crawler"),
+      "ai_bot_visit",
+    );
+    assert.equal(
+      getLiveAiTrafficSignalFamily("ai_referral_visit"),
+      "ai_referral_visit",
+    );
+    assert.equal(
+      getLiveAiTrafficSignalFamily("search_referral"),
+      "search_baseline",
+    );
+  });
+
+  it("exports displayable integration origin kinds", async () => {
+    const {
+      getLiveAiTrafficIntegrationOrigin,
+      liveAiTrafficIntegrationOrigins,
+    } = await coreModule();
+
+    assert.deepEqual(
+      liveAiTrafficIntegrationOrigins.map((origin) => origin.kind),
+      [
+        "vercel_nextjs_middleware",
+        "cloudflare_worker",
+        "netlify_edge",
+        "fastly_compute",
+        "cloudfront_aws_realtime_logs",
+        "nginx_log_forwarder",
+        "wordpress_plugin",
+        "node_express",
+        "manual",
+        "other",
+      ],
+    );
+    assert.deepEqual(
+      getLiveAiTrafficIntegrationOrigin("vercel_nextjs_middleware"),
+      {
+        kind: "vercel_nextjs_middleware",
+        sourceProvider: "vercel",
+        label: "Vercel / Next.js middleware",
+      },
+    );
+    assert.deepEqual(getLiveAiTrafficIntegrationOrigin("not-real"), {
+      kind: "other",
+      sourceProvider: "other",
+      label: "Other",
+    });
   });
 
   it("parses events built from classifier output through the provider adapter", async () => {

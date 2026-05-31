@@ -72,7 +72,7 @@ describe("live AI traffic event contract", () => {
       parseLiveAiTrafficEvent,
       parseLiveAiTrafficSetupProbeEvent,
     } = await coreModule();
-    const probeCredential = ["probe", "token", "123"].join("-");
+    const probeToken = ["probe", "token", "123"].join("-");
 
     const probe = parseLiveAiTrafficSetupProbeEvent({
       schemaVersion: LIVE_AI_TRAFFIC_SETUP_PROBE_SCHEMA_VERSION,
@@ -81,7 +81,7 @@ describe("live AI traffic event contract", () => {
       observedAt: "2026-05-31T10:00:00.000Z",
       probe: {
         id: "probe_123",
-        token: probeCredential,
+        token: probeToken,
       },
       request: {
         host: "example.com",

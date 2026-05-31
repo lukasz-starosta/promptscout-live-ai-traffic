@@ -56,7 +56,7 @@ describe("generic Node live AI traffic middleware", () => {
   it("sends setup probes separately from AI traffic events", async () => {
     const { observeLiveAiTrafficNodeRequest } = await nodeMiddlewareModule();
     const sentProbes = [];
-    const probeCredential = ["probe", "token", "123"].join("-");
+    const probeToken = ["probe", "token", "123"].join("-");
 
     const probe = await observeLiveAiTrafficNodeRequest(
       request({
@@ -66,7 +66,7 @@ describe("generic Node live AI traffic middleware", () => {
           "user-agent": "PromptScout-Setup-Probe/1.0",
           "x-promptscout-setup-probe": "1",
           "x-promptscout-probe-id": "probe_123",
-          "x-promptscout-probe-token": probeCredential,
+          "x-promptscout-probe-token": probeToken,
           "x-request-id": "req_probe",
         },
       }),
@@ -93,7 +93,7 @@ describe("generic Node live AI traffic middleware", () => {
     assert.equal(Object.hasOwn(probe, "providerClassification"), false);
     assert.deepEqual(probe.probe, {
       id: "probe_123",
-      token: probeCredential,
+      token: probeToken,
     });
     assert.deepEqual(probe.request, {
       host: "example.com",

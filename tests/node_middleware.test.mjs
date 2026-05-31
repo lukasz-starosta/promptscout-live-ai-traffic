@@ -149,7 +149,7 @@ describe("generic Node live AI traffic middleware", () => {
     assert.equal(sentEvents.length, 0);
   });
 
-  it("classifies UTM-only ChatGPT referral visits without storing the raw query", async () => {
+  it("classifies UTM-only ChatGPT referral visits with safe query attribution", async () => {
     const { observeLiveAiTrafficNodeRequest } = await nodeMiddlewareModule();
     const sentEvents = [];
 
@@ -189,7 +189,7 @@ describe("generic Node live AI traffic middleware", () => {
       confidence: 0.68,
       matchedBy: ["query"],
     });
-    assert.equal(event.request.search, undefined);
+    assert.equal(event.request.search, "?utm_source=chatgpt.com");
   });
 
   it("calls Express next before awaiting background delivery for AI requests", async () => {

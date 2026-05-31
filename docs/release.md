@@ -103,7 +103,7 @@ Install the public package from npm and pin the exact version in production
 apps:
 
 ```bash
-npm install @promptscout/live-ai-traffic@0.1.0
+npm install @promptscout/live-ai-traffic@0.1.1
 ```
 
 Use the Vercel helper through its subpath export:

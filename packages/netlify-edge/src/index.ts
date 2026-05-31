@@ -162,11 +162,11 @@ export function createPromptScoutNetlifyEdgeSetupProbeEvent(
     request.headers,
     PROMPTSCOUT_SETUP_PROBE_ID_HEADER,
   );
-  const probeToken = optionalHeader(
+  const probeCredential = optionalHeader(
     request.headers,
     PROMPTSCOUT_SETUP_PROBE_TOKEN_HEADER,
   );
-  if (probeId === undefined || probeToken === undefined) {
+  if (probeId === undefined || probeCredential === undefined) {
     return undefined;
   }
 
@@ -178,7 +178,7 @@ export function createPromptScoutNetlifyEdgeSetupProbeEvent(
     now: options.now,
     probe: {
       id: probeId,
-      token: probeToken,
+      token: probeCredential,
     },
     request: {
       host: url.host,

@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "packageName": "@promptscout/live-ai-traffic",
+  "betaNotice": "These integration guides are available in the PromptScout beta UI. Some integrations are early; report bugs to support@promptscout.app.",
+  "guides": [
+    {
+      "id": "vercel-nextjs",
+      "title": "Vercel / Next.js Proxy",
+      "shortDescription": "Collect live AI traffic from Next.js Proxy or Middleware on Vercel with the public package export.",
+      "runtime": "Next.js Proxy or Middleware",
+      "platform": "Vercel",
+      "packageName": "@promptscout/live-ai-traffic",
+      "packageExports": [
+        "./vercel-middleware"
+      ],
+      "markdownPath": "docs/integrations/vercel.md",
+      "supportStatus": "current",
+      "order": 10
+    },
+    {
+      "id": "cloudflare-worker",
+      "title": "Cloudflare Worker",
+      "shortDescription": "Collect request observations at the Cloudflare edge for proxied customer routes.",
+      "runtime": "Cloudflare Workers",
+      "platform": "Cloudflare",
+      "packageName": "promptscout-live-ai-traffic-cloudflare-worker",
+      "packageExports": [],
+      "markdownPath": "docs/integrations/cloudflare-worker.md",
+      "supportStatus": "preview",
+      "order": 20
+    },
+    {
+      "id": "netlify-edge",
+      "title": "Netlify Edge",
+      "shortDescription": "Collect live AI traffic from Netlify-hosted routes with an Edge Function.",
+      "runtime": "Netlify Edge Functions",
+      "platform": "Netlify",
+      "packageName": "promptscout-live-ai-traffic-netlify-edge",
+      "packageExports": [],
+      "markdownPath": "docs/integrations/netlify-edge.md",
+      "supportStatus": "preview",
+      "order": 30
+    },
+    {
+      "id": "wordpress",
+      "title": "WordPress Plugin",
+      "shortDescription": "Collect server-side WordPress request observations through the PromptScout plugin collector.",
+      "runtime": "WordPress plugin",
+      "platform": "WordPress",
+      "packageName": "promptscout-live-ai-traffic-wordpress-plugin",
+      "packageExports": [],
+      "markdownPath": "docs/integrations/wordpress.md",
+      "supportStatus": "current",
+      "order": 40
+    },
+    {
+      "id": "nginx-log-forwarder",
+      "title": "nginx Log Forwarder",
+      "shortDescription": "Forward classified live AI traffic observations from nginx access logs.",
+      "runtime": "Node.js log forwarder",
+      "platform": "nginx",
+      "packageName": "promptscout-live-ai-traffic-nginx-log-forwarder",
+      "packageExports": [],
+      "markdownPath": "docs/integrations/nginx-log-forwarder.md",
+      "supportStatus": "preview",
+      "order": 50
+    },
+    {
+      "id": "node-express",
+      "title": "Node / Express Middleware",
+      "shortDescription": "Collect live AI traffic from custom Express or Node HTTP servers that own routing.",
+      "runtime": "Node.js middleware",
+      "platform": "Node / Express",
+      "packageName": "promptscout-live-ai-traffic-node-middleware",
+      "packageExports": [],
+      "markdownPath": "docs/integrations/express.md",
+      "supportStatus": "preview",
+      "order": 60
+    },
+    {
+      "id": "cloudfront-aws",
+      "title": "CloudFront / AWS",
+      "shortDescription": "Collect AI traffic observations from CloudFront real-time logs delivered through AWS.",
+      "runtime": "CloudFront real-time logs with Kinesis",
+      "platform": "AWS CloudFront",
+      "packageName": "promptscout-live-ai-traffic-cloudfront-aws",
+      "packageExports": [],
+      "markdownPath": "docs/integrations/cloudfront-aws.md",
+      "supportStatus": "preview",
+      "order": 70
+    },
+    {
+      "id": "fastly-compute",
+      "title": "Fastly Compute",
+      "shortDescription": "Collect live AI traffic at the Fastly edge with JavaScript Compute.",
+      "runtime": "Fastly JavaScript Compute",
+      "platform": "Fastly",
+      "packageName": "promptscout-live-ai-traffic-fastly-compute",
+      "packageExports": [],
+      "markdownPath": "docs/integrations/fastly-compute.md",
+      "supportStatus": "preview",
+      "order": 80
+    },
+    {
+      "id": "cloudflare",
+      "title": "Cloudflare Placeholder",
+      "shortDescription": "Generic Cloudflare package shell; use the Cloudflare Worker guide for the implemented edge collector.",
+      "runtime": "Deferred package shell",
+      "platform": "Cloudflare",
+      "packageName": "promptscout-live-ai-traffic-cloudflare",
+      "packageExports": [],
+      "markdownPath": "docs/integrations/cloudflare.md",
+      "supportStatus": "placeholder",
+      "order": 90
+    },
+    {
+      "id": "netlify",
+      "title": "Netlify Placeholder",
+      "shortDescription": "Generic Netlify package shell; use the Netlify Edge guide for the implemented collector path.",
+      "runtime": "Deferred package shell",
+      "platform": "Netlify",
+      "packageName": "promptscout-live-ai-traffic-netlify",
+      "packageExports": [],
+      "markdownPath": "docs/integrations/netlify.md",
+      "supportStatus": "placeholder",
+      "order": 100
+    },
+    {
+      "id": "fastly",
+      "title": "Fastly Placeholder",
+      "shortDescription": "Generic Fastly package shell; use the Fastly Compute guide for the implemented edge collector.",
+      "runtime": "Deferred package shell",
+      "platform": "Fastly",
+      "packageName": "promptscout-live-ai-traffic-fastly",
+      "packageExports": [],
+      "markdownPath": "docs/integrations/fastly.md",
+      "supportStatus": "placeholder",
+      "order": 110
+    },
+    {
+      "id": "express",
+      "title": "Express Placeholder",
+      "shortDescription": "Generic Node/Express package shell kept for workspace shape while runtime implementation remains deferred.",
+      "runtime": "Deferred package shell",
+      "platform": "Node / Express",
+      "packageName": "promptscout-live-ai-traffic-node-express",
+      "packageExports": [],
+      "markdownPath": "docs/integrations/node-express.md",
+      "supportStatus": "placeholder",
+      "order": 120
+    }
+  ]
+}

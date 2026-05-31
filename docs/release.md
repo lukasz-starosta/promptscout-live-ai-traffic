@@ -88,14 +88,17 @@ verify and dry-run gates before the real publish step.
 The public package manifest allows only these package contents:
 
 - `dist`
+- `docs`
+- `docs-manifest.json`
 - `README.md`
 - `LICENSE`
 - package metadata automatically included by npm
 
 The `exports` map points `.` and `./core` to the compiled shared core entrypoint,
 and `./vercel-middleware` to the compiled Next.js/Vercel collector entrypoint.
-Examples, tests, docs, fixtures, local environment files, and secrets are not
-published.
+It also exposes `./docs-manifest.json` for apps that need integration guide
+metadata without scraping README links. Examples, tests, fixtures, local
+environment files, and secrets are not published.
 
 ## Consumer Install
 

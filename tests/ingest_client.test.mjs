@@ -394,6 +394,62 @@ describe("live AI traffic privacy helpers", () => {
       "?utm_source=chatgpt.com",
     );
 
+    const normalizedLegacyOpenAiQueryReferral =
+      await normalizeLiveAiTrafficEvent(
+        aiReferralVisitEvent({
+          request: {
+            host: "example.com",
+            path: "/pricing",
+            search:
+              "?source=https%3A%2F%2Fwww.chat.openai.com%2Fshare%2Fabc&prompt=secret",
+            method: "GET",
+            userAgent: "Mozilla/5.0",
+          },
+          providerClassification: {
+            provider: "openai_chatgpt_referral",
+            agentType: "ai_referral_visit",
+            confidence: 0.68,
+            matchedBy: ["query"],
+          },
+        }),
+        {
+          query: { mode: "omit" },
+        },
+      );
+    assert.equal(
+      normalizedLegacyOpenAiQueryReferral.request.search,
+      "?utm_source=chat.openai.com",
+    );
+
+    const normalizedMalformedQueryReferral = await normalizeLiveAiTrafficEvent(
+      aiReferralVisitEvent({
+        request: {
+          host: "example.com",
+          path: "/pricing",
+          search: "?utm_source=cha%3Atgpt.com&prompt=secret",
+          method: "GET",
+          userAgent: "Mozilla/5.0",
+        },
+        providerClassification: {
+          provider: "openai_chatgpt_referral",
+          agentType: "ai_referral_visit",
+          confidence: 0.68,
+          matchedBy: ["query"],
+        },
+      }),
+      {
+        query: { mode: "omit" },
+      },
+    );
+    assert.equal(
+      normalizedMalformedQueryReferral.request.search,
+      "?utm_source=chatgpt.com",
+    );
+    assert.equal(
+      JSON.stringify(normalizedMalformedQueryReferral).includes("cha%3A"),
+      false,
+    );
+
     assert.deepEqual(
       filterLiveAiTrafficHeaders(
         {

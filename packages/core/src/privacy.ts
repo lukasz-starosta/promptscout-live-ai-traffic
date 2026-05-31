@@ -2,6 +2,7 @@ import type {
   LiveAiTrafficEvent,
   LiveAiTrafficIpHashAlgorithm,
 } from "./index.js";
+import { canonicalOpenAiQueryAttributionValue } from "./query_attribution.js";
 
 export type WebCryptoLike = {
   subtle?: {
@@ -354,28 +355,22 @@ function safeLandingQueryAttributionSearch(
       continue;
     }
 
-    const [rawKey = "", rawValue = ""] = pair.split("=", 2);
+    const equalsIndex = pair.indexOf("=");
+    const rawKey = equalsIndex >= 0 ? pair.slice(0, equalsIndex) : pair;
+    const rawValue = equalsIndex >= 0 ? pair.slice(equalsIndex + 1) : "";
     const key = decodeFormComponent(rawKey).toLowerCase();
     if (key !== "utm_source" && key !== "source") {
       continue;
     }
 
     const value = decodeFormComponent(rawValue).trim();
-    if (isSafeOpenAiQueryAttributionValue(value)) {
-      return `?${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+    const canonicalValue = canonicalOpenAiQueryAttributionValue(value);
+    if (canonicalValue !== undefined) {
+      return `?utm_source=${encodeURIComponent(canonicalValue)}`;
     }
   }
 
   return undefined;
-}
-
-function isSafeOpenAiQueryAttributionValue(value: string): boolean {
-  const normalizedValue = value.toLowerCase().replace(/[^a-z0-9]/g, "");
-  return (
-    normalizedValue === "chatgpt" ||
-    normalizedValue === "chatgptcom" ||
-    normalizedValue === "chatopenaicom"
-  );
 }
 
 function isRefererHeader(name: string): boolean {

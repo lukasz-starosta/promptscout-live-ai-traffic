@@ -1,3 +1,8 @@
+import {
+  normalizeQueryAttributionValue,
+  openAiQueryAttributionNormalizedValues,
+} from "./query_attribution.js";
+
 export type PlaceholderIntegration = {
   provider: string;
   status: "placeholder";
@@ -489,7 +494,12 @@ const landingQueryAttributionRules: readonly ClassificationRule[] = [
     agentType: "ai_referral_visit",
     confidence: 0.68,
     docsUrl: chatGptGeneratedLinksDocsUrl,
-    patterns: [/^(?:chatgpt|chatgptcom|chatopenaicom)$/i],
+    patterns: [
+      new RegExp(
+        `^(?:${openAiQueryAttributionNormalizedValues.join("|")})$`,
+        "i",
+      ),
+    ],
   },
 ] as const;
 
@@ -1102,15 +1112,6 @@ function searchParams(search: string): [string, string][] {
   }
 
   return params;
-}
-
-function normalizeQueryAttributionValue(value: string): string {
-  const trimmed = value.trim().toLowerCase();
-  const withoutProtocol = trimmed.replace(/^[a-z][a-z0-9+.-]*:\/\//, "");
-  const withoutWww = withoutProtocol.replace(/^www\./, "");
-  const hostLike = withoutWww.split(/[/?#]/, 1)[0] ?? withoutWww;
-
-  return hostLike.replace(/[^a-z0-9]+/g, "");
 }
 
 function decodeFormComponent(value: string): string {

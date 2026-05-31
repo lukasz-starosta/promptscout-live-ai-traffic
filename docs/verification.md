@@ -32,7 +32,7 @@ provider calls, or API E2E checks. Those checks should be added behind the same
 
 ## CI Contract
 
-GitHub Actions runs the cheap verification path on pull requests and pushes to
+GitHub Actions runs the verification path on pull requests and pushes to
 `main`. The workflow uses the committed Yarn lockfile contract and runs:
 
 ```bash
@@ -40,8 +40,26 @@ corepack enable
 yarn install --immutable
 yarn lint
 yarn typecheck
+yarn build
 yarn test
 ./scripts/verify
+```
+
+## Required PR Checks
+
+GitHub branch protection for `main` must bind to these stable required status
+checks from the `Verify` workflow. Keep these job names unique across all workflows.
+GitHub required checks bind to check names, and duplicate job names can make merge
+gates ambiguous.
+
+- `Live traffic verification`
+- `Release readiness package dry run`
+
+The release-readiness job depends on verification, rebuilds the package output,
+and runs:
+
+```bash
+npm pack --dry-run
 ```
 
 CI intentionally does not require secrets and does not run live provider checks,

@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   verify:
-    name: Verify
+    name: Live traffic verification
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -44,3 +44,30 @@ jobs:
 
       - name: Repo verification
         run: ./scripts/verify
+
+  release-readiness:
+    name: Release readiness package dry run
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: verify
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Build package
+        run: yarn build:package
+
+      - name: Dry-run package contents
+        run: npm pack --dry-run

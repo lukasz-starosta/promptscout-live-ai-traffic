@@ -30,7 +30,7 @@ describe("public package install path", () => {
       const packedFiles = await readdir(tempRoot);
       const tarballs = packedFiles.filter((file) => file.endsWith(".tgz"));
 
-      assert.deepEqual(tarballs, ["promptscout-live-ai-traffic-0.1.0.tgz"]);
+      assert.deepEqual(tarballs, ["promptscout-live-ai-traffic-0.1.1.tgz"]);
 
       await mkdir(projectDir);
       await writeFile(

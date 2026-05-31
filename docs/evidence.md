@@ -107,9 +107,11 @@ Referer behavior is treated as an observed request signal, not a provider
 guarantee. Browsers and in-app surfaces can omit or rewrite `Referer`, and some
 AI products also append query parameters such as UTM tags. The core privacy
 helpers therefore strip referer query strings and fragments, and AI referral
-visit events omit the landing-page query string before storage or forwarding.
-The classifier may inspect safe source keys such as `utm_source` and `source`
-for classification before that omission happens.
+visit events keep only closed safe source attribution when the event was
+classified from the landing query, such as `?utm_source=chatgpt.com`. The
+classifier may inspect safe source keys such as `utm_source` and `source`; raw
+landing queries, prompts, tokens, email addresses, fragments, unknown keys, and
+unsafe values are omitted before storage or forwarding.
 
 Explicit non-goals:
 

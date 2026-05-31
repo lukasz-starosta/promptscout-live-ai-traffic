@@ -2,6 +2,7 @@ import type {
   LiveAiTrafficEvent,
   LiveAiTrafficIpHashAlgorithm,
 } from "./index.js";
+import { canonicalOpenAiQueryAttributionValue } from "./query_attribution.js";
 
 export type WebCryptoLike = {
   subtle?: {
@@ -101,7 +102,7 @@ export async function normalizeLiveAiTrafficEvent(
   }
 
   if (options.query?.mode === "omit") {
-    delete normalized.request.search;
+    keepSafeQueryAttributionOrDelete(normalized);
   } else if (options.query?.mode === "allowlist") {
     const search = filterSearchParams(
       normalized.request.search,
@@ -116,7 +117,7 @@ export async function normalizeLiveAiTrafficEvent(
   }
 
   sanitizeRefererInPlace(normalized);
-  omitAiReferralVisitSearchInPlace(normalized);
+  sanitizeAiReferralVisitSearchInPlace(normalized);
 
   if (options.ip?.mode === "omit") {
     delete normalized.ipHash;
@@ -186,7 +187,7 @@ export function sanitizeLiveAiTrafficEventForIngest(
   };
 
   sanitizeRefererInPlace(sanitized);
-  omitAiReferralVisitSearchInPlace(sanitized);
+  sanitizeAiReferralVisitSearchInPlace(sanitized);
 
   return sanitized;
 }
@@ -301,10 +302,75 @@ function sanitizeRefererInPlace(event: LiveAiTrafficEvent): void {
   }
 }
 
-function omitAiReferralVisitSearchInPlace(event: LiveAiTrafficEvent): void {
-  if (event.providerClassification.agentType === "ai_referral_visit") {
-    delete event.request.search;
+function sanitizeAiReferralVisitSearchInPlace(event: LiveAiTrafficEvent): void {
+  if (event.providerClassification.agentType !== "ai_referral_visit") {
+    return;
   }
+
+  if (!event.providerClassification.matchedBy.includes("query")) {
+    delete event.request.search;
+    return;
+  }
+
+  const safeSearch = safeLandingQueryAttributionSearch(
+    event.request.search,
+    event.providerClassification.provider,
+  );
+  if (safeSearch === undefined) {
+    delete event.request.search;
+  } else {
+    event.request.search = safeSearch;
+  }
+}
+
+function keepSafeQueryAttributionOrDelete(event: LiveAiTrafficEvent): void {
+  if (
+    event.providerClassification.agentType === "ai_referral_visit" &&
+    event.providerClassification.matchedBy.includes("query")
+  ) {
+    const safeSearch = safeLandingQueryAttributionSearch(
+      event.request.search,
+      event.providerClassification.provider,
+    );
+    if (safeSearch !== undefined) {
+      event.request.search = safeSearch;
+      return;
+    }
+  }
+
+  delete event.request.search;
+}
+
+function safeLandingQueryAttributionSearch(
+  search: string | undefined,
+  provider: LiveAiTrafficEvent["providerClassification"]["provider"],
+): string | undefined {
+  if (search === undefined || provider !== "openai_chatgpt_referral") {
+    return undefined;
+  }
+
+  const body = search.startsWith("?") ? search.slice(1) : search;
+  for (const pair of body.split("&")) {
+    if (pair.length === 0) {
+      continue;
+    }
+
+    const equalsIndex = pair.indexOf("=");
+    const rawKey = equalsIndex >= 0 ? pair.slice(0, equalsIndex) : pair;
+    const rawValue = equalsIndex >= 0 ? pair.slice(equalsIndex + 1) : "";
+    const key = decodeFormComponent(rawKey).toLowerCase();
+    if (key !== "utm_source" && key !== "source") {
+      continue;
+    }
+
+    const value = decodeFormComponent(rawValue).trim();
+    const canonicalValue = canonicalOpenAiQueryAttributionValue(value);
+    if (canonicalValue !== undefined) {
+      return `?utm_source=${encodeURIComponent(canonicalValue)}`;
+    }
+  }
+
+  return undefined;
 }
 
 function isRefererHeader(name: string): boolean {

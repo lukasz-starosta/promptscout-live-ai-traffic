@@ -1,6 +1,6 @@
 {
   "name": "promptscout-live-ai-traffic-node-express",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Placeholder Node/Express integration for PromptScout live AI traffic.",
   "license": "Apache-2.0",
   "type": "module",

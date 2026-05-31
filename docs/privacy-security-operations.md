@@ -81,8 +81,11 @@ classifier can detect AI referral visits when browsers omit `Referer`. The
 current classifier only uses source-style keys such as `utm_source` and
 `source`, and only for known provider values such as `chatgpt.com`, `chatgpt`,
 or `chat.openai.com`. This inspection should happen in memory at the collector
-boundary; full raw query strings remain omitted or allowlisted by default before
-delivery to PromptScout.
+boundary; full raw query strings remain omitted before delivery to PromptScout.
+For query-classified AI referral visits, the emitted `request.search` may keep
+only the closed safe source attribution pair, such as
+`?utm_source=chatgpt.com`, so PromptScout can store landing source attribution
+without retaining raw landing queries.
 
 Header forwarding must be allowlist-only. The classifier may read headers such
 as `user-agent` and `referer`, but collectors must not forward full header

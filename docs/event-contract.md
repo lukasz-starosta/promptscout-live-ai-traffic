@@ -49,8 +49,10 @@ preserve any integration-specific raw details outside the canonical fields.
 
 ## Optional Fields
 
-- `request.search`: query string. Use an empty string or a value starting with
-  `?`.
+- `request.search`: privacy-normalized query metadata. Use an empty string or a
+  value starting with `?`. For query-classified AI referral visits, producers
+  may emit only closed safe source attribution such as
+  `?utm_source=chatgpt.com`; they must not emit the full raw landing query.
 - `request.userAgent`: request user agent when available.
 - `request.referer`: request referer when available.
 - `location.country`: ISO 3166-1 alpha-2 country code when available.
@@ -175,7 +177,10 @@ inspects source-style query keys such as `utm_source` and `source` for known
 ChatGPT source values such as `chatgpt.com`, `chatgpt`, `chat.openai.com`, and
 normalized equivalents. Query attribution returns `matchedBy: ["query"]`; it
 must not be reported as `referer`. It is an advisory referral signal and should
-not override higher-confidence bot or user-fetch user-agent matches.
+not override higher-confidence bot or user-fetch user-agent matches. Before
+delivery, privacy normalization keeps only the known safe source pair for
+query-classified AI referral visits and drops prompt text, tokens, emails,
+conversation IDs, fragments, unknown query keys, and unsafe values.
 
 The lower-level helpers return the same shape:
 

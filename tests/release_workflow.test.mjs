@@ -97,6 +97,7 @@ describe("release workflow", () => {
       assert.doesNotMatch(docs, new RegExp(obsolete));
     }
 
+    assert.match(changelog, /## 0\.1\.1/);
     assert.match(changelog, /## 0\.1\.0/);
     assert.match(changelog, /single public npm package/i);
   });
@@ -107,7 +108,7 @@ describe("release workflow", () => {
     const yarnrc = await readFile(".yarnrc.yml", "utf8");
 
     assert.equal(rootPackage.name, "@promptscout/live-ai-traffic");
-    assert.equal(rootPackage.version, "0.1.0");
+    assert.equal(rootPackage.version, "0.1.1");
     assert.notEqual(rootPackage.private, true);
     assert.deepEqual(rootPackage.files, ["dist", "README.md", "LICENSE"]);
     assert.deepEqual(rootPackage.publishConfig, {

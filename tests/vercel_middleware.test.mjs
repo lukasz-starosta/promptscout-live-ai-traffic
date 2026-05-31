@@ -149,7 +149,7 @@ describe("Vercel middleware collector", () => {
     });
   });
 
-  it("tracks UTM-only ChatGPT referral visits without forwarding the raw query", async () => {
+  it("tracks UTM-only ChatGPT referral visits with safe query attribution", async () => {
     const { trackPromptScoutAiTraffic } = await vercelMiddlewareModule();
     const waitUntilPromises = [];
     const calls = [];
@@ -197,8 +197,8 @@ describe("Vercel middleware collector", () => {
       confidence: 0.68,
       matchedBy: ["query"],
     });
-    assert.equal(event.request.search, undefined);
-    assert.equal(calls[0].init.body.includes("utm_source"), false);
+    assert.equal(event.request.search, "?utm_source=chatgpt.com");
+    assert.equal(calls[0].init.body.includes("utm_source"), true);
     assert.equal(calls[0].init.body.includes("prompt=private"), false);
   });
 

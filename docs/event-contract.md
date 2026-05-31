@@ -41,6 +41,12 @@ token/source wiring from transport auth plus the probe `sourceProvider`,
 `integration`, `host`, and `path` fields. Integration completion still requires
 the first real `request_observation` event from live AI traffic.
 
+Probe responses use the separate `setup_probe` response contract with `ok`,
+`eventKind`, `probeId`, and `receivedAt` fields. This keeps setup validation
+status distinct from request observations and gives PromptScout app code a
+stable parser for the probe endpoint response without introducing AI provider
+classification.
+
 ## Required Fields
 
 - `schemaVersion`: numeric schema version, currently `1`.
@@ -195,6 +201,11 @@ the `other` provider bucket until the classifier has a documented provider rule.
 - `parseLiveAiTrafficSetupProbeEvent`
 - `isLiveAiTrafficSetupProbeEvent`
 - `validateLiveAiTrafficSetupProbeEvent`
+- `LiveAiTrafficSetupProbeResponse`
+- `liveAiTrafficSetupProbeResponseJsonSchema`
+- `parseLiveAiTrafficSetupProbeResponse`
+- `isLiveAiTrafficSetupProbeResponse`
+- `validateLiveAiTrafficSetupProbeResponse`
 - `createLiveAiTrafficSetupProbeEvent(input)`
 - `createLiveAiTrafficSetupProbeClient(options)`
 

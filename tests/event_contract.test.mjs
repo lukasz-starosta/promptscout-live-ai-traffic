@@ -104,6 +104,38 @@ describe("live AI traffic event contract", () => {
     );
   });
 
+  it("parses setup probe responses as their own contract", async () => {
+    const {
+      liveAiTrafficSetupProbeResponseJsonSchema,
+      parseLiveAiTrafficSetupProbeResponse,
+    } = await coreModule();
+
+    assert.equal(
+      liveAiTrafficSetupProbeResponseJsonSchema.$id,
+      "promptscout.liveAiTrafficSetupProbeResponse",
+    );
+
+    const response = parseLiveAiTrafficSetupProbeResponse({
+      ok: true,
+      eventKind: "setup_probe",
+      probeId: "probe_123",
+      receivedAt: "2026-05-31T10:00:01.000Z",
+    });
+
+    assert.equal(response.ok, true);
+    assert.equal(response.probeId, "probe_123");
+    assert.throws(
+      () =>
+        parseLiveAiTrafficSetupProbeResponse({
+          ok: true,
+          eventKind: "request_observation",
+          probeId: "probe_123",
+          receivedAt: "2026-05-31T10:00:01.000Z",
+        }),
+      /Invalid live AI traffic setup probe response/,
+    );
+  });
+
   it("accepts all committed common traffic fixtures", async () => {
     const { LIVE_AI_TRAFFIC_EVENT_SCHEMA_VERSION, parseLiveAiTrafficEvent } =
       await coreModule();

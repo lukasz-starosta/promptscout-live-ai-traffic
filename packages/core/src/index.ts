@@ -916,10 +916,37 @@ export const liveAiTrafficSetupProbeEventJsonSchema = {
   },
 } as const;
 
+export const liveAiTrafficSetupProbeResponseJsonSchema = {
+  $schema: "https://json-schema.org/draft/2020-12/schema",
+  $id: "promptscout.liveAiTrafficSetupProbeResponse",
+  title: "PromptScout live AI traffic setup probe response",
+  type: "object",
+  required: ["ok", "eventKind", "probeId", "receivedAt"],
+  additionalProperties: false,
+  properties: {
+    ok: { type: "boolean" },
+    eventKind: {
+      const: "setup_probe",
+    },
+    probeId: { type: "string", minLength: 1 },
+    receivedAt: {
+      type: "string",
+      format: "date-time",
+    },
+  },
+} as const;
+
 class LiveAiTrafficEventValidationError extends Error {
   constructor(issues: string[]) {
     super(`Invalid live AI traffic event: ${issues.join("; ")}`);
     this.name = "LiveAiTrafficEventValidationError";
+  }
+}
+
+class LiveAiTrafficSetupProbeResponseValidationError extends Error {
+  constructor(issues: string[]) {
+    super(`Invalid live AI traffic setup probe response: ${issues.join("; ")}`);
+    this.name = "LiveAiTrafficSetupProbeResponseValidationError";
   }
 }
 
@@ -979,6 +1006,24 @@ export function isLiveAiTrafficSetupProbeEvent(
   return validateLiveAiTrafficSetupProbeEvent(input).length === 0;
 }
 
+export function parseLiveAiTrafficSetupProbeResponse(
+  input: unknown,
+): LiveAiTrafficSetupProbeResponse {
+  const issues = validateLiveAiTrafficSetupProbeResponse(input);
+
+  if (issues.length > 0) {
+    throw new LiveAiTrafficSetupProbeResponseValidationError(issues);
+  }
+
+  return input as LiveAiTrafficSetupProbeResponse;
+}
+
+export function isLiveAiTrafficSetupProbeResponse(
+  input: unknown,
+): input is LiveAiTrafficSetupProbeResponse {
+  return validateLiveAiTrafficSetupProbeResponse(input).length === 0;
+}
+
 export function validateLiveAiTrafficSetupProbeEvent(input: unknown): string[] {
   const issues: string[] = [];
 
@@ -1019,6 +1064,29 @@ export function validateLiveAiTrafficSetupProbeEvent(input: unknown): string[] {
   if (input.integration !== undefined) {
     validateIntegration(input.integration, issues);
   }
+
+  return issues;
+}
+
+export function validateLiveAiTrafficSetupProbeResponse(
+  input: unknown,
+): string[] {
+  const issues: string[] = [];
+
+  if (!isRecord(input)) {
+    return ["setup probe response must be an object"];
+  }
+
+  rejectUnknownProperties(
+    input,
+    "response",
+    ["ok", "eventKind", "probeId", "receivedAt"],
+    issues,
+  );
+  requireBoolean(input, "ok", issues);
+  requireLiteral(input, "eventKind", "setup_probe", issues);
+  requireString(input, "probeId", issues);
+  requireIsoDateTime(input, "receivedAt", issues);
 
   return issues;
 }
@@ -1396,6 +1464,16 @@ function requireInteger(
 ): void {
   if (!Number.isInteger(input[field])) {
     issues.push(`${field} must be an integer`);
+  }
+}
+
+function requireBoolean(
+  input: Record<string, unknown>,
+  field: string,
+  issues: string[],
+): void {
+  if (typeof input[field] !== "boolean") {
+    issues.push(`${field} must be a boolean`);
   }
 }
 

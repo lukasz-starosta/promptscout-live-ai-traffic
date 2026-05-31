@@ -127,11 +127,11 @@ export function createCloudflareWorkerSetupProbeEvent(
     request.headers,
     PROMPTSCOUT_SETUP_PROBE_ID_HEADER,
   );
-  const probeToken = optionalHeader(
+  const probeVerifier = optionalHeader(
     request.headers,
     PROMPTSCOUT_SETUP_PROBE_TOKEN_HEADER,
   );
-  if (probeId === undefined || probeToken === undefined) {
+  if (probeId === undefined || probeVerifier === undefined) {
     return undefined;
   }
 
@@ -143,7 +143,7 @@ export function createCloudflareWorkerSetupProbeEvent(
     now: options.now,
     probe: {
       id: probeId,
-      token: probeToken,
+      token: probeVerifier,
     },
     request: {
       host: url.host,

@@ -10,9 +10,7 @@
       "runtime": "Next.js Proxy or Middleware",
       "platform": "Vercel",
       "packageName": "@promptscout/live-ai-traffic",
-      "packageExports": [
-        "./vercel-middleware"
-      ],
+      "packageExports": ["./vercel-middleware"],
       "markdownPath": "docs/integrations/vercel.md",
       "supportStatus": "current",
       "order": 10

@@ -102,13 +102,17 @@ describe("docs manifest", () => {
     const tempRoot = await mkdtemp(join(tmpdir(), "promptscout-docs-pack-"));
 
     try {
-      execFileSync("npm", ["pack", "--pack-destination", tempRoot], {
-        env: {
-          ...process.env,
-          npm_config_cache: join(tempRoot, "npm-cache"),
+      execFileSync(
+        "npm",
+        ["pack", "--ignore-scripts", "--pack-destination", tempRoot],
+        {
+          env: {
+            ...process.env,
+            npm_config_cache: join(tempRoot, "npm-cache"),
+          },
+          stdio: "pipe",
         },
-        stdio: "pipe",
-      });
+      );
 
       const tarball = join(tempRoot, "promptscout-live-ai-traffic-0.1.1.tgz");
       const packedFiles = execFileSync("tar", ["-tzf", tarball], {

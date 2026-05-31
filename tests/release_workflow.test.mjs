@@ -39,13 +39,21 @@ describe("release workflow", () => {
       /^\s+if:/m,
       "package dry-run must run before both dry-run and real publish modes",
     );
+    assert.match(workflow, /runs-on:\s*ubuntu-latest/);
     assert.match(workflow, /registry-url:\s*https:\/\/registry\.npmjs\.org/);
+    assert.match(workflow, /package-manager-cache:\s*false/);
+    assert.match(workflow, /node-version:\s*22\.14\.0/);
+    assert.match(workflow, /npm install --global npm@11\.5\.1/);
+    assert.match(workflow, /check_min_version "\$node_version" 22 14 0 Node/);
+    assert.match(workflow, /check_min_version "\$npm_version" 11 5 1 npm/);
     assert.match(workflow, /id-token:\s*write/);
+    assert.match(workflow, /contents:\s*read/);
     assert.match(workflow, /^ {4}environment:\s*npm$/m);
     assert.match(
       workflow,
-      /npm publish --access public --provenance --registry=https:\/\/registry\.npmjs\.org/,
+      /npm publish --access public --registry=https:\/\/registry\.npmjs\.org/,
     );
+    assert.doesNotMatch(workflow, /--provenance/);
     assert.doesNotMatch(workflow, /npm\.pkg\.github\.com/);
     assert.doesNotMatch(workflow, /packages:\s*write/);
     assert.doesNotMatch(workflow, /secrets\.GITHUB_TOKEN/);
@@ -65,12 +73,15 @@ describe("release workflow", () => {
       "registry.npmjs.org",
       "Trusted Publishing",
       "id-token: write",
+      "contents: read",
+      "Node `22.14.0` or newer",
+      "npm `11.5.1` or newer",
+      "repository",
+      "https://github.com/lukasz-starosta/promptscout-live-ai-traffic.git",
       "npm",
       "npm login --registry=https://registry.npmjs.org",
       "npm whoami --registry=https://registry.npmjs.org",
-      "npm publish --access public --registry=https://registry.npmjs.org",
       "npm view @promptscout/live-ai-traffic version --registry=https://registry.npmjs.org",
-      "npm access grant read-write @promptscout:maintainers @promptscout/live-ai-traffic --registry=https://registry.npmjs.org",
       "npm trust github @promptscout/live-ai-traffic",
       "--repo lukasz-starosta/promptscout-live-ai-traffic",
       "--file release.yml",
@@ -80,6 +91,7 @@ describe("release workflow", () => {
       "dry run",
       "0.1.0",
       "dry_run: false",
+      "provenance",
     ]) {
       assert.match(docs, new RegExp(expected));
     }
@@ -93,6 +105,7 @@ describe("release workflow", () => {
       "read:packages",
       "packages: write",
       "--access restricted",
+      "--provenance",
     ]) {
       assert.doesNotMatch(docs, new RegExp(obsolete));
     }
@@ -110,6 +123,10 @@ describe("release workflow", () => {
     assert.equal(rootPackage.name, "@promptscout/live-ai-traffic");
     assert.equal(rootPackage.version, "0.1.1");
     assert.notEqual(rootPackage.private, true);
+    assert.deepEqual(rootPackage.repository, {
+      type: "git",
+      url: "https://github.com/lukasz-starosta/promptscout-live-ai-traffic.git",
+    });
     assert.deepEqual(rootPackage.files, [
       "dist",
       "docs",

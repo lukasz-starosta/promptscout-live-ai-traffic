@@ -4,6 +4,10 @@
   "description": "PromptScout live AI traffic event contracts, classifiers, and runtime collectors.",
   "license": "Apache-2.0",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lukasz-starosta/promptscout-live-ai-traffic.git"
+  },
   "packageManager": "yarn@4.9.2",
   "workspaces": [
     "packages/*",

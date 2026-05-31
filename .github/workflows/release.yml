@@ -25,10 +25,46 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 22.14.0
           registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Install npm trusted publishing CLI
+        run: npm install --global npm@11.5.1
+
+      - name: Check trusted publishing runtime
+        run: |
+          check_min_version() {
+            local version="$1"
+            local required_major="$2"
+            local required_minor="$3"
+            local required_patch="$4"
+            local name="$5"
+            local major minor patch_extra patch
+
+            IFS=. read -r major minor patch_extra <<< "$version"
+            patch="${patch_extra%%[^0-9]*}"
+
+            if (( major > required_major )) ||
+              (( major == required_major && minor > required_minor )) ||
+              (( major == required_major && minor == required_minor && patch >= required_patch )); then
+              return 0
+            fi
+
+            echo "$name $version is below required $required_major.$required_minor.$required_patch" >&2
+            exit 1
+          }
+
+          node_version="$(node -p 'process.versions.node')"
+          npm_version="$(npm --version)"
+
+          echo "Node $node_version"
+          echo "npm $npm_version"
+
+          check_min_version "$node_version" 22 14 0 Node
+          check_min_version "$npm_version" 11 5 1 npm
 
       - name: Enable Corepack
         run: corepack enable
@@ -56,4 +92,4 @@ jobs:
 
       - name: Publish public npm package
         if: ${{ !inputs.dry_run }}
-        run: npm publish --access public --provenance --registry=https://registry.npmjs.org
+        run: npm publish --access public --registry=https://registry.npmjs.org

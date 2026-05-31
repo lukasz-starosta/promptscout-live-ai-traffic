@@ -1,4 +1,7 @@
-import type { LiveAiTrafficEvent } from "./index.js";
+import type {
+  LiveAiTrafficEvent,
+  LiveAiTrafficSetupProbeEvent,
+} from "./index.js";
 import {
   hmacSha256Hex,
   sanitizeLiveAiTrafficEventForIngest,
@@ -66,6 +69,12 @@ export type LiveAiTrafficIngestClient = {
   ): Promise<LiveAiTrafficIngestResult>;
 };
 
+export type LiveAiTrafficSetupProbeClient = {
+  sendProbe(
+    event: LiveAiTrafficSetupProbeEvent,
+  ): Promise<LiveAiTrafficIngestResult>;
+};
+
 export type LiveAiTrafficBatcher = {
   push(event: LiveAiTrafficEvent): LiveAiTrafficEvent[] | undefined;
   flush(): LiveAiTrafficEvent[];
@@ -127,66 +136,8 @@ export function createLiveAiTrafficIngestClient(
       events: events.map((event) => sanitizeLiveAiTrafficEventForIngest(event)),
     });
     const headers = await ingestHeaders(options, body);
-    let attempts = 0;
-    let lastError: Error | undefined;
 
-    while (attempts <= retry.maxRetries) {
-      attempts += 1;
-
-      try {
-        const response = await fetch(options.endpoint, {
-          method: "POST",
-          headers,
-          body,
-        });
-        const responseBody = await readResponseBody(response);
-        const authFailure = response.status === 401 || response.status === 403;
-        const retryable = isRetryableStatus(response.status);
-
-        if (response.ok) {
-          return {
-            ok: true,
-            status: response.status,
-            attempts,
-            retryable: false,
-            authFailure: false,
-            ...(responseBody === undefined ? {} : { responseBody }),
-          };
-        }
-
-        if (!retryable || authFailure || attempts > retry.maxRetries) {
-          return {
-            ok: false,
-            status: response.status,
-            attempts,
-            retryable: retryable && !authFailure,
-            authFailure,
-            ...(responseBody === undefined ? {} : { responseBody }),
-          };
-        }
-      } catch (error) {
-        lastError = asError(error);
-        if (attempts > retry.maxRetries) {
-          return {
-            ok: false,
-            attempts,
-            retryable: true,
-            authFailure: false,
-            error: lastError,
-          };
-        }
-      }
-
-      await retry.sleep(backoffDelay(attempts, retry));
-    }
-
-    return {
-      ok: false,
-      attempts,
-      retryable: true,
-      authFailure: false,
-      ...(lastError === undefined ? {} : { error: lastError }),
-    };
+    return postJsonWithRetry(options.endpoint, headers, body, fetch, retry);
   };
 
   return {
@@ -194,6 +145,35 @@ export function createLiveAiTrafficIngestClient(
       return sendBatch([event]);
     },
     sendBatch,
+  };
+}
+
+export function createLiveAiTrafficSetupProbeClient(
+  options: LiveAiTrafficIngestClientOptions,
+): LiveAiTrafficSetupProbeClient {
+  const retry = {
+    maxRetries: options.retry?.maxRetries ?? 2,
+    baseDelayMs: options.retry?.baseDelayMs ?? 100,
+    maxDelayMs: options.retry?.maxDelayMs ?? 1_000,
+    sleep: options.retry?.sleep ?? defaultSleep,
+  };
+  const fetch = options.fetch ?? defaultFetch();
+
+  if (options.endpoint.length === 0) {
+    throw new Error("PromptScout live AI traffic probe endpoint is required");
+  }
+
+  if (options.ingestToken.length === 0) {
+    throw new Error("PromptScout live AI traffic ingest token is required");
+  }
+
+  return {
+    async sendProbe(event) {
+      const body = JSON.stringify({ probe: event });
+      const headers = await ingestHeaders(options, body);
+
+      return postJsonWithRetry(options.endpoint, headers, body, fetch, retry);
+    },
   };
 }
 
@@ -281,6 +261,75 @@ async function ingestHeaders(
   }
 
   return headers;
+}
+
+async function postJsonWithRetry(
+  endpoint: string,
+  headers: Record<string, string>,
+  body: string,
+  fetch: LiveAiTrafficFetch,
+  retry: Required<LiveAiTrafficRetryOptions>,
+): Promise<LiveAiTrafficIngestResult> {
+  let attempts = 0;
+  let lastError: Error | undefined;
+
+  while (attempts <= retry.maxRetries) {
+    attempts += 1;
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers,
+        body,
+      });
+      const responseBody = await readResponseBody(response);
+      const authFailure = response.status === 401 || response.status === 403;
+      const retryable = isRetryableStatus(response.status);
+
+      if (response.ok) {
+        return {
+          ok: true,
+          status: response.status,
+          attempts,
+          retryable: false,
+          authFailure: false,
+          ...(responseBody === undefined ? {} : { responseBody }),
+        };
+      }
+
+      if (!retryable || authFailure || attempts > retry.maxRetries) {
+        return {
+          ok: false,
+          status: response.status,
+          attempts,
+          retryable: retryable && !authFailure,
+          authFailure,
+          ...(responseBody === undefined ? {} : { responseBody }),
+        };
+      }
+    } catch (error) {
+      lastError = asError(error);
+      if (attempts > retry.maxRetries) {
+        return {
+          ok: false,
+          attempts,
+          retryable: true,
+          authFailure: false,
+          error: lastError,
+        };
+      }
+    }
+
+    await retry.sleep(backoffDelay(attempts, retry));
+  }
+
+  return {
+    ok: false,
+    attempts,
+    retryable: true,
+    authFailure: false,
+    ...(lastError === undefined ? {} : { error: lastError }),
+  };
 }
 
 function isRetryableStatus(status: number): boolean {

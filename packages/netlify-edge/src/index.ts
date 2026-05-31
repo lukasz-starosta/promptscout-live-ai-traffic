@@ -1,6 +1,9 @@
 import {
   classifyAiTraffic,
   createLiveAiTrafficIngestClient,
+  createLiveAiTrafficSetupProbeClient,
+  createLiveAiTrafficSetupProbeEvent,
+  isPromptScoutSetupProbeHeaderValue,
   LIVE_AI_TRAFFIC_EVENT_SCHEMA_VERSION,
   type LiveAiTrafficEvent,
   type LiveAiTrafficFetch,
@@ -8,6 +11,10 @@ import {
   type LiveAiTrafficIngestResult,
   type LiveAiTrafficPrivacyOptions,
   normalizeLiveAiTrafficEvent,
+  PROMPTSCOUT_SETUP_PROBE_HEADER,
+  PROMPTSCOUT_SETUP_PROBE_ID_HEADER,
+  PROMPTSCOUT_SETUP_PROBE_PATH,
+  PROMPTSCOUT_SETUP_PROBE_TOKEN_HEADER,
   parseLiveAiTrafficEvent,
   toLiveAiTrafficProviderClassification,
 } from "@promptscout/live-ai-traffic/core";
@@ -15,6 +22,7 @@ import {
 export type PromptScoutNetlifyEdgeEnv = {
   PROMPTSCOUT_INGEST_TOKEN: string;
   PROMPTSCOUT_INGEST_URL: string;
+  PROMPTSCOUT_PROBE_URL?: string;
   PROMPTSCOUT_QUERY_POLICY?: "keep" | "omit" | "allowlist";
   PROMPTSCOUT_QUERY_ALLOWLIST?: string;
   PROMPTSCOUT_PATH_POLICY?: "keep" | "redact";
@@ -104,6 +112,21 @@ export async function observePromptScoutNetlifyEdgeRequest(
   options: PromptScoutNetlifyEdgeOptions = {},
 ): Promise<LiveAiTrafficIngestResult> {
   const env = options.env ?? readNetlifyEdgeEnv();
+  const probe = createPromptScoutNetlifyEdgeSetupProbeEvent(
+    request,
+    context,
+    options,
+  );
+  if (probe !== undefined) {
+    const client = createLiveAiTrafficSetupProbeClient({
+      endpoint: env.PROMPTSCOUT_PROBE_URL ?? env.PROMPTSCOUT_INGEST_URL,
+      ingestToken: env.PROMPTSCOUT_INGEST_TOKEN,
+      fetch: options.ingestFetch,
+    });
+
+    return client.sendProbe(probe);
+  }
+
   const event = await createPromptScoutNetlifyEdgeEvent(request, context, {
     ...options,
     env,
@@ -115,6 +138,62 @@ export async function observePromptScoutNetlifyEdgeRequest(
   });
 
   return client.send(event);
+}
+
+export function createPromptScoutNetlifyEdgeSetupProbeEvent(
+  request: Request,
+  context: PromptScoutNetlifyEdgeContext,
+  options: PromptScoutNetlifyEdgeOptions = {},
+) {
+  const url = new URL(request.url);
+  if (url.pathname !== PROMPTSCOUT_SETUP_PROBE_PATH) {
+    return undefined;
+  }
+
+  if (
+    !isPromptScoutSetupProbeHeaderValue(
+      optionalHeader(request.headers, PROMPTSCOUT_SETUP_PROBE_HEADER),
+    )
+  ) {
+    return undefined;
+  }
+
+  const probeId = optionalHeader(
+    request.headers,
+    PROMPTSCOUT_SETUP_PROBE_ID_HEADER,
+  );
+  const probeToken = optionalHeader(
+    request.headers,
+    PROMPTSCOUT_SETUP_PROBE_TOKEN_HEADER,
+  );
+  if (probeId === undefined || probeToken === undefined) {
+    return undefined;
+  }
+
+  const userAgent = optionalHeader(request.headers, "user-agent");
+  const referer = optionalHeader(request.headers, "referer");
+
+  return createLiveAiTrafficSetupProbeEvent({
+    sourceProvider: "netlify",
+    now: options.now,
+    probe: {
+      id: probeId,
+      token: probeToken,
+    },
+    request: {
+      host: url.host,
+      path: url.pathname,
+      ...(url.search.length === 0 ? {} : { search: url.search }),
+      method: normalizeHttpMethod(request.method),
+      ...(userAgent === undefined ? {} : { userAgent }),
+      ...(referer === undefined ? {} : { referer }),
+    },
+    integration: {
+      kind: "netlify_edge",
+      name: "netlify-edge",
+      ...netlifyRequestId(context),
+    },
+  });
 }
 
 export async function createPromptScoutNetlifyEdgeEvent(
@@ -198,6 +277,7 @@ function readNetlifyEdgeEnv(): PromptScoutNetlifyEdgeEnv {
   return {
     PROMPTSCOUT_INGEST_TOKEN: ingestToken,
     PROMPTSCOUT_INGEST_URL: ingestUrl,
+    ...optionalEnv(get, "PROMPTSCOUT_PROBE_URL"),
     ...optionalEnv(get, "PROMPTSCOUT_QUERY_POLICY"),
     ...optionalEnv(get, "PROMPTSCOUT_QUERY_ALLOWLIST"),
     ...optionalEnv(get, "PROMPTSCOUT_PATH_POLICY"),

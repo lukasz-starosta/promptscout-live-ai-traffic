@@ -70,3 +70,19 @@ The collector sends canonical request observation events with
 `sourceProvider: "netlify"` and `integration.name: "netlify-edge"`. Raw IP
 addresses are not collected by default; the event records
 `ipHash.algorithm: "none"` with `originalIpRetention: "not_collected"`.
+
+## Setup Probe
+
+PromptScout can trigger a collector wiring probe at
+`/__promptscout/setup-probe`. The Netlify Edge collector recognizes that path
+when the request includes `x-promptscout-setup-probe: 1`,
+`x-promptscout-probe-id`, and `x-promptscout-probe-token`, then sends a
+separate `setup_probe` payload to `PROMPTSCOUT_PROBE_URL` or, when omitted, the
+normal
+`PROMPTSCOUT_INGEST_URL`.
+
+Probe payloads include the probe id/token, `sourceProvider: "netlify"`, request
+host/path/method, and the Netlify request id when available. They do not include
+`providerClassification`, are not AI bot/referral events, and do not complete
+the integration. Completion still requires the first real live AI traffic
+`request_observation` event.

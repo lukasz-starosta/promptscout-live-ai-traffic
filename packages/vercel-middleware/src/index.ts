@@ -1,13 +1,21 @@
 import {
   classifyAiTraffic,
   createLiveAiTrafficIngestClient,
+  createLiveAiTrafficSetupProbeClient,
+  createLiveAiTrafficSetupProbeEvent,
+  isPromptScoutSetupProbeHeaderValue,
   LIVE_AI_TRAFFIC_EVENT_SCHEMA_VERSION,
   type LiveAiTrafficEvent,
   type LiveAiTrafficHttpMethod,
   type LiveAiTrafficIngestClientOptions,
   type LiveAiTrafficIngestResult,
   type LiveAiTrafficPrivacyOptions,
+  type LiveAiTrafficSetupProbeEvent,
   normalizeLiveAiTrafficEvent,
+  PROMPTSCOUT_SETUP_PROBE_HEADER,
+  PROMPTSCOUT_SETUP_PROBE_ID_HEADER,
+  PROMPTSCOUT_SETUP_PROBE_PATH,
+  PROMPTSCOUT_SETUP_PROBE_TOKEN_HEADER,
   toLiveAiTrafficProviderClassification,
   type WebCryptoLike,
 } from "@promptscout/live-ai-traffic/core";
@@ -70,6 +78,7 @@ export type TrackPromptScoutAiTrafficOptions = Omit<
   LiveAiTrafficIngestClientOptions,
   "now"
 > & {
+  probeEndpoint?: string;
   now?: () => Date;
   privacy?: PromptScoutVercelPrivacyOptions;
   includeUnknown?: boolean;
@@ -83,6 +92,17 @@ export type TrackPromptScoutAiTrafficResult =
   | {
       mode: "background";
       tracked: true;
+      promise: Promise<LiveAiTrafficIngestResult>;
+    }
+  | {
+      mode: "waitUntil";
+      tracked: true;
+      probe: true;
+    }
+  | {
+      mode: "background";
+      tracked: true;
+      probe: true;
       promise: Promise<LiveAiTrafficIngestResult>;
     }
   | {
@@ -147,6 +167,35 @@ export function trackPromptScoutAiTraffic(
   options: TrackPromptScoutAiTrafficOptions,
 ): TrackPromptScoutAiTrafficResult {
   const normalizedRequest = normalizeVercelRequest(request);
+
+  if (normalizedRequest.path === PROMPTSCOUT_SETUP_PROBE_PATH) {
+    const probe = createVercelSetupProbeEvent(
+      normalizedRequest,
+      request.headers,
+      options.now,
+    );
+    if (probe !== undefined) {
+      const client = createLiveAiTrafficSetupProbeClient({
+        endpoint: options.probeEndpoint ?? options.endpoint,
+        ingestToken: options.ingestToken,
+        siteId: options.siteId,
+        signingSecret: options.signingSecret,
+        fetch: options.fetch,
+        crypto: options.crypto,
+        retry: options.retry,
+        now: options.now,
+      });
+      const promise = client.sendProbe(probe);
+
+      if (eventOrContext?.waitUntil !== undefined) {
+        eventOrContext.waitUntil(promise);
+        return { mode: "waitUntil", tracked: true, probe: true };
+      }
+
+      return { mode: "background", tracked: true, probe: true, promise };
+    }
+  }
+
   const classification = classifyAiTraffic({
     userAgent: normalizedRequest.userAgent,
     referer: normalizedRequest.referer,
@@ -180,6 +229,53 @@ export function trackPromptScoutAiTraffic(
   }
 
   return { mode: "background", tracked: true, promise };
+}
+
+function createVercelSetupProbeEvent(
+  request: NormalizedVercelRequest,
+  headers: PromptScoutVercelHeaderBag | undefined,
+  now: (() => Date) | undefined,
+): LiveAiTrafficSetupProbeEvent | undefined {
+  if (
+    !isPromptScoutSetupProbeHeaderValue(
+      headerValue(headers, PROMPTSCOUT_SETUP_PROBE_HEADER),
+    )
+  ) {
+    return undefined;
+  }
+
+  const probeId = headerValue(headers, PROMPTSCOUT_SETUP_PROBE_ID_HEADER);
+  const probeToken = headerValue(headers, PROMPTSCOUT_SETUP_PROBE_TOKEN_HEADER);
+
+  if (probeId === undefined || probeToken === undefined) {
+    return undefined;
+  }
+
+  return createLiveAiTrafficSetupProbeEvent({
+    sourceProvider: "vercel",
+    now,
+    probe: {
+      id: probeId,
+      token: probeToken,
+    },
+    request: {
+      host: request.host,
+      path: request.path,
+      ...(request.search === undefined ? {} : { search: request.search }),
+      method: request.method,
+      ...(request.userAgent === undefined
+        ? {}
+        : { userAgent: request.userAgent }),
+      ...(request.referer === undefined ? {} : { referer: request.referer }),
+    },
+    integration: {
+      kind: "vercel_nextjs_middleware",
+      name: "vercel-middleware",
+      ...(request.requestId === undefined
+        ? {}
+        : { requestId: request.requestId }),
+    },
+  });
 }
 
 async function sendTrackedEvent(

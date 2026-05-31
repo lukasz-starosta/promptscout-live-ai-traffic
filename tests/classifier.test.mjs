@@ -18,6 +18,25 @@ async function coreModule() {
 }
 
 describe("AI traffic classifier", () => {
+  it("does not classify PromptScout setup probes as AI traffic", async () => {
+    const { classifyAiTraffic } = await coreModule();
+
+    assert.deepEqual(
+      classifyAiTraffic({
+        userAgent: "PromptScout-Setup-Probe/1.0",
+        referer: "https://promptscout.com/setup-probe",
+        search: "?promptscout_probe=probe_123",
+      }),
+      {
+        provider: "other",
+        agentType: "other",
+        confidence: 0,
+        matchedRule: "fallback:unknown-request",
+        matchedBy: ["other"],
+      },
+    );
+  });
+
   it("classifies fixture-backed known AI bot and fetcher user agents", async () => {
     const { classifyUserAgent } = await coreModule();
     const cases = JSON.parse(

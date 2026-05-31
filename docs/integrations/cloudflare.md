@@ -7,3 +7,10 @@ The customer-owned edge collector for proxied Cloudflare sites lives in
 
 Runtime implementation for the generic `packages/cloudflare` placeholder is
 intentionally deferred.
+
+## Setup Probe
+
+Use the implemented Cloudflare Worker collector documented in
+[`cloudflare-worker.md`](cloudflare-worker.md) for setup probe support. This
+generic placeholder package does not expose a runtime collector or probe path
+yet.

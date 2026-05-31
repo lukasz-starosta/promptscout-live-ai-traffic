@@ -71,6 +71,15 @@ Use query omission by default. If a customer needs campaign attribution, prefer
 Do not store raw viewer IP addresses in PromptScout events; use `ip:
 { mode: "disabled" }` or an explicit salted hash policy.
 
+## Setup Probe
+
+Setup probe support is not available for the CloudFront/AWS real-time log path
+yet. The collector receives delivered log records through Kinesis after the
+viewer request has already completed, so it cannot recognize
+`/__promptscout/setup-probe` in the live request path or return a probe response
+to PromptScout. Integration completion still requires the first real live AI
+traffic `request_observation` event.
+
 ## IAM Notes
 
 CloudFront needs an IAM role that it can assume to write real-time access logs

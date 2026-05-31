@@ -66,6 +66,43 @@ async function fixturePaths(directory) {
 }
 
 describe("live AI traffic event contract", () => {
+  it("parses setup probe events separately from live AI traffic observations", async () => {
+    const {
+      LIVE_AI_TRAFFIC_SETUP_PROBE_SCHEMA_VERSION,
+      parseLiveAiTrafficEvent,
+      parseLiveAiTrafficSetupProbeEvent,
+    } = await coreModule();
+
+    const probe = parseLiveAiTrafficSetupProbeEvent({
+      schemaVersion: LIVE_AI_TRAFFIC_SETUP_PROBE_SCHEMA_VERSION,
+      eventKind: "setup_probe",
+      sourceProvider: "vercel",
+      observedAt: "2026-05-31T10:00:00.000Z",
+      probe: {
+        id: "probe_123",
+        token: "probe-token-123",
+      },
+      request: {
+        host: "example.com",
+        path: "/__promptscout/setup-probe",
+        method: "GET",
+        userAgent: "PromptScout-Setup-Probe/1.0",
+      },
+      integration: {
+        kind: "vercel_nextjs_middleware",
+        name: "vercel-middleware",
+      },
+    });
+
+    assert.equal(probe.eventKind, "setup_probe");
+    assert.equal(probe.probe.id, "probe_123");
+    assert.equal(Object.hasOwn(probe, "providerClassification"), false);
+    assert.throws(
+      () => parseLiveAiTrafficEvent(probe),
+      /eventKind must be request_observation/,
+    );
+  });
+
   it("accepts all committed common traffic fixtures", async () => {
     const { LIVE_AI_TRAFFIC_EVENT_SCHEMA_VERSION, parseLiveAiTrafficEvent } =
       await coreModule();

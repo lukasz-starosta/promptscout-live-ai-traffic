@@ -1,13 +1,22 @@
 import {
   classifyAiTraffic,
   createLiveAiTrafficIngestClient,
+  createLiveAiTrafficSetupProbeClient,
+  createLiveAiTrafficSetupProbeEvent,
+  isPromptScoutSetupProbeHeaderValue,
   LIVE_AI_TRAFFIC_EVENT_SCHEMA_VERSION,
   type LiveAiTrafficEvent,
   type LiveAiTrafficFetch,
   type LiveAiTrafficIngestClient,
   type LiveAiTrafficPrivacyOptions,
+  type LiveAiTrafficSetupProbeClient,
+  type LiveAiTrafficSetupProbeEvent,
   type LiveAiTrafficSourceProvider,
   normalizeLiveAiTrafficEvent,
+  PROMPTSCOUT_SETUP_PROBE_HEADER,
+  PROMPTSCOUT_SETUP_PROBE_ID_HEADER,
+  PROMPTSCOUT_SETUP_PROBE_PATH,
+  PROMPTSCOUT_SETUP_PROBE_TOKEN_HEADER,
   toLiveAiTrafficProviderClassification,
 } from "@promptscout/live-ai-traffic/core";
 
@@ -62,7 +71,9 @@ export type LiveAiTrafficNodePrivacyOptions =
 
 export type LiveAiTrafficNodeMiddlewareOptions = {
   client?: LiveAiTrafficIngestClient;
+  probeClient?: LiveAiTrafficSetupProbeClient;
   endpoint?: string;
+  probeEndpoint?: string;
   ingestToken?: string;
   siteId?: string;
   signingSecret?: string;
@@ -77,7 +88,9 @@ export type LiveAiTrafficNodeMiddlewareOptions = {
 };
 
 export type LiveAiTrafficNodeObserver = {
-  observe(request: NodeRequestLike): Promise<LiveAiTrafficEvent | undefined>;
+  observe(
+    request: NodeRequestLike,
+  ): Promise<LiveAiTrafficEvent | LiveAiTrafficSetupProbeEvent | undefined>;
 };
 
 type ParsedRequestUrl = {
@@ -102,7 +115,13 @@ export function createLiveAiTrafficNodeObserver(
 export async function observeLiveAiTrafficNodeRequest(
   request: NodeRequestLike,
   options: LiveAiTrafficNodeMiddlewareOptions,
-): Promise<LiveAiTrafficEvent | undefined> {
+): Promise<LiveAiTrafficEvent | LiveAiTrafficSetupProbeEvent | undefined> {
+  const probe = buildLiveAiTrafficNodeSetupProbeEvent(request, options);
+  if (probe !== undefined) {
+    await probeClientForOptions(options).sendProbe(probe);
+    return probe;
+  }
+
   const event = await buildLiveAiTrafficNodeEvent(request, options);
 
   if (event === undefined) {
@@ -184,8 +203,62 @@ export function createExpressLiveAiTrafficMiddleware(
 
 export function createNodeLiveAiTrafficMiddleware(
   options: LiveAiTrafficNodeMiddlewareOptions,
-): (request: NodeRequestLike) => Promise<LiveAiTrafficEvent | undefined> {
+): (
+  request: NodeRequestLike,
+) => Promise<LiveAiTrafficEvent | LiveAiTrafficSetupProbeEvent | undefined> {
   return (request) => observeLiveAiTrafficNodeRequest(request, options);
+}
+
+export function buildLiveAiTrafficNodeSetupProbeEvent(
+  request: NodeRequestLike,
+  options: LiveAiTrafficNodeMiddlewareOptions = {},
+): LiveAiTrafficSetupProbeEvent | undefined {
+  const parsedUrl = parseRequestUrl(request);
+  if (parsedUrl.path !== PROMPTSCOUT_SETUP_PROBE_PATH) {
+    return undefined;
+  }
+
+  if (
+    !isPromptScoutSetupProbeHeaderValue(
+      headerValue(request, PROMPTSCOUT_SETUP_PROBE_HEADER),
+    )
+  ) {
+    return undefined;
+  }
+
+  const probeId = headerValue(request, PROMPTSCOUT_SETUP_PROBE_ID_HEADER);
+  const probeToken = headerValue(request, PROMPTSCOUT_SETUP_PROBE_TOKEN_HEADER);
+  if (probeId === undefined || probeToken === undefined) {
+    return undefined;
+  }
+
+  const userAgent = headerValue(request, "user-agent");
+  const referer =
+    headerValue(request, "referer") ?? headerValue(request, "referrer");
+  const requestId =
+    options.requestId?.(request) ?? headerValue(request, "x-request-id");
+
+  return createLiveAiTrafficSetupProbeEvent({
+    sourceProvider: options.sourceProvider ?? defaultSourceProvider,
+    now: options.now,
+    probe: {
+      id: probeId,
+      token: probeToken,
+    },
+    request: {
+      host: parsedUrl.host,
+      path: parsedUrl.path,
+      ...(parsedUrl.search === undefined ? {} : { search: parsedUrl.search }),
+      method: normalizeMethod(request.method),
+      ...(userAgent === undefined ? {} : { userAgent }),
+      ...(referer === undefined ? {} : { referer }),
+    },
+    integration: {
+      kind: "node_express",
+      name: options.integrationName ?? defaultIntegrationName,
+      ...(requestId === undefined ? {} : { requestId }),
+    },
+  });
 }
 
 function clientForOptions(
@@ -197,6 +270,22 @@ function clientForOptions(
 
   return createLiveAiTrafficIngestClient({
     endpoint: options.endpoint ?? "",
+    ingestToken: options.ingestToken ?? "",
+    siteId: options.siteId,
+    signingSecret: options.signingSecret,
+    fetch: options.fetch,
+  });
+}
+
+function probeClientForOptions(
+  options: LiveAiTrafficNodeMiddlewareOptions,
+): LiveAiTrafficSetupProbeClient {
+  if (options.probeClient !== undefined) {
+    return options.probeClient;
+  }
+
+  return createLiveAiTrafficSetupProbeClient({
+    endpoint: options.probeEndpoint ?? options.endpoint ?? "",
     ingestToken: options.ingestToken ?? "",
     siteId: options.siteId,
     signingSecret: options.signingSecret,

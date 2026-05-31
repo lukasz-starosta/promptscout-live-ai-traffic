@@ -113,6 +113,21 @@ For mocked ingest locally, point `PROMPTSCOUT_INGEST_URL` at a local HTTP sink
 and confirm the sink receives a `request_observation` event while curl still
 gets the forwarded origin response.
 
+## Setup Probe
+
+PromptScout can trigger a collector wiring probe at
+`/__promptscout/setup-probe`. The Worker recognizes that path when the request
+includes `x-promptscout-setup-probe: 1`, `x-promptscout-probe-id`, and
+`x-promptscout-probe-token`, then sends a separate `setup_probe` payload to
+`PROMPTSCOUT_PROBE_URL` or, when omitted, the normal
+`PROMPTSCOUT_INGEST_URL`.
+
+Probe payloads include the probe id/token, `sourceProvider: "cloudflare"`,
+request host/path/method, and `cf-ray` as the request id when available. They do
+not include `providerClassification`, are not AI bot/referral events, and do not
+complete the integration. Completion still requires the first real live AI
+traffic `request_observation` event.
+
 ## Deploy
 
 After setting the route and secret:

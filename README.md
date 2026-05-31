@@ -95,6 +95,11 @@ Customer-facing install selection, site-scoped ingest token behavior, and
 signal-quality guidance are documented in
 [docs/install-matrix-and-signal-quality.md](docs/install-matrix-and-signal-quality.md).
 
+The package also ships [docs-manifest.json](docs-manifest.json), a stable
+integration guide manifest for apps that need guide metadata and markdown paths
+without scraping README links. The manifest includes a beta UI support note and
+all currently owned integration guides under `docs/integrations`.
+
 Collector privacy, token rotation, failure handling, and operational ownership
 guidance is documented in
 [docs/privacy-security-operations.md](docs/privacy-security-operations.md).

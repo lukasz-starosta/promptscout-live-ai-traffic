@@ -110,7 +110,13 @@ describe("release workflow", () => {
     assert.equal(rootPackage.name, "@promptscout/live-ai-traffic");
     assert.equal(rootPackage.version, "0.1.1");
     assert.notEqual(rootPackage.private, true);
-    assert.deepEqual(rootPackage.files, ["dist", "README.md", "LICENSE"]);
+    assert.deepEqual(rootPackage.files, [
+      "dist",
+      "docs",
+      "docs-manifest.json",
+      "README.md",
+      "LICENSE",
+    ]);
     assert.deepEqual(rootPackage.publishConfig, {
       access: "public",
       registry: "https://registry.npmjs.org",
@@ -128,6 +134,7 @@ describe("release workflow", () => {
         types: "./dist/packages/vercel-middleware/src/index.d.ts",
         default: "./dist/packages/vercel-middleware/src/index.js",
       },
+      "./docs-manifest.json": "./docs-manifest.json",
       "./package.json": "./package.json",
     });
 

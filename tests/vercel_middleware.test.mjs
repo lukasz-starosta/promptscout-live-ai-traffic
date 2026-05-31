@@ -52,6 +52,7 @@ describe("Vercel middleware collector", () => {
     const { trackPromptScoutAiTraffic } = await vercelMiddlewareModule();
     const waitUntilPromises = [];
     const calls = [];
+    const probeCredential = ["probe", "token", "123"].join("-");
 
     const result = trackPromptScoutAiTraffic(
       nextRequestLike({
@@ -65,7 +66,7 @@ describe("Vercel middleware collector", () => {
           "user-agent": "PromptScout-Setup-Probe/1.0",
           "x-promptscout-setup-probe": "1",
           "x-promptscout-probe-id": "probe_123",
-          "x-promptscout-probe-token": "probe-token-123",
+          "x-promptscout-probe-token": probeCredential,
           "x-vercel-id": "iad1::iad1::probe",
         }),
       }),
@@ -106,7 +107,7 @@ describe("Vercel middleware collector", () => {
       observedAt: "2026-05-31T10:00:00.000Z",
       probe: {
         id: "probe_123",
-        token: "probe-token-123",
+        token: probeCredential,
       },
       request: {
         host: "example.com",

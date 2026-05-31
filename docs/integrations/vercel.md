@@ -84,6 +84,21 @@ promise and returns it to the caller.
 Unknown traffic is skipped by default. Set `includeUnknown: true` if you want to
 collect non-classified requests as `other` for calibration.
 
+## Setup Probe
+
+PromptScout can trigger a collector wiring probe at
+`/__promptscout/setup-probe`. The Vercel helper recognizes that path when the
+request includes `x-promptscout-setup-probe: 1`,
+`x-promptscout-probe-id`, and `x-promptscout-probe-token`, then sends a
+separate `setup_probe` payload to `probeEndpoint` or, when omitted, the normal
+`endpoint`.
+
+Probe payloads include the probe id/token, `sourceProvider: "vercel"`, request
+host/path/method, and Vercel request id when available. They do not include
+`providerClassification`, are not AI bot/referral events, and do not complete
+the integration. Completion still requires the first real live AI traffic
+`request_observation` event.
+
 ## Matcher Tradeoffs
 
 The example matcher avoids API routes, Next.js internals, image optimization,

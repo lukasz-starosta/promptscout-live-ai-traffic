@@ -11,6 +11,42 @@ version values. Parsers may accept future numeric versions when all known
 version `1` fields remain valid, so new producers can add non-critical extension
 fields without breaking older consumers.
 
+## Setup Probe Contract
+
+Setup probes use a separate package-owned contract so wiring checks cannot be
+confused with real AI traffic. Collectors recognize the path
+`/__promptscout/setup-probe` with `x-promptscout-setup-probe: 1`,
+`x-promptscout-probe-id`, and `x-promptscout-probe-token` headers, then send a
+single `setup_probe` payload to the configured PromptScout probe endpoint.
+Probe payloads do not include
+`providerClassification` and must not pass through `classifyAiTraffic`.
+
+The probe event fields are:
+
+- `schemaVersion`: setup probe schema version, currently `1`.
+- `eventKind`: always `setup_probe`.
+- `sourceProvider`: collector platform that observed the probe.
+- `observedAt`: ISO timestamp for when the collector observed the probe.
+- `probe.id`: opaque PromptScout probe identifier.
+- `probe.token`: opaque PromptScout probe token from the triggering request.
+- `request.host`, `request.path`, `request.search`, `request.method`,
+  `request.userAgent`, and `request.referer`: normalized request wiring data.
+- `integration`: same optional collector metadata shape used by
+  `request_observation` events.
+
+The HTTP body sent by probe-capable collectors is `{ "probe": <setup_probe> }`,
+not `{ "events": [...] }`. The request still uses the configured site-scoped
+PromptScout ingest token as bearer authorization, so PromptScout can validate
+token/source wiring from transport auth plus the probe `sourceProvider`,
+`integration`, `host`, and `path` fields. Integration completion still requires
+the first real `request_observation` event from live AI traffic.
+
+Probe responses use the separate `setup_probe` response contract with `ok`,
+`eventKind`, `probeId`, and `receivedAt` fields. This keeps setup validation
+status distinct from request observations and gives PromptScout app code a
+stable parser for the probe endpoint response without introducing AI provider
+classification.
+
 ## Required Fields
 
 - `schemaVersion`: numeric schema version, currently `1`.
@@ -157,6 +193,21 @@ the `other` provider bucket until the classifier has a documented provider rule.
 - `filterLiveAiTrafficHeaders(headers, allowlist)`
 - `createLiveAiTrafficBatcher(options)`
 - `deliverLiveAiTrafficEvent(options)`
+- `LIVE_AI_TRAFFIC_SETUP_PROBE_SCHEMA_VERSION`
+- `PROMPTSCOUT_SETUP_PROBE_PATH`
+- `PROMPTSCOUT_SETUP_PROBE_ID_HEADER`
+- `PROMPTSCOUT_SETUP_PROBE_TOKEN_HEADER`
+- `LiveAiTrafficSetupProbeEvent`
+- `parseLiveAiTrafficSetupProbeEvent`
+- `isLiveAiTrafficSetupProbeEvent`
+- `validateLiveAiTrafficSetupProbeEvent`
+- `LiveAiTrafficSetupProbeResponse`
+- `liveAiTrafficSetupProbeResponseJsonSchema`
+- `parseLiveAiTrafficSetupProbeResponse`
+- `isLiveAiTrafficSetupProbeResponse`
+- `validateLiveAiTrafficSetupProbeResponse`
+- `createLiveAiTrafficSetupProbeEvent(input)`
+- `createLiveAiTrafficSetupProbeClient(options)`
 
 The ingest client uses `fetch` and optional Web Crypto HMAC signing so provider
 packages can run in Node, edge, or log-forwarder environments without importing

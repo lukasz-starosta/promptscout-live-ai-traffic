@@ -43,3 +43,11 @@ curl -A "Mozilla/5.0" http://localhost:8088/
 The mock ingest service prints batches for the AI crawler requests. Normal
 browser traffic is parsed and checkpointed but not forwarded unless
 `includeUnclassified` is enabled.
+
+## Setup Probe
+
+Setup probe support is not available for the nginx log forwarder yet. The
+forwarder reads completed access-log lines after requests reach nginx, so it
+cannot intercept `__promptscout/setup-probe` in the live request path or return
+a probe response to PromptScout. Integration completion still requires the first
+real live AI traffic `request_observation` event.

@@ -48,6 +48,21 @@ PromptScout ingest is scheduled separately. If the fetch event exposes
 starts the ingest promise in the background and catches failures. Ingest errors
 do not replace the customer origin response.
 
+## Setup Probe
+
+PromptScout can trigger a collector wiring probe at
+`/__promptscout/setup-probe`. The Fastly Compute handler recognizes that path
+when the request includes `x-promptscout-setup-probe: 1`,
+`x-promptscout-probe-id`, and `x-promptscout-probe-token`, then sends a
+separate `setup_probe` payload to `probeEndpoint` or, when omitted, the normal
+`ingestEndpoint`.
+
+Probe payloads include the probe id/token, `sourceProvider: "fastly"`, request
+host/path/method, and the Fastly request id when available. They do not include
+`providerClassification`, are not AI bot/referral events, and do not complete
+the integration. Completion still requires the first real live AI traffic
+`request_observation` event.
+
 ## Local and deploy notes
 
 Initialize a JavaScript Compute application and copy in the example handler:

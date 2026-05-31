@@ -53,3 +53,11 @@ The classifier rules used by PHP are copied from
 `packages/core/fixtures/classifier/php-rules-export.json` into the plugin as
 `includes/classifier-rules.json`; the focused test suite verifies both files
 stay identical and continue to match the committed core classifier fixtures.
+
+## Setup Probe
+
+Setup probe support is not available in the WordPress plugin yet. The plugin
+continues to skip unknown traffic and only posts classified
+`request_observation` events, so PromptScout must not use a fake AI bot request
+to validate WordPress setup. Integration completion still requires the first
+real live AI traffic event.

@@ -48,6 +48,81 @@ function nextRequestLike(overrides = {}) {
 }
 
 describe("Vercel middleware collector", () => {
+  it("sends setup probes to the probe endpoint without AI classification", async () => {
+    const { trackPromptScoutAiTraffic } = await vercelMiddlewareModule();
+    const waitUntilPromises = [];
+    const calls = [];
+    const probeToken = ["probe", "token", "123"].join("-");
+
+    const result = trackPromptScoutAiTraffic(
+      nextRequestLike({
+        url: "https://example.com/__promptscout/setup-probe",
+        nextUrl: {
+          hostname: "example.com",
+          pathname: "/__promptscout/setup-probe",
+          search: "",
+        },
+        headers: new Headers({
+          "user-agent": "PromptScout-Setup-Probe/1.0",
+          "x-promptscout-setup-probe": "1",
+          "x-promptscout-probe-id": "probe_123",
+          "x-promptscout-probe-token": probeToken,
+          "x-vercel-id": "iad1::iad1::probe",
+        }),
+      }),
+      {
+        waitUntil(promise) {
+          waitUntilPromises.push(promise);
+        },
+      },
+      {
+        endpoint: "https://promptscout.example/ingest/live-ai-traffic",
+        probeEndpoint:
+          "https://promptscout.example/ingest/live-ai-traffic/probe",
+        ingestToken: "test-token",
+        fetch: async (url, init) => {
+          calls.push({ url, init });
+          return response(202);
+        },
+        now: () => new Date("2026-05-31T10:00:00.000Z"),
+      },
+    );
+
+    assert.deepEqual(result, { mode: "waitUntil", tracked: true, probe: true });
+    await waitUntilPromises[0];
+
+    assert.equal(calls.length, 1);
+    assert.equal(
+      calls[0].url,
+      "https://promptscout.example/ingest/live-ai-traffic/probe",
+    );
+    assert.equal(calls[0].init.headers.authorization, "Bearer test-token");
+
+    const body = JSON.parse(calls[0].init.body);
+    assert.equal(Object.hasOwn(body, "events"), false);
+    assert.deepEqual(body.probe, {
+      schemaVersion: 1,
+      eventKind: "setup_probe",
+      sourceProvider: "vercel",
+      observedAt: "2026-05-31T10:00:00.000Z",
+      probe: {
+        id: "probe_123",
+        token: probeToken,
+      },
+      request: {
+        host: "example.com",
+        path: "/__promptscout/setup-probe",
+        method: "GET",
+        userAgent: "PromptScout-Setup-Probe/1.0",
+      },
+      integration: {
+        kind: "vercel_nextjs_middleware",
+        name: "vercel-middleware",
+        requestId: "iad1::iad1::probe",
+      },
+    });
+  });
+
   it("normalizes representative NextRequest-like objects with core classification and privacy", async () => {
     const { buildPromptScoutVercelAiTrafficEvent } =
       await vercelMiddlewareModule();

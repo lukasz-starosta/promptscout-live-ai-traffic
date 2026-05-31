@@ -1,6 +1,9 @@
 import {
   classifyAiTraffic,
   createLiveAiTrafficIngestClient,
+  createLiveAiTrafficSetupProbeClient,
+  createLiveAiTrafficSetupProbeEvent,
+  isPromptScoutSetupProbeHeaderValue,
   LIVE_AI_TRAFFIC_EVENT_SCHEMA_VERSION,
   type LiveAiTrafficEvent,
   type LiveAiTrafficFetch,
@@ -8,6 +11,10 @@ import {
   type LiveAiTrafficIngestResult,
   type LiveAiTrafficPrivacyOptions,
   normalizeLiveAiTrafficEvent,
+  PROMPTSCOUT_SETUP_PROBE_HEADER,
+  PROMPTSCOUT_SETUP_PROBE_ID_HEADER,
+  PROMPTSCOUT_SETUP_PROBE_PATH,
+  PROMPTSCOUT_SETUP_PROBE_TOKEN_HEADER,
   parseLiveAiTrafficEvent,
   toLiveAiTrafficProviderClassification,
 } from "@promptscout/live-ai-traffic/core";
@@ -15,6 +22,7 @@ import {
 export type PromptScoutCloudflareWorkerEnv = {
   PROMPTSCOUT_INGEST_TOKEN: string;
   PROMPTSCOUT_INGEST_URL: string;
+  PROMPTSCOUT_PROBE_URL?: string;
   PROMPTSCOUT_QUERY_POLICY?: "keep" | "omit" | "allowlist";
   PROMPTSCOUT_QUERY_ALLOWLIST?: string;
   PROMPTSCOUT_PATH_POLICY?: "keep" | "redact";
@@ -77,6 +85,17 @@ export async function observeCloudflareWorkerRequest(
   env: PromptScoutCloudflareWorkerEnv,
   options: PromptScoutCloudflareWorkerOptions = {},
 ): Promise<LiveAiTrafficIngestResult> {
+  const probe = createCloudflareWorkerSetupProbeEvent(request, options);
+  if (probe !== undefined) {
+    const client = createLiveAiTrafficSetupProbeClient({
+      endpoint: env.PROMPTSCOUT_PROBE_URL ?? env.PROMPTSCOUT_INGEST_URL,
+      ingestToken: env.PROMPTSCOUT_INGEST_TOKEN,
+      fetch: options.ingestFetch,
+    });
+
+    return client.sendProbe(probe);
+  }
+
   const event = await createCloudflareWorkerEvent(request, env, options);
   const client = createLiveAiTrafficIngestClient({
     endpoint: env.PROMPTSCOUT_INGEST_URL,
@@ -85,6 +104,61 @@ export async function observeCloudflareWorkerRequest(
   });
 
   return client.send(event);
+}
+
+export function createCloudflareWorkerSetupProbeEvent(
+  request: Request,
+  options: PromptScoutCloudflareWorkerOptions = {},
+) {
+  const url = new URL(request.url);
+  if (url.pathname !== PROMPTSCOUT_SETUP_PROBE_PATH) {
+    return undefined;
+  }
+
+  if (
+    !isPromptScoutSetupProbeHeaderValue(
+      optionalHeader(request.headers, PROMPTSCOUT_SETUP_PROBE_HEADER),
+    )
+  ) {
+    return undefined;
+  }
+
+  const probeId = optionalHeader(
+    request.headers,
+    PROMPTSCOUT_SETUP_PROBE_ID_HEADER,
+  );
+  const probeValue = optionalHeader(
+    request.headers,
+    PROMPTSCOUT_SETUP_PROBE_TOKEN_HEADER,
+  );
+  if (probeId === undefined || probeValue === undefined) {
+    return undefined;
+  }
+
+  const userAgent = optionalHeader(request.headers, "user-agent");
+  const referer = optionalHeader(request.headers, "referer");
+
+  return createLiveAiTrafficSetupProbeEvent({
+    sourceProvider: "cloudflare",
+    now: options.now,
+    probe: {
+      id: probeId,
+      token: probeValue,
+    },
+    request: {
+      host: url.host,
+      path: url.pathname,
+      ...(url.search.length === 0 ? {} : { search: url.search }),
+      method: normalizeHttpMethod(request.method),
+      ...(userAgent === undefined ? {} : { userAgent }),
+      ...(referer === undefined ? {} : { referer }),
+    },
+    integration: {
+      kind: "cloudflare_worker",
+      name: "cloudflare-worker",
+      ...cloudflareRequestId(request),
+    },
+  });
 }
 
 export async function createCloudflareWorkerEvent(

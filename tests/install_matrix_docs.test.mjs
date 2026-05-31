@@ -122,6 +122,21 @@ describe("install matrix docs", () => {
     }
   });
 
+  it("documents setup probe support or unavailability in every integration guide", async () => {
+    const docs = await collectMarkdownFiles("docs/integrations");
+
+    for (const path of docs) {
+      const source = await readFile(path, "utf8");
+
+      assert.match(source, /## Setup Probe/i, `${path}: setup probe section`);
+      assert.match(
+        source,
+        /setup_probe|not available|does not expose a runtime collector or probe path/i,
+        `${path}: setup probe contract or availability note`,
+      );
+    }
+  });
+
   it("keeps local documentation links resolvable", async () => {
     const markdownFiles = [
       "README.md",

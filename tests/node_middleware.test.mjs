@@ -53,6 +53,56 @@ function pendingClient(calls) {
 }
 
 describe("generic Node live AI traffic middleware", () => {
+  it("sends setup probes separately from AI traffic events", async () => {
+    const { observeLiveAiTrafficNodeRequest } = await nodeMiddlewareModule();
+    const sentProbes = [];
+    const probeToken = ["probe", "token", "123"].join("-");
+
+    const probe = await observeLiveAiTrafficNodeRequest(
+      request({
+        url: "/__promptscout/setup-probe",
+        headers: {
+          host: "example.com",
+          "user-agent": "PromptScout-Setup-Probe/1.0",
+          "x-promptscout-setup-probe": "1",
+          "x-promptscout-probe-id": "probe_123",
+          "x-promptscout-probe-token": probeToken,
+          "x-request-id": "req_probe",
+        },
+      }),
+      {
+        probeClient: {
+          async sendProbe(event) {
+            sentProbes.push(event);
+            return {
+              ok: true,
+              status: 202,
+              attempts: 1,
+              retryable: false,
+              authFailure: false,
+            };
+          },
+        },
+        now: () => new Date("2026-05-31T10:00:00.000Z"),
+      },
+    );
+
+    assert.equal(sentProbes.length, 1);
+    assert.deepEqual(probe, sentProbes[0]);
+    assert.equal(probe.eventKind, "setup_probe");
+    assert.equal(Object.hasOwn(probe, "providerClassification"), false);
+    assert.deepEqual(probe.probe, {
+      id: "probe_123",
+      token: probeToken,
+    });
+    assert.deepEqual(probe.request, {
+      host: "example.com",
+      path: "/__promptscout/setup-probe",
+      method: "GET",
+      userAgent: "PromptScout-Setup-Probe/1.0",
+    });
+  });
+
   it("builds a normalized event from a Node request and sends it with the shared ingest client", async () => {
     const { observeLiveAiTrafficNodeRequest } = await nodeMiddlewareModule();
     const sentEvents = [];

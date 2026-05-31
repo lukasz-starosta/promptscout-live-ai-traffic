@@ -1,12 +1,19 @@
 import {
   classifyAiTraffic,
   createLiveAiTrafficIngestClient,
+  createLiveAiTrafficSetupProbeClient,
+  createLiveAiTrafficSetupProbeEvent,
+  isPromptScoutSetupProbeHeaderValue,
   LIVE_AI_TRAFFIC_EVENT_SCHEMA_VERSION,
   type LiveAiTrafficEvent,
   type LiveAiTrafficFetchInit,
   type LiveAiTrafficIngestResult,
   type LiveAiTrafficRetryOptions,
   normalizeLiveAiTrafficEvent,
+  PROMPTSCOUT_SETUP_PROBE_HEADER,
+  PROMPTSCOUT_SETUP_PROBE_ID_HEADER,
+  PROMPTSCOUT_SETUP_PROBE_PATH,
+  PROMPTSCOUT_SETUP_PROBE_TOKEN_HEADER,
   toLiveAiTrafficProviderClassification,
 } from "@promptscout/live-ai-traffic/core";
 
@@ -42,6 +49,7 @@ export type FastlyComputeCollectorOptions<TResponse = unknown> = {
   originBackend: string;
   ingestBackend: string;
   ingestEndpoint: string;
+  probeEndpoint?: string;
   ingestToken: string;
   siteId?: string;
   signingSecret?: string;
@@ -122,6 +130,65 @@ export function normalizeFastlyComputeRequest(
   return event;
 }
 
+export function normalizeFastlyComputeSetupProbeRequest(
+  request: FastlyComputeRequestLike,
+  metadata: FastlyComputeRequestMetadata = {},
+) {
+  const parsedUrl = parseRequestUrl(request.url);
+  if (parsedUrl.pathname !== PROMPTSCOUT_SETUP_PROBE_PATH) {
+    return undefined;
+  }
+
+  if (
+    !isPromptScoutSetupProbeHeaderValue(
+      headerValue(request.headers, PROMPTSCOUT_SETUP_PROBE_HEADER),
+    )
+  ) {
+    return undefined;
+  }
+
+  const probeId = headerValue(
+    request.headers,
+    PROMPTSCOUT_SETUP_PROBE_ID_HEADER,
+  );
+  const probeToken = headerValue(
+    request.headers,
+    PROMPTSCOUT_SETUP_PROBE_TOKEN_HEADER,
+  );
+  if (probeId === undefined || probeToken === undefined) {
+    return undefined;
+  }
+
+  const userAgent = headerValue(request.headers, "user-agent");
+  const referer =
+    headerValue(request.headers, "referer") ??
+    headerValue(request.headers, "referrer");
+
+  return createLiveAiTrafficSetupProbeEvent({
+    sourceProvider: "fastly",
+    now: metadata.now,
+    probe: {
+      id: probeId,
+      token: probeToken,
+    },
+    request: {
+      host: parsedUrl.host,
+      path: parsedUrl.pathname || "/",
+      method: normalizeHttpMethod(request.method),
+      ...(parsedUrl.search === "" ? {} : { search: parsedUrl.search }),
+      ...(userAgent === undefined ? {} : { userAgent }),
+      ...(referer === undefined ? {} : { referer }),
+    },
+    integration: {
+      kind: "fastly_compute",
+      name: "fastly-compute",
+      ...(metadata.requestId === undefined
+        ? {}
+        : { requestId: metadata.requestId }),
+    },
+  });
+}
+
 export function createFastlyComputeHandler<TResponse = unknown>(
   options: FastlyComputeCollectorOptions<TResponse>,
 ): (event: FastlyComputeFetchEventLike) => Promise<TResponse> {
@@ -145,17 +212,44 @@ export function createFastlyComputeHandler<TResponse = unknown>(
     ...(options.retry === undefined ? {} : { retry: options.retry }),
     now: options.now,
   });
+  const probeClient = createLiveAiTrafficSetupProbeClient({
+    endpoint: options.probeEndpoint ?? options.ingestEndpoint,
+    ingestToken: options.ingestToken,
+    ...(options.siteId === undefined ? {} : { siteId: options.siteId }),
+    ...(options.signingSecret === undefined
+      ? {}
+      : { signingSecret: options.signingSecret }),
+    fetch: async (url, init) =>
+      (await fetch(url, {
+        ...init,
+        backend: options.ingestBackend,
+      })) as unknown as {
+        ok: boolean;
+        status: number;
+        text?: () => Promise<string>;
+      },
+    ...(options.retry === undefined ? {} : { retry: options.retry }),
+    now: options.now,
+  });
 
   return async (event) => {
-    const ingestPromise = normalizeLiveAiTrafficEvent(
-      normalizeFastlyComputeRequest(event.request, {
-        now: options.now,
-        country: event.country,
-        region: event.region,
-        requestId: event.requestId,
-      }),
-      { query: { mode: "omit" } },
-    ).then((normalizedEvent) => ingestClient.send(normalizedEvent));
+    const metadata = {
+      now: options.now,
+      country: event.country,
+      region: event.region,
+      requestId: event.requestId,
+    };
+    const setupProbe = normalizeFastlyComputeSetupProbeRequest(
+      event.request,
+      metadata,
+    );
+    const ingestPromise =
+      setupProbe === undefined
+        ? normalizeLiveAiTrafficEvent(
+            normalizeFastlyComputeRequest(event.request, metadata),
+            { query: { mode: "omit" } },
+          ).then((normalizedEvent) => ingestClient.send(normalizedEvent))
+        : probeClient.sendProbe(setupProbe);
 
     if (event.waitUntil === undefined) {
       void ingestPromise.catch(() => undefined);

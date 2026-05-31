@@ -19,6 +19,62 @@ async function fastlyComputeModule() {
 }
 
 describe("Fastly Compute collector", () => {
+  it("sends setup probes to the probe endpoint without AI classification", async () => {
+    const { createFastlyComputeHandler } = await fastlyComputeModule();
+    const fetchCalls = [];
+    const scheduled = [];
+    const originResponse = new Response("origin ok", { status: 203 });
+    const handler = createFastlyComputeHandler({
+      originBackend: "customer_origin",
+      ingestBackend: "promptscout_ingest",
+      ingestEndpoint: "https://ingest.promptscout.com/live-ai-traffic",
+      probeEndpoint: "https://ingest.promptscout.com/live-ai-traffic/probe",
+      ingestToken: "test-token",
+      fetch: async (resource, init) => {
+        fetchCalls.push({ resource, init });
+
+        if (init?.backend === "customer_origin") {
+          return originResponse;
+        }
+
+        return new Response("", { status: 202 });
+      },
+      now: () => new Date("2026-05-31T10:00:00.000Z"),
+    });
+    const request = new Request(
+      "https://www.example.com/__promptscout/setup-probe",
+      {
+        headers: {
+          "user-agent": "PromptScout-Setup-Probe/1.0",
+          "x-promptscout-setup-probe": "1",
+          "x-promptscout-probe-id": "probe_123",
+          "x-promptscout-probe-token": "probe-token-123",
+        },
+      },
+    );
+
+    const response = await handler({
+      request,
+      requestId: "fastly-probe-001",
+      waitUntil: (promise) => scheduled.push(promise),
+    });
+    await Promise.all(scheduled);
+
+    assert.equal(response, originResponse);
+    assert.equal(fetchCalls.length, 2);
+    assert.equal(
+      fetchCalls[1].resource,
+      "https://ingest.promptscout.com/live-ai-traffic/probe",
+    );
+
+    const body = JSON.parse(fetchCalls[1].init.body);
+    assert.equal(Object.hasOwn(body, "events"), false);
+    assert.equal(body.probe.eventKind, "setup_probe");
+    assert.equal(body.probe.probe.id, "probe_123");
+    assert.equal(Object.hasOwn(body.probe, "providerClassification"), false);
+    assert.equal(body.probe.integration.requestId, "fastly-probe-001");
+  });
+
   it("normalizes Compute requests into PromptScout live AI traffic events", async () => {
     const { normalizeFastlyComputeRequest } = await fastlyComputeModule();
     const request = new Request(

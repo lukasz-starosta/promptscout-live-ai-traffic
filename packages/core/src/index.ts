@@ -23,6 +23,11 @@ export function createPlaceholderIntegration(
 }
 
 export const LIVE_AI_TRAFFIC_EVENT_SCHEMA_VERSION = 1;
+export const LIVE_AI_TRAFFIC_SETUP_PROBE_SCHEMA_VERSION = 1;
+export const PROMPTSCOUT_SETUP_PROBE_PATH = "/__promptscout/setup-probe";
+export const PROMPTSCOUT_SETUP_PROBE_HEADER = "x-promptscout-setup-probe";
+export const PROMPTSCOUT_SETUP_PROBE_ID_HEADER = "x-promptscout-probe-id";
+export const PROMPTSCOUT_SETUP_PROBE_TOKEN_HEADER = "x-promptscout-probe-token";
 
 export const liveAiTrafficSourceProviders = [
   "vercel",
@@ -719,6 +724,46 @@ export type LiveAiTrafficEvent = {
   };
 };
 
+export type LiveAiTrafficSetupProbeEvent = {
+  schemaVersion: number;
+  eventKind: "setup_probe";
+  sourceProvider: LiveAiTrafficSourceProvider;
+  observedAt: string;
+  probe: {
+    id: string;
+    token: string;
+  };
+  request: {
+    host: string;
+    path: string;
+    search?: string;
+    method: LiveAiTrafficHttpMethod;
+    userAgent?: string;
+    referer?: string;
+  };
+  integration?: {
+    kind?: LiveAiTrafficIntegrationKind;
+    name: string;
+    version?: string;
+    requestId?: string;
+  };
+};
+
+export type LiveAiTrafficSetupProbeResponse = {
+  ok: boolean;
+  eventKind: "setup_probe";
+  probeId: string;
+  receivedAt: string;
+};
+
+export type CreateLiveAiTrafficSetupProbeEventInput = Omit<
+  LiveAiTrafficSetupProbeEvent,
+  "schemaVersion" | "eventKind" | "observedAt"
+> & {
+  observedAt?: string;
+  now?: () => Date;
+};
+
 export const liveAiTrafficEventJsonSchema = {
   $schema: "https://json-schema.org/draft/2020-12/schema",
   $id: "promptscout.liveAiTrafficEvent",
@@ -827,10 +872,81 @@ export const liveAiTrafficEventJsonSchema = {
   },
 } as const;
 
+export const liveAiTrafficSetupProbeEventJsonSchema = {
+  $schema: "https://json-schema.org/draft/2020-12/schema",
+  $id: "promptscout.liveAiTrafficSetupProbeEvent",
+  title: "PromptScout live AI traffic setup probe",
+  type: "object",
+  required: [
+    "schemaVersion",
+    "eventKind",
+    "sourceProvider",
+    "observedAt",
+    "probe",
+    "request",
+  ],
+  additionalProperties: false,
+  properties: {
+    schemaVersion: {
+      type: "integer",
+      minimum: LIVE_AI_TRAFFIC_SETUP_PROBE_SCHEMA_VERSION,
+    },
+    eventKind: {
+      const: "setup_probe",
+    },
+    sourceProvider: {
+      type: "string",
+      enum: liveAiTrafficSourceProviders,
+    },
+    observedAt: {
+      type: "string",
+      format: "date-time",
+    },
+    probe: {
+      type: "object",
+      required: ["id", "token"],
+      additionalProperties: false,
+      properties: {
+        id: { type: "string", minLength: 1 },
+        token: { type: "string", minLength: 1 },
+      },
+    },
+    request: liveAiTrafficEventJsonSchema.properties.request,
+    integration: liveAiTrafficEventJsonSchema.properties.integration,
+  },
+} as const;
+
+export const liveAiTrafficSetupProbeResponseJsonSchema = {
+  $schema: "https://json-schema.org/draft/2020-12/schema",
+  $id: "promptscout.liveAiTrafficSetupProbeResponse",
+  title: "PromptScout live AI traffic setup probe response",
+  type: "object",
+  required: ["ok", "eventKind", "probeId", "receivedAt"],
+  additionalProperties: false,
+  properties: {
+    ok: { type: "boolean" },
+    eventKind: {
+      const: "setup_probe",
+    },
+    probeId: { type: "string", minLength: 1 },
+    receivedAt: {
+      type: "string",
+      format: "date-time",
+    },
+  },
+} as const;
+
 class LiveAiTrafficEventValidationError extends Error {
   constructor(issues: string[]) {
     super(`Invalid live AI traffic event: ${issues.join("; ")}`);
     this.name = "LiveAiTrafficEventValidationError";
+  }
+}
+
+class LiveAiTrafficSetupProbeResponseValidationError extends Error {
+  constructor(issues: string[]) {
+    super(`Invalid live AI traffic setup probe response: ${issues.join("; ")}`);
+    this.name = "LiveAiTrafficSetupProbeResponseValidationError";
   }
 }
 
@@ -842,6 +958,137 @@ export function parseLiveAiTrafficEvent(input: unknown): LiveAiTrafficEvent {
   }
 
   return input as LiveAiTrafficEvent;
+}
+
+export function createLiveAiTrafficSetupProbeEvent(
+  input: CreateLiveAiTrafficSetupProbeEventInput,
+): LiveAiTrafficSetupProbeEvent {
+  return parseLiveAiTrafficSetupProbeEvent({
+    schemaVersion: LIVE_AI_TRAFFIC_SETUP_PROBE_SCHEMA_VERSION,
+    eventKind: "setup_probe",
+    sourceProvider: input.sourceProvider,
+    observedAt: input.observedAt ?? (input.now?.() ?? new Date()).toISOString(),
+    probe: input.probe,
+    request: input.request,
+    ...(input.integration === undefined
+      ? {}
+      : { integration: input.integration }),
+  });
+}
+
+export function isPromptScoutSetupProbePath(path: unknown): boolean {
+  return path === PROMPTSCOUT_SETUP_PROBE_PATH;
+}
+
+export function isPromptScoutSetupProbeHeaderValue(value: unknown): boolean {
+  if (typeof value !== "string") {
+    return false;
+  }
+
+  return ["1", "true", "yes", "on"].includes(value.trim().toLowerCase());
+}
+
+export function parseLiveAiTrafficSetupProbeEvent(
+  input: unknown,
+): LiveAiTrafficSetupProbeEvent {
+  const issues = validateLiveAiTrafficSetupProbeEvent(input);
+
+  if (issues.length > 0) {
+    throw new LiveAiTrafficEventValidationError(issues);
+  }
+
+  return input as LiveAiTrafficSetupProbeEvent;
+}
+
+export function isLiveAiTrafficSetupProbeEvent(
+  input: unknown,
+): input is LiveAiTrafficSetupProbeEvent {
+  return validateLiveAiTrafficSetupProbeEvent(input).length === 0;
+}
+
+export function parseLiveAiTrafficSetupProbeResponse(
+  input: unknown,
+): LiveAiTrafficSetupProbeResponse {
+  const issues = validateLiveAiTrafficSetupProbeResponse(input);
+
+  if (issues.length > 0) {
+    throw new LiveAiTrafficSetupProbeResponseValidationError(issues);
+  }
+
+  return input as LiveAiTrafficSetupProbeResponse;
+}
+
+export function isLiveAiTrafficSetupProbeResponse(
+  input: unknown,
+): input is LiveAiTrafficSetupProbeResponse {
+  return validateLiveAiTrafficSetupProbeResponse(input).length === 0;
+}
+
+export function validateLiveAiTrafficSetupProbeEvent(input: unknown): string[] {
+  const issues: string[] = [];
+
+  if (!isRecord(input)) {
+    return ["setup probe event must be an object"];
+  }
+
+  rejectUnknownProperties(
+    input,
+    "event",
+    [
+      "schemaVersion",
+      "eventKind",
+      "sourceProvider",
+      "observedAt",
+      "probe",
+      "request",
+      "integration",
+    ],
+    issues,
+  );
+  requireInteger(input, "schemaVersion", issues);
+  if (
+    typeof input.schemaVersion === "number" &&
+    input.schemaVersion < LIVE_AI_TRAFFIC_SETUP_PROBE_SCHEMA_VERSION
+  ) {
+    issues.push(
+      `schemaVersion must be >= ${LIVE_AI_TRAFFIC_SETUP_PROBE_SCHEMA_VERSION}`,
+    );
+  }
+
+  requireLiteral(input, "eventKind", "setup_probe", issues);
+  requireEnum(input, "sourceProvider", liveAiTrafficSourceProviders, issues);
+  requireIsoDateTime(input, "observedAt", issues);
+  validateProbe(input.probe, issues);
+  validateRequest(input.request, issues);
+
+  if (input.integration !== undefined) {
+    validateIntegration(input.integration, issues);
+  }
+
+  return issues;
+}
+
+export function validateLiveAiTrafficSetupProbeResponse(
+  input: unknown,
+): string[] {
+  const issues: string[] = [];
+
+  if (!isRecord(input)) {
+    return ["setup probe response must be an object"];
+  }
+
+  rejectUnknownProperties(
+    input,
+    "response",
+    ["ok", "eventKind", "probeId", "receivedAt"],
+    issues,
+  );
+  requireBoolean(input, "ok", issues);
+  requireLiteral(input, "eventKind", "setup_probe", issues);
+  requireString(input, "probeId", issues);
+  requireIsoDateTime(input, "receivedAt", issues);
+
+  return issues;
 }
 
 export function isLiveAiTrafficEvent(
@@ -886,6 +1133,17 @@ export function validateLiveAiTrafficEvent(input: unknown): string[] {
   }
 
   return issues;
+}
+
+function validateProbe(input: unknown, issues: string[]): void {
+  if (!isRecord(input)) {
+    issues.push("probe must be an object");
+    return;
+  }
+
+  rejectUnknownProperties(input, "probe", ["id", "token"], issues);
+  requireString(input, "id", issues);
+  requireString(input, "token", issues);
 }
 
 function validateRequest(input: unknown, issues: string[]): void {
@@ -1206,6 +1464,16 @@ function requireInteger(
 ): void {
   if (!Number.isInteger(input[field])) {
     issues.push(`${field} must be an integer`);
+  }
+}
+
+function requireBoolean(
+  input: Record<string, unknown>,
+  field: string,
+  issues: string[],
+): void {
+  if (typeof input[field] !== "boolean") {
+    issues.push(`${field} must be a boolean`);
   }
 }
 

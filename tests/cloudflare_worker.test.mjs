@@ -30,6 +30,51 @@ function env(overrides = {}) {
 }
 
 describe("cloudflare worker collector", () => {
+  it("sends setup probes to the probe endpoint without AI classification", async () => {
+    const { observeCloudflareWorkerRequest } = await cloudflareWorkerModule();
+    const ingestCalls = [];
+    const request = new Request(
+      "https://example.com/__promptscout/setup-probe",
+      {
+        headers: {
+          "user-agent": "PromptScout-Setup-Probe/1.0",
+          "x-promptscout-setup-probe": "1",
+          "x-promptscout-probe-id": "probe_123",
+          "x-promptscout-probe-token": "probe-token-123",
+          "cf-ray": "probe-ray-WAW",
+        },
+      },
+    );
+
+    await observeCloudflareWorkerRequest(
+      request,
+      env({
+        PROMPTSCOUT_PROBE_URL:
+          "https://promptscout.example/ingest/live-ai-traffic/probe",
+      }),
+      {
+        ingestFetch: async (url, init) => {
+          ingestCalls.push({ url, init });
+          return new Response("", { status: 202 });
+        },
+        now: () => new Date("2026-05-31T10:00:00.000Z"),
+      },
+    );
+
+    assert.equal(ingestCalls.length, 1);
+    assert.equal(
+      ingestCalls[0].url,
+      "https://promptscout.example/ingest/live-ai-traffic/probe",
+    );
+
+    const body = JSON.parse(ingestCalls[0].init.body);
+    assert.equal(Object.hasOwn(body, "events"), false);
+    assert.equal(body.probe.eventKind, "setup_probe");
+    assert.equal(body.probe.probe.id, "probe_123");
+    assert.equal(Object.hasOwn(body.probe, "providerClassification"), false);
+    assert.equal(body.probe.integration.requestId, "probe-ray-WAW");
+  });
+
   it("forwards the original request while scheduling ingest with waitUntil", async () => {
     const { handlePromptScoutCloudflareWorkerRequest } =
       await cloudflareWorkerModule();

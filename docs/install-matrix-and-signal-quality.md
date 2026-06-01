@@ -10,7 +10,7 @@ client-side analytics pixel.
 Current local or customer install paths:
 
 1. Vercel middleware for Next.js sites hosted on Vercel. Production apps should
-   install `@promptscout/live-ai-traffic@0.1.1` and import the Vercel helper
+   install `@promptscout/live-ai-traffic@0.1.2` and import the Vercel helper
    from `@promptscout/live-ai-traffic/vercel-middleware`; use a local checkout
    or generated tarballs only for repository development workflows.
 2. Cloudflare Worker for sites already proxied through Cloudflare.
@@ -48,7 +48,7 @@ Compute before any future placeholder adapter.
 
 | Install path | Status | Best fit | Reliability | Complexity | Why choose it |
 | --- | --- | --- | --- | --- | --- |
-| Vercel middleware | Current | Next.js sites on Vercel | High for routed page requests before the app route runs | Low | Run `npm install @promptscout/live-ai-traffic@0.1.1`, import `@promptscout/live-ai-traffic/vercel-middleware`, add one middleware or proxy helper, and use Vercel environment variables. Local checkout or tarballs are for repository development workflows only. |
+| Vercel middleware | Current | Next.js sites on Vercel | High for routed page requests before the app route runs | Low | Run `npm install @promptscout/live-ai-traffic@0.1.2`, import `@promptscout/live-ai-traffic/vercel-middleware`, add one middleware or proxy helper, and use Vercel environment variables. Local checkout or tarballs are for repository development workflows only. |
 | Cloudflare Worker | Current | Sites already proxied through Cloudflare | High at the edge for matched routes | Medium | Observe traffic before the origin while preserving normal Cloudflare routing. |
 | Netlify Edge | Current | Netlify-hosted sites using edge functions | High for matched edge routes | Low to medium | Add one edge function declaration and use Netlify environment variables. |
 | WordPress plugin | Current | WordPress sites managed by site owners or agencies | Medium to high for WordPress-rendered requests | Low | Install the implemented plugin collector and configure its site-scoped ingest token in WordPress admin. |

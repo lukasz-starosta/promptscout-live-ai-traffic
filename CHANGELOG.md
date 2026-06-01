@@ -6,6 +6,15 @@ This project publishes one public npm package. Internal provider workspaces and
 examples use the same version for traceability, but remain private and are not
 published.
 
+## 0.1.2
+
+- Released setup-probe-capable collectors for the one-install PromptScout setup
+  flow.
+- Added Vercel middleware support for `__promptscout/setup-probe` requests with
+  `setup_probe` callbacks.
+- Documented that setup probes and live traffic use the same middleware install;
+  `probeEndpoint` remains optional and falls back to the normal ingest endpoint.
+
 ## 0.1.1
 
 - Preserved safe landing query attribution for query-classified AI referral

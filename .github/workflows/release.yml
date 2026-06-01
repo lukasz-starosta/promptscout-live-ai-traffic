@@ -1,6 +1,9 @@
 name: Release
 
 on:
+  push:
+    tags:
+      - "v*"
   workflow_dispatch:
     inputs:
       dry_run:
@@ -10,7 +13,7 @@ on:
         default: true
 
 permissions:
-  contents: read
+  contents: write
   id-token: write
 
 jobs:
@@ -23,6 +26,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Node
         uses: actions/setup-node@v6
@@ -33,6 +38,9 @@ jobs:
 
       - name: Install npm trusted publishing CLI
         run: npm install --global npm@11.5.1
+
+      - name: Fetch main branch for release tag guard
+        run: git fetch --no-tags origin main:refs/remotes/origin/main
 
       - name: Check trusted publishing runtime
         run: |
@@ -66,6 +74,9 @@ jobs:
           check_min_version "$node_version" 22 14 0 Node
           check_min_version "$npm_version" 11 5 1 npm
 
+      - name: Verify release tag
+        run: node scripts/verify-release-tag.mjs
+
       - name: Enable Corepack
         run: corepack enable
 
@@ -91,5 +102,20 @@ jobs:
         run: npm pack --dry-run
 
       - name: Publish public npm package
-        if: ${{ !inputs.dry_run }}
+        if: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, 'v') && (github.event_name == 'push' || inputs.dry_run == false) }}
         run: npm publish --access public --registry=https://registry.npmjs.org
+
+      - name: Verify published package
+        if: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, 'v') && (github.event_name == 'push' || inputs.dry_run == false) }}
+        run: |
+          package_version="$(node -p "JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version")"
+          published_version="$(npm view @promptscout/live-ai-traffic@"$package_version" version --registry=https://registry.npmjs.org)"
+          test "$published_version" = "$package_version"
+
+      - name: Create GitHub Release
+        if: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, 'v') && (github.event_name == 'push' || inputs.dry_run == false) }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag_name="${GITHUB_REF_NAME}"
+          gh release create "$tag_name" --verify-tag --title "$tag_name" --generate-notes

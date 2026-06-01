@@ -30,6 +30,9 @@ describe("release workflow", () => {
       /^ {6}- name: Dry-run package contents\n(?<body>(?:^ {8}.+\n?)*)/m,
     );
 
+    assert.match(workflow, /^ {2}push:\s*$/m);
+    assert.match(workflow, /^ {4}tags:\s*$/m);
+    assert.match(workflow, /^ {6}- "v\*"/m);
     assert.match(workflow, /^ {6}dry_run:\s*$/m);
     assert.match(workflow, /default:\s*true/);
     assert.match(workflow, /npm pack --dry-run/);
@@ -47,11 +50,17 @@ describe("release workflow", () => {
     assert.match(workflow, /check_min_version "\$node_version" 22 14 0 Node/);
     assert.match(workflow, /check_min_version "\$npm_version" 11 5 1 npm/);
     assert.match(workflow, /id-token:\s*write/);
-    assert.match(workflow, /contents:\s*read/);
+    assert.match(workflow, /contents:\s*write/);
     assert.match(workflow, /^ {4}environment:\s*npm$/m);
     assert.match(
       workflow,
       /npm publish --access public --registry=https:\/\/registry\.npmjs\.org/,
+    );
+    assert.match(workflow, /scripts\/verify-release-tag\.mjs/);
+    assert.match(workflow, /gh release create "\$tag_name"/);
+    assert.match(
+      workflow,
+      /npm view @promptscout\/live-ai-traffic@"\$package_version" version/,
     );
     assert.doesNotMatch(workflow, /--provenance/);
     assert.doesNotMatch(workflow, /npm\.pkg\.github\.com/);
@@ -60,6 +69,29 @@ describe("release workflow", () => {
     assert.doesNotMatch(workflow, /secrets\.NPM_TOKEN/);
     assert.doesNotMatch(workflow, /NODE_AUTH_TOKEN/);
     assert.doesNotMatch(workflow, /--access restricted/);
+  });
+
+  it("guards tag releases before publishing", async () => {
+    const guard = await readFile("scripts/verify-release-tag.mjs", "utf8");
+
+    for (const expected of [
+      "GITHUB_REF_TYPE",
+      "GITHUB_REF_NAME",
+      "view",
+      "packageName",
+      "merge-base",
+      "--is-ancestor",
+      "origin/main",
+      "expectedTag",
+      "Release tag must match package.json version",
+      "already published",
+      "Prerelease package versions are not supported",
+    ]) {
+      assert.match(
+        guard,
+        new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")),
+      );
+    }
   });
 
   it("documents public npm consumption and trusted publishing", async () => {
@@ -73,7 +105,7 @@ describe("release workflow", () => {
       "registry.npmjs.org",
       "Trusted Publishing",
       "id-token: write",
-      "contents: read",
+      "contents: write",
       "Node `22.14.0` or newer",
       "npm `11.5.1` or newer",
       "repository",
@@ -89,6 +121,10 @@ describe("release workflow", () => {
       "--allow-publish",
       "./scripts/verify",
       "dry run",
+      "tag",
+      "v0.1.2",
+      "GitHub Release",
+      "npm environment",
       "0.1.0",
       "dry_run: false",
       "provenance",

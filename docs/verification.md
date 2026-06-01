@@ -69,11 +69,18 @@ runtime surface.
 
 ## Release Workflow Contract
 
-GitHub Actions also exposes a manual `Release` workflow. It runs the same
+GitHub Actions also exposes a tag-based `Release` workflow. It runs the same
 install, lint, typecheck, unit test, and `./scripts/verify` checks before any
-package dry run or public publish command. The workflow defaults to a dry run
-so release candidates can validate package contents without publishing. The real
-publish path targets the public npm registry for `@promptscout/live-ai-traffic`.
+package dry run or public publish command. Manual dispatch remains available
+for dry runs from branches or tags. The real publish path is a `v*` tag push
+from `main` and targets the public npm registry for
+`@promptscout/live-ai-traffic`.
+
+The release workflow guards real publishes with `scripts/verify-release-tag.mjs`
+before `npm publish`. The guard checks that the tag matches
+`package.json`, the version is stable, the tag commit is reachable from
+`origin/main`, and the version is not already present on npm. A successful
+publish also creates a GitHub Release for the tag.
 
 ## Intentionally Empty Packages
 

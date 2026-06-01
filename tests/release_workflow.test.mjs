@@ -42,6 +42,9 @@ describe("release workflow", () => {
     const dryRunStep = workflow.match(
       /^ {6}- name: Dry-run package contents\n(?<body>(?:^ {8}.+\n?)*)/m,
     );
+    const verifyPublishedStep = workflow.match(
+      /^ {6}- name: Verify published package\n(?<body>[\s\S]*?)^ {6}- name: Create GitHub Release/m,
+    );
 
     assert.match(workflow, /^ {2}push:\s*$/m);
     assert.match(workflow, /^ {4}tags:\s*$/m);
@@ -74,6 +77,13 @@ describe("release workflow", () => {
     assert.match(
       workflow,
       /npm view @promptscout\/live-ai-traffic@"\$package_version" version/,
+    );
+    assert.ok(verifyPublishedStep?.groups?.body);
+    assert.match(verifyPublishedStep.groups.body, /for attempt in/);
+    assert.match(verifyPublishedStep.groups.body, /sleep 5/);
+    assert.match(
+      verifyPublishedStep.groups.body,
+      /Timed out waiting for @promptscout\/live-ai-traffic/,
     );
     assert.doesNotMatch(workflow, /--provenance/);
     assert.doesNotMatch(workflow, /npm\.pkg\.github\.com/);

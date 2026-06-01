@@ -24,6 +24,19 @@ describe("release workflow", () => {
     );
   });
 
+  it("builds package artifacts before running unit tests in clean release runners", async () => {
+    const workflow = await readFile(releaseWorkflowPath, "utf8");
+    const buildIndex = workflow.indexOf("run: yarn build");
+    const testIndex = workflow.indexOf("run: yarn test");
+
+    assert.notEqual(buildIndex, -1);
+    assert.notEqual(testIndex, -1);
+    assert.ok(
+      buildIndex < testIndex,
+      "release workflow unit tests import workspace dist artifacts and must run after yarn build",
+    );
+  });
+
   it("supports dry-run and real public npm publish modes", async () => {
     const workflow = await readFile(releaseWorkflowPath, "utf8");
     const dryRunStep = workflow.match(

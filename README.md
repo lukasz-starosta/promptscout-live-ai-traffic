@@ -57,14 +57,15 @@ This repository uses Yarn workspaces:
 - `docs/install-matrix-and-signal-quality.md` explains how customers should
   choose an install path and how to interpret collector signal quality.
 
-The manual release workflow publishes only the root
+The tag-based release workflow publishes only the root
 `@promptscout/live-ai-traffic` package. Internal workspaces and examples keep
 the same version for traceability, but remain private and are not published. See
-[docs/release.md](docs/release.md) for npm trusted publishing, version pinning,
-and workflow details. `packages/node-middleware` and runtime collectors such as
-`packages/vercel-middleware`, `packages/netlify-edge`, `packages/cloudfront-aws`,
-and `packages/fastly-compute` reuse the shared core classifier, privacy
-normalization helpers, and ingest client for implemented paths.
+[docs/release.md](docs/release.md) for npm trusted publishing, version tags,
+GitHub Release creation, and workflow details. `packages/node-middleware` and
+runtime collectors such as `packages/vercel-middleware`, `packages/netlify-edge`,
+`packages/cloudfront-aws`, and `packages/fastly-compute` reuse the shared core
+classifier, privacy normalization helpers, and ingest client for implemented
+paths.
 CloudFront/AWS is implemented through real-time access logs delivered to Kinesis
 Data Streams, not CloudFront Functions. `examples/fastly-compute` shows how to
 wire Fastly JavaScript Compute to customer origin and PromptScout ingest

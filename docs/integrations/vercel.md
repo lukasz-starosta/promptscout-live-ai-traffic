@@ -9,13 +9,13 @@ runs.
 Install the public package from npm:
 
 ```bash
-npm install @promptscout/live-ai-traffic@0.1.1
+npm install @promptscout/live-ai-traffic@0.1.2
 ```
 
 For Yarn:
 
 ```bash
-yarn add @promptscout/live-ai-traffic@0.1.1
+yarn add @promptscout/live-ai-traffic@0.1.2
 ```
 
 Pin exact versions in production apps. The Vercel collector is imported from
@@ -51,7 +51,7 @@ No crawler or referrer detection rules are required in your app code. The
 collector uses the shared PromptScout classifier and event schema.
 
 For UTM-only ChatGPT/OpenAI referrals with no `Referer` header or AI user
-agent, version `0.1.1` emits `providerClassification.matchedBy: ["query"]` and
+agent, version `0.1.1` and later emits `providerClassification.matchedBy: ["query"]` and
 keeps only closed safe source attribution in `request.search`, for example
 `?utm_source=chatgpt.com`. The collector does not forward prompt text, tokens,
 email addresses, fragments, unknown query keys, or the full raw landing query.

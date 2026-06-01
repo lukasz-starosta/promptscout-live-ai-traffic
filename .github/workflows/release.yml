@@ -89,14 +89,14 @@ jobs:
       - name: Typecheck
         run: yarn typecheck
 
+      - name: Build package
+        run: yarn build
+
       - name: Unit tests
         run: yarn test
 
       - name: Repo verification
         run: ./scripts/verify
-
-      - name: Build package
-        run: yarn build
 
       - name: Dry-run package contents
         run: npm pack --dry-run

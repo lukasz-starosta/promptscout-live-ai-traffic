@@ -1,0 +1,12 @@
+{
+  "name": "promptscout-live-ai-traffic-example-netlify",
+  "version": "0.1.2",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "promptscout-live-ai-traffic-netlify": "workspace:*"
+  },
+  "scripts": {
+    "typecheck": "tsc -b"
+  }
+}

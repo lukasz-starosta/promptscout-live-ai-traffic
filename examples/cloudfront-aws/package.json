@@ -1,0 +1,12 @@
+{
+  "name": "promptscout-live-ai-traffic-example-cloudfront-aws",
+  "version": "0.1.2",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "promptscout-live-ai-traffic-cloudfront-aws": "workspace:*"
+  },
+  "scripts": {
+    "typecheck": "tsc -b"
+  }
+}

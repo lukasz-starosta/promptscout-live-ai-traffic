@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.turbo/
+.promptscout-local-packages/
+.yarn/
+!.yarn/releases/
+!.yarn/plugins/
+*.tsbuildinfo
+.symphony/
+examples/cloudflare-worker/.dev.vars

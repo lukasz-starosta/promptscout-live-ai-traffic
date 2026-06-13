@@ -1,0 +1,15 @@
+{
+  "name": "promptscout-live-ai-traffic-wordpress-plugin",
+  "version": "0.1.2",
+  "description": "Installable WordPress plugin collector for PromptScout live AI traffic.",
+  "license": "Apache-2.0",
+  "files": [
+    "promptscout-live-ai-traffic.php",
+    "includes"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lukasz-starosta/promptscout-live-ai-traffic.git"
+  },
+  "private": true
+}

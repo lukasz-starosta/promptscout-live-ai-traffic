@@ -1,0 +1,12 @@
+{
+  "name": "promptscout-live-ai-traffic-example-vercel",
+  "version": "0.1.2",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "promptscout-live-ai-traffic-vercel": "workspace:*"
+  },
+  "scripts": {
+    "typecheck": "tsc -b"
+  }
+}

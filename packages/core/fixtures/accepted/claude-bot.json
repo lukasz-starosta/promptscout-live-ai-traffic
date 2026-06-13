@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "eventKind": "request_observation",
+  "sourceProvider": "fastly",
+  "observedAt": "2026-05-26T07:08:00.000Z",
+  "request": {
+    "host": "example.com",
+    "path": "/blog/ai-visibility",
+    "method": "GET",
+    "userAgent": "ClaudeBot/1.0"
+  },
+  "providerClassification": {
+    "provider": "anthropic_claudebot",
+    "agentType": "ai_training_crawler",
+    "confidence": 0.96,
+    "matchedBy": ["user_agent"]
+  },
+  "location": {
+    "country": "US"
+  },
+  "ipHash": {
+    "algorithm": "hmac-sha256",
+    "value": "sha256:6a0f940e8cb84158",
+    "keyId": "edge-key-2026-05",
+    "truncatedBits": 64,
+    "originalIpRetention": "discarded_after_hash"
+  },
+  "integration": {
+    "kind": "fastly_compute",
+    "name": "fastly",
+    "requestId": "fastly-claude-bot-001"
+  }
+}

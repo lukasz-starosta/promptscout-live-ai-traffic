@@ -1,0 +1,29 @@
+{
+  "name": "promptscout-live-ai-traffic-cloudflare-worker",
+  "version": "0.1.2",
+  "description": "Cloudflare Worker collector for PromptScout live AI traffic.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@promptscout/live-ai-traffic": "workspace:*"
+  },
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lukasz-starosta/promptscout-live-ai-traffic.git"
+  },
+  "private": true
+}

@@ -1,0 +1,16 @@
+{
+  "method": "GET",
+  "url": "https://example.com/docs?utm_source=chatgpt",
+  "nextUrl": {
+    "hostname": "example.com",
+    "pathname": "/docs",
+    "search": "?utm_source=chatgpt"
+  },
+  "headers": {
+    "host": "example.com",
+    "referer": "https://chatgpt.com/share/example",
+    "user-agent": "ChatGPT-User/1.0",
+    "x-forwarded-for": "203.0.113.42",
+    "x-vercel-id": "iad1::promptscout-example"
+  }
+}

@@ -1,0 +1,47 @@
+services:
+  nginx:
+    image: nginx:1.27-alpine
+    depends_on:
+      - mock-ingest
+    ports:
+      - "8088:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./html:/usr/share/nginx/html:ro
+      - nginx-logs:/var/log/nginx
+
+  mock-ingest:
+    image: node:22-alpine
+    working_dir: /workspace
+    volumes:
+      - ../..:/workspace:ro
+    command: node examples/nginx-docker/mock-ingest.mjs
+    ports:
+      - "8787:8787"
+
+  forwarder:
+    image: node:22-alpine
+    depends_on:
+      - nginx
+      - mock-ingest
+    working_dir: /workspace
+    environment:
+      PROMPTSCOUT_INGEST_ENDPOINT: http://mock-ingest:8787/ingest/live-ai-traffic
+      PROMPTSCOUT_INGEST_TOKEN: local-dev-token
+      NGINX_ACCESS_LOG_PATH: /var/log/nginx/access.log
+      NGINX_CHECKPOINT_PATH: /state/nginx-log-forwarder.checkpoint.json
+      NGINX_FORWARDER_BATCH_SIZE: "2"
+      NGINX_FORWARDER_INTERVAL_MS: "1000"
+    volumes:
+      - ../..:/workspace
+      - nginx-logs:/var/log/nginx
+      - forwarder-state:/state
+    command: >
+      sh -lc "corepack enable &&
+      yarn install --immutable &&
+      yarn tsc -b packages/nginx-log-forwarder &&
+      yarn node examples/nginx-docker/forwarder.mjs"
+
+volumes:
+  nginx-logs:
+  forwarder-state:

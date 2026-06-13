@@ -1,0 +1,83 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./packages/core"
+    },
+    {
+      "path": "./packages/vercel"
+    },
+    {
+      "path": "./packages/vercel-middleware"
+    },
+    {
+      "path": "./packages/cloudflare"
+    },
+    {
+      "path": "./packages/cloudflare-worker"
+    },
+    {
+      "path": "./packages/netlify"
+    },
+    {
+      "path": "./packages/netlify-edge"
+    },
+    {
+      "path": "./packages/nginx-log-forwarder"
+    },
+    {
+      "path": "./packages/wordpress"
+    },
+    {
+      "path": "./packages/node-express"
+    },
+    {
+      "path": "./packages/node-middleware"
+    },
+    {
+      "path": "./packages/cloudfront-aws"
+    },
+    {
+      "path": "./packages/fastly"
+    },
+    {
+      "path": "./packages/fastly-compute"
+    },
+    {
+      "path": "./examples/vercel"
+    },
+    {
+      "path": "./examples/cloudflare"
+    },
+    {
+      "path": "./examples/cloudflare-worker"
+    },
+    {
+      "path": "./examples/netlify"
+    },
+    {
+      "path": "./examples/netlify-edge"
+    },
+    {
+      "path": "./examples/nginx-log-forwarder"
+    },
+    {
+      "path": "./examples/wordpress"
+    },
+    {
+      "path": "./examples/node-express"
+    },
+    {
+      "path": "./examples/express"
+    },
+    {
+      "path": "./examples/cloudfront-aws"
+    },
+    {
+      "path": "./examples/fastly"
+    },
+    {
+      "path": "./examples/fastly-compute"
+    }
+  ]
+}

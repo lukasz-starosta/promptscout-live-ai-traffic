@@ -1,0 +1,4 @@
+203.0.113.10 - - [26/May/2026:12:00:00 +0000] "GET /docs?source=openai HTTP/1.1" 200 512 "-" "OAI-SearchBot/1.0; +https://openai.com/searchbot"
+203.0.113.11 - - [26/May/2026:12:01:00 +0000] "GET /pricing HTTP/1.1" 200 1024 "-" "ClaudeBot/1.0"
+203.0.113.12 - - [26/May/2026:12:02:00 +0000] "GET /blog HTTP/1.1" 200 2048 "-" "PerplexityBot/1.0"
+203.0.113.13 - - [26/May/2026:12:03:00 +0000] "GET / HTTP/1.1" 200 4096 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"

@@ -1,0 +1,12 @@
+{
+  "name": "promptscout-live-ai-traffic-example-cloudflare",
+  "version": "0.1.2",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "promptscout-live-ai-traffic-cloudflare": "workspace:*"
+  },
+  "scripts": {
+    "typecheck": "tsc -b"
+  }
+}

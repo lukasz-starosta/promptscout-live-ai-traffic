@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "eventKind": "request_observation",
+  "sourceProvider": "vercel",
+  "observedAt": "2026-05-26T07:06:00.000Z",
+  "request": {
+    "host": "example.com",
+    "path": "/robots.txt",
+    "method": "GET",
+    "userAgent": "GPTBot/1.2"
+  },
+  "providerClassification": {
+    "provider": "openai_gptbot",
+    "agentType": "ai_training_crawler",
+    "confidence": 0.98,
+    "matchedBy": ["user_agent"]
+  },
+  "ipHash": {
+    "algorithm": "hmac-sha256",
+    "value": "sha256:3aa2c5948d72155c",
+    "keyId": "edge-key-2026-05",
+    "truncatedBits": 64,
+    "originalIpRetention": "discarded_after_hash"
+  },
+  "integration": {
+    "kind": "vercel_nextjs_middleware",
+    "name": "vercel",
+    "requestId": "vercel-gptbot-001"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "eventKind": "request_observation",
+  "sourceProvider": "cloudflare",
+  "observedAt": "2026-05-26T07:10:00.000Z",
+  "request": {
+    "host": "example.com",
+    "path": "/docs",
+    "method": "GET",
+    "userAgent": "ChatGPT-User/1.0",
+    "referer": "https://chatgpt.com/"
+  },
+  "providerClassification": {
+    "provider": "openai_chatgpt_user",
+    "agentType": "ai_browser_user",
+    "confidence": 0.93,
+    "matchedBy": ["user_agent", "referer"]
+  },
+  "location": {
+    "country": "US",
+    "region": "WA"
+  },
+  "ipHash": {
+    "algorithm": "hmac-sha256",
+    "value": "sha256:fe3a4b990e9a2d11",
+    "keyId": "edge-key-2026-05",
+    "truncatedBits": 64,
+    "originalIpRetention": "discarded_after_hash"
+  },
+  "integration": {
+    "kind": "cloudflare_worker",
+    "name": "cloudflare",
+    "requestId": "cf-chatgpt-user-001"
+  }
+}

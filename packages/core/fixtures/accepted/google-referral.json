@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "eventKind": "request_observation",
+  "sourceProvider": "netlify",
+  "observedAt": "2026-05-26T07:16:00.000Z",
+  "request": {
+    "host": "example.com",
+    "path": "/comparison",
+    "search": "?utm_source=google",
+    "method": "GET",
+    "userAgent": "Mozilla/5.0",
+    "referer": "https://www.google.com/search?q=example+comparison"
+  },
+  "providerClassification": {
+    "provider": "google_referral",
+    "agentType": "search_referral",
+    "confidence": 0.82,
+    "matchedBy": ["referer"]
+  },
+  "location": {
+    "country": "GB",
+    "region": "ENG"
+  },
+  "ipHash": {
+    "algorithm": "hmac-sha256",
+    "value": "sha256:8e98e36c11d137d5",
+    "keyId": "edge-key-2026-05",
+    "truncatedBits": 64,
+    "originalIpRetention": "discarded_after_hash"
+  },
+  "integration": {
+    "kind": "netlify_edge",
+    "name": "netlify",
+    "requestId": "netlify-google-referral-001"
+  }
+}

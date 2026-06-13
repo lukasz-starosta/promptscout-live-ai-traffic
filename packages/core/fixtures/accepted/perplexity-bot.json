@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "eventKind": "request_observation",
+  "sourceProvider": "nginx_log_forwarder",
+  "observedAt": "2026-05-26T07:09:00.000Z",
+  "request": {
+    "host": "example.com",
+    "path": "/resources",
+    "method": "GET",
+    "userAgent": "PerplexityBot/1.0"
+  },
+  "providerClassification": {
+    "provider": "perplexitybot",
+    "agentType": "ai_search_crawler",
+    "confidence": 0.95,
+    "matchedBy": ["user_agent"]
+  },
+  "ipHash": {
+    "algorithm": "hmac-sha256",
+    "value": "sha256:d1c3d0e622550be9",
+    "keyId": "edge-key-2026-05",
+    "truncatedBits": 64,
+    "originalIpRetention": "discarded_after_hash"
+  },
+  "integration": {
+    "kind": "nginx_log_forwarder",
+    "name": "nginx-log-forwarder",
+    "requestId": "nginx-perplexity-001"
+  }
+}

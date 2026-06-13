@@ -1,0 +1,212 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<'USAGE'
+Usage: ./scripts/verify [--help]
+
+Run deterministic local verification for promptscout-live-ai-traffic.
+
+Checks:
+  - text files have no trailing whitespace and end with one newline
+  - monorepo package, example, and docs scaffold is present
+  - shell scripts parse with bash -n
+  - package builds complete before tests
+  - focused Node tests in tests/*.test.mjs pass
+  - focused shell tests in tests/*.sh pass
+USAGE
+}
+
+if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
+  usage
+  exit 0
+fi
+
+if [[ $# -gt 0 ]]; then
+  usage >&2
+  exit 2
+fi
+
+if ! command -v git >/dev/null 2>&1; then
+  echo "git is required to run verification" >&2
+  exit 127
+fi
+
+if ! command -v bash >/dev/null 2>&1; then
+  echo "bash is required to run verification" >&2
+  exit 127
+fi
+
+if ! ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"; then
+  echo "scripts/verify must be run inside a git checkout" >&2
+  exit 1
+fi
+cd "$ROOT"
+
+TEXT_FAILURES=0
+SHELL_FAILURES=0
+SCAFFOLD_FAILURES=0
+
+PROVIDERS=(
+  vercel
+  cloudflare
+  cloudflare-worker
+  netlify-edge
+  netlify
+  nginx-log-forwarder
+  wordpress
+  node-express
+  cloudfront-aws
+  fastly
+  fastly-compute
+)
+
+is_text_file() {
+  local file="$1"
+
+  if [[ ! -s "$file" ]]; then
+    return 0
+  fi
+
+  LC_ALL=C grep -Iq '$' "$file"
+}
+
+is_shell_script() {
+  local file="$1"
+  local first_line
+
+  case "$file" in
+    *.sh) return 0 ;;
+  esac
+
+  IFS= read -r first_line <"$file" || first_line=""
+  [[ "$first_line" =~ ^#!.*(bash|sh|zsh|ksh)$ || "$first_line" =~ ^#!/usr/bin/env[[:space:]]+(bash|sh|zsh|ksh)$ ]]
+}
+
+echo "==> Checking text formatting"
+while IFS= read -r -d '' file; do
+  [[ -f "$file" ]] || continue
+  is_text_file "$file" || continue
+
+  if LC_ALL=C grep -nH --binary-files=without-match '[[:blank:]]$' "$file" >&2; then
+    TEXT_FAILURES=1
+  fi
+
+  if [[ -s "$file" ]]; then
+    last_byte="$(tail -c 1 "$file" | od -An -t x1 | tr -d '[:space:]')"
+    if [[ "$last_byte" != "0a" ]]; then
+      echo "$file: missing final newline" >&2
+      TEXT_FAILURES=1
+    fi
+
+    byte_count="$(wc -c <"$file" | tr -d '[:space:]')"
+    if [[ "$byte_count" -gt 1 ]]; then
+      last_two_bytes="$(tail -c 2 "$file" | od -An -t x1 | tr -d '[:space:]')"
+      if [[ "$last_two_bytes" == "0a0a" ]]; then
+        echo "$file: extra blank line at EOF" >&2
+        TEXT_FAILURES=1
+      fi
+    fi
+  fi
+done < <(git ls-files -z --cached --others --exclude-standard -- . ':(exclude).symphony/**')
+
+if [[ "$TEXT_FAILURES" -ne 0 ]]; then
+  echo "Text formatting check failed" >&2
+  exit 1
+fi
+
+require_path() {
+  local path="$1"
+
+  if [[ ! -e "$path" ]]; then
+    echo "Missing required path: $path" >&2
+    SCAFFOLD_FAILURES=1
+  fi
+}
+
+require_file_contains() {
+  local file="$1"
+  local expected="$2"
+
+  if [[ ! -f "$file" ]]; then
+    echo "Missing required path: $file" >&2
+    SCAFFOLD_FAILURES=1
+    return
+  fi
+
+  if ! grep -qF "$expected" "$file"; then
+    echo "$file: missing expected content: $expected" >&2
+    SCAFFOLD_FAILURES=1
+  fi
+}
+
+echo "==> Checking monorepo scaffold"
+require_path package.json
+require_path biome.json
+require_path tsconfig.json
+require_path tsconfig.base.json
+require_path tsconfig.package.json
+require_path docs/getting-started.md
+require_path docs/integrations
+require_path packages/core/package.json
+require_path packages/core/tsconfig.json
+require_path packages/core/src/index.ts
+
+for provider in "${PROVIDERS[@]}"; do
+  require_path "packages/$provider/package.json"
+  require_path "packages/$provider/tsconfig.json"
+  require_file_contains "packages/$provider/src/index.ts" "@promptscout/live-ai-traffic/core"
+  require_file_contains "packages/$provider/package.json" "\"@promptscout/live-ai-traffic\": \"workspace:*\""
+
+  require_path "examples/$provider/package.json"
+  require_path "examples/$provider/tsconfig.json"
+  require_file_contains "examples/$provider/src/index.ts" "promptscout-live-ai-traffic-$provider"
+  require_file_contains "examples/$provider/package.json" "\"promptscout-live-ai-traffic-$provider\": \"workspace:*\""
+  require_path "examples/$provider/README.md"
+
+  require_path "docs/integrations/$provider.md"
+done
+
+if [[ "$SCAFFOLD_FAILURES" -ne 0 ]]; then
+  echo "Monorepo scaffold check failed" >&2
+  exit 1
+fi
+
+echo "==> Checking shell syntax"
+while IFS= read -r -d '' file; do
+  [[ -f "$file" ]] || continue
+  is_shell_script "$file" || continue
+
+  if ! bash -n "$file"; then
+    SHELL_FAILURES=1
+  fi
+done < <(git ls-files -z --cached --others --exclude-standard -- . ':(exclude).symphony/**')
+
+if [[ "$SHELL_FAILURES" -ne 0 ]]; then
+  echo "Shell syntax check failed" >&2
+  exit 1
+fi
+
+if node -e 'process.exit(require("./package.json").scripts?.build ? 0 : 1)' >/dev/null 2>&1; then
+  echo "==> Building packages"
+  yarn build
+fi
+
+if compgen -G "tests/*.test.mjs" >/dev/null; then
+  if ! command -v node >/dev/null 2>&1; then
+    echo "node is required to run Node tests" >&2
+    exit 127
+  fi
+
+  echo "==> Running Node tests"
+  node --test tests/*.test.mjs
+fi
+
+if compgen -G "tests/*.sh" >/dev/null; then
+  echo "==> Running shell tests"
+  for test_script in tests/*.sh; do
+    bash "$test_script"
+  done
+fi
+
+echo "Verification passed"

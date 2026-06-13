@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "eventKind": "request_observation",
+  "sourceProvider": "node_express",
+  "observedAt": "2026-05-26T07:12:00.000Z",
+  "request": {
+    "host": "example.com",
+    "path": "/pricing",
+    "method": "GET",
+    "userAgent": "Mozilla/5.0",
+    "referer": "https://chatgpt.com/"
+  },
+  "providerClassification": {
+    "provider": "openai_chatgpt_referral",
+    "agentType": "ai_referral_visit",
+    "confidence": 0.78,
+    "matchedBy": ["referer"]
+  },
+  "location": {
+    "country": "US",
+    "region": "CA"
+  },
+  "ipHash": {
+    "algorithm": "hmac-sha256",
+    "value": "sha256:9f1b3b6b5dfaf1ac",
+    "keyId": "edge-key-2026-05",
+    "truncatedBits": 64,
+    "originalIpRetention": "discarded_after_hash"
+  },
+  "integration": {
+    "kind": "node_express",
+    "name": "node-express",
+    "requestId": "req_ai_referral_browser_001"
+  }
+}

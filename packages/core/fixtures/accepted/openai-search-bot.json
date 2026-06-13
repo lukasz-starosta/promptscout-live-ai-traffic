@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "eventKind": "request_observation",
+  "sourceProvider": "cloudflare",
+  "observedAt": "2026-05-26T07:05:00.000Z",
+  "request": {
+    "host": "example.com",
+    "path": "/guides/live-ai-traffic",
+    "search": "?ref=openai",
+    "method": "GET",
+    "userAgent": "OAI-SearchBot/1.0"
+  },
+  "providerClassification": {
+    "provider": "openai_search_bot",
+    "agentType": "ai_search_crawler",
+    "confidence": 0.99,
+    "matchedBy": ["user_agent"]
+  },
+  "location": {
+    "country": "US",
+    "region": "VA"
+  },
+  "ipHash": {
+    "algorithm": "hmac-sha256",
+    "value": "sha256:092fb1562b2f7c36",
+    "keyId": "edge-key-2026-05",
+    "truncatedBits": 64,
+    "originalIpRetention": "discarded_after_hash"
+  },
+  "integration": {
+    "kind": "cloudflare_worker",
+    "name": "cloudflare",
+    "requestId": "cf-openai-search-001"
+  }
+}

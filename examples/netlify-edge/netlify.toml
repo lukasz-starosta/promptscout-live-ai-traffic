@@ -1,0 +1,4 @@
+[[edge_functions]]
+  path = "/*"
+  excludedPath = "/assets/*"
+  function = "promptscout-live-ai-traffic"

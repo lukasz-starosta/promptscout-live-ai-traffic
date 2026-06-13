@@ -1,0 +1,125 @@
+[
+  {
+    "name": "openai-oai-searchbot",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36; compatible; OAI-SearchBot/1.3; +https://openai.com/searchbot",
+    "provider": "openai_search_bot",
+    "agentType": "ai_search_crawler",
+    "matchedRule": "ua:openai:oai-searchbot",
+    "docsUrl": "https://platform.openai.com/docs/bots",
+    "confidenceLabel": "high",
+    "signalSource": "user_agent",
+    "sourceUrl": "https://platform.openai.com/docs/bots"
+  },
+  {
+    "name": "openai-gptbot",
+    "userAgent": "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko); compatible; GPTBot/1.3; +https://openai.com/gptbot",
+    "provider": "openai_gptbot",
+    "agentType": "ai_training_crawler",
+    "matchedRule": "ua:openai:gptbot",
+    "docsUrl": "https://platform.openai.com/docs/bots",
+    "confidenceLabel": "high",
+    "signalSource": "user_agent",
+    "sourceUrl": "https://platform.openai.com/docs/bots"
+  },
+  {
+    "name": "openai-chatgpt-user",
+    "userAgent": "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko); compatible; ChatGPT-User/1.0; +https://openai.com/bot",
+    "provider": "openai_chatgpt_user",
+    "agentType": "ai_browser_user",
+    "matchedRule": "ua:openai:chatgpt-user",
+    "docsUrl": "https://platform.openai.com/docs/bots",
+    "confidenceLabel": "high",
+    "signalSource": "user_agent",
+    "sourceUrl": "https://platform.openai.com/docs/bots"
+  },
+  {
+    "name": "anthropic-claudebot",
+    "userAgent": "ClaudeBot/1.0",
+    "provider": "anthropic_claudebot",
+    "agentType": "ai_training_crawler",
+    "matchedRule": "ua:anthropic:claudebot",
+    "confidenceLabel": "high",
+    "signalSource": "user_agent",
+    "sourceUrl": "https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler"
+  },
+  {
+    "name": "anthropic-claude-searchbot",
+    "userAgent": "Claude-SearchBot/1.0",
+    "provider": "anthropic_claude_search_bot",
+    "agentType": "ai_search_crawler",
+    "matchedRule": "ua:anthropic:claude-searchbot",
+    "confidenceLabel": "high",
+    "signalSource": "user_agent",
+    "sourceUrl": "https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler"
+  },
+  {
+    "name": "anthropic-claude-user",
+    "userAgent": "Claude-User/1.0",
+    "provider": "anthropic_claude_user",
+    "agentType": "ai_browser_user",
+    "matchedRule": "ua:anthropic:claude-user",
+    "confidenceLabel": "high",
+    "signalSource": "user_agent",
+    "sourceUrl": "https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler"
+  },
+  {
+    "name": "perplexitybot",
+    "userAgent": "Mozilla/5.0 (compatible; PerplexityBot/1.0; +https://www.perplexity.ai/bot)",
+    "provider": "perplexitybot",
+    "agentType": "ai_search_crawler",
+    "matchedRule": "ua:perplexity:perplexitybot",
+    "confidenceLabel": "high",
+    "signalSource": "user_agent",
+    "sourceUrl": "https://docs.perplexity.ai/guides/bots"
+  },
+  {
+    "name": "perplexity-user",
+    "userAgent": "Perplexity-User/1.0",
+    "provider": "perplexity_user",
+    "agentType": "ai_browser_user",
+    "matchedRule": "ua:perplexity:perplexity-user",
+    "confidenceLabel": "high",
+    "signalSource": "user_agent",
+    "sourceUrl": "https://docs.perplexity.ai/guides/bots"
+  },
+  {
+    "name": "googleother",
+    "userAgent": "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; GoogleOther) Chrome/138.0.0.0 Safari/537.36",
+    "provider": "google_crawler",
+    "agentType": "search_crawler",
+    "matchedRule": "ua:google:googleother",
+    "confidenceLabel": "high",
+    "signalSource": "user_agent",
+    "sourceUrl": "https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers"
+  },
+  {
+    "name": "google-agent",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko; compatible; Google-Agent; +https://developers.google.com/crawling/docs/crawlers-fetchers/google-agent) Chrome/138.0.0.0 Safari/537.36",
+    "provider": "google_agent",
+    "agentType": "ai_browser_user",
+    "matchedRule": "ua:google:google-agent",
+    "confidenceLabel": "high",
+    "signalSource": "user_agent",
+    "sourceUrl": "https://developers.google.com/crawling/docs/crawlers-fetchers/google-user-triggered-fetchers"
+  },
+  {
+    "name": "meta-externalagent",
+    "userAgent": "meta-externalagent/1.1 (+https://developers.facebook.com/docs/sharing/webmasters/crawler)",
+    "provider": "meta_external_agent",
+    "agentType": "ai_training_crawler",
+    "matchedRule": "ua:meta:externalagent",
+    "confidenceLabel": "high",
+    "signalSource": "user_agent",
+    "sourceUrl": "https://developers.facebook.com/docs/sharing/webmasters/crawler"
+  },
+  {
+    "name": "bytedance-bytespider",
+    "userAgent": "Mozilla/5.0 (Linux; Android 8.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0 Mobile Safari/537.36; Bytespider",
+    "provider": "bytedance_bytespider",
+    "agentType": "ai_training_crawler",
+    "matchedRule": "ua:bytedance:bytespider",
+    "confidenceLabel": "high",
+    "signalSource": "user_agent",
+    "sourceUrl": "https://vercel.com/blog/the-rise-of-the-ai-crawler"
+  }
+]

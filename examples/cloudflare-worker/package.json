@@ -1,0 +1,14 @@
+{
+  "name": "promptscout-live-ai-traffic-example-cloudflare-worker",
+  "version": "0.1.2",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "promptscout-live-ai-traffic-cloudflare-worker": "workspace:*"
+  },
+  "scripts": {
+    "dev": "yarn dlx wrangler@latest dev",
+    "deploy": "yarn dlx wrangler@latest deploy",
+    "typecheck": "tsc -b"
+  }
+}

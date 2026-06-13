@@ -1,0 +1,135 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Run verification and package publish dry-runs without publishing.
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  release:
+    name: Release public npm package
+    runs-on: ubuntu-latest
+    environment: npm
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.14.0
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Install npm trusted publishing CLI
+        run: npm install --global npm@11.5.1
+
+      - name: Fetch main branch for release tag guard
+        run: git fetch --no-tags origin main:refs/remotes/origin/main
+
+      - name: Check trusted publishing runtime
+        run: |
+          check_min_version() {
+            local version="$1"
+            local required_major="$2"
+            local required_minor="$3"
+            local required_patch="$4"
+            local name="$5"
+            local major minor patch_extra patch
+
+            IFS=. read -r major minor patch_extra <<< "$version"
+            patch="${patch_extra%%[^0-9]*}"
+
+            if (( major > required_major )) ||
+              (( major == required_major && minor > required_minor )) ||
+              (( major == required_major && minor == required_minor && patch >= required_patch )); then
+              return 0
+            fi
+
+            echo "$name $version is below required $required_major.$required_minor.$required_patch" >&2
+            exit 1
+          }
+
+          node_version="$(node -p 'process.versions.node')"
+          npm_version="$(npm --version)"
+
+          echo "Node $node_version"
+          echo "npm $npm_version"
+
+          check_min_version "$node_version" 22 14 0 Node
+          check_min_version "$npm_version" 11 5 1 npm
+
+      - name: Verify release tag
+        run: node scripts/verify-release-tag.mjs
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Typecheck
+        run: yarn typecheck
+
+      - name: Build package
+        run: yarn build
+
+      - name: Unit tests
+        run: yarn test
+
+      - name: Repo verification
+        run: ./scripts/verify
+
+      - name: Dry-run package contents
+        run: npm pack --dry-run
+
+      - name: Publish public npm package
+        if: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, 'v') && (github.event_name == 'push' || inputs.dry_run == false) }}
+        run: npm publish --access public --registry=https://registry.npmjs.org
+
+      - name: Verify published package
+        if: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, 'v') && (github.event_name == 'push' || inputs.dry_run == false) }}
+        run: |
+          package_version="$(node -p "JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version")"
+          for attempt in {1..24}; do
+            published_version="$(npm view @promptscout/live-ai-traffic@"$package_version" version --registry=https://registry.npmjs.org 2>/dev/null || true)"
+
+            if [ "$published_version" = "$package_version" ]; then
+              echo "@promptscout/live-ai-traffic@$package_version is published."
+              exit 0
+            fi
+
+            if [ "$attempt" -lt 24 ]; then
+              echo "Package version is not visible yet (attempt $attempt/24); retrying in 5 seconds."
+              sleep 5
+            fi
+          done
+
+          echo "Timed out waiting for @promptscout/live-ai-traffic@$package_version to appear on npm." >&2
+          exit 1
+
+      - name: Create GitHub Release
+        if: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, 'v') && (github.event_name == 'push' || inputs.dry_run == false) }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag_name="${GITHUB_REF_NAME}"
+          gh release create "$tag_name" --verify-tag --title "$tag_name" --generate-notes

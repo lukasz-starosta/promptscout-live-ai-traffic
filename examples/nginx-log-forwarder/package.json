@@ -1,0 +1,12 @@
+{
+  "name": "promptscout-live-ai-traffic-example-nginx-log-forwarder",
+  "version": "0.1.2",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "promptscout-live-ai-traffic-nginx-log-forwarder": "workspace:*"
+  },
+  "scripts": {
+    "typecheck": "tsc -b"
+  }
+}

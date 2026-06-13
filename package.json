@@ -1,0 +1,60 @@
+{
+  "name": "@promptscout/live-ai-traffic",
+  "version": "0.1.2",
+  "description": "PromptScout live AI traffic event contracts, classifiers, and runtime collectors.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lukasz-starosta/promptscout-live-ai-traffic.git"
+  },
+  "packageManager": "yarn@4.9.2",
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "verify": "./scripts/verify",
+    "test": "node --test tests/*.test.mjs",
+    "build": "tsc -b && yarn build:package",
+    "typecheck": "tsc -b",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "dogfood:vercel": "yarn tsc -b packages/vercel-middleware && node examples/vercel-nextjs/dogfood-promptscout.mjs",
+    "build:package": "rm -rf dist && tsc -p tsconfig.package.json",
+    "prepack": "yarn build:package"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.3.11",
+    "typescript": "5.8.3"
+  },
+  "main": "./dist/packages/core/src/index.js",
+  "types": "./dist/packages/core/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/packages/core/src/index.d.ts",
+      "default": "./dist/packages/core/src/index.js"
+    },
+    "./core": {
+      "types": "./dist/packages/core/src/index.d.ts",
+      "default": "./dist/packages/core/src/index.js"
+    },
+    "./vercel-middleware": {
+      "types": "./dist/packages/vercel-middleware/src/index.d.ts",
+      "default": "./dist/packages/vercel-middleware/src/index.js"
+    },
+    "./docs-manifest.json": "./docs-manifest.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "docs",
+    "docs-manifest.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  }
+}

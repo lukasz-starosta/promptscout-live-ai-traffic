@@ -1,0 +1,17 @@
+{
+  "name": "promptscout-live-ai-traffic-example-vercel-nextjs",
+  "version": "0.1.2",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "smoke": "node smoke-test.mjs"
+  },
+  "dependencies": {
+    "@promptscout/live-ai-traffic": "workspace:*"
+  },
+  "peerDependencies": {
+    "next": ">=16.0.0",
+    "react": ">=19.2.0",
+    "react-dom": ">=19.2.0"
+  }
+}

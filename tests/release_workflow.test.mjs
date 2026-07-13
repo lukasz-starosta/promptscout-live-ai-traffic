@@ -61,6 +61,8 @@ describe("release workflow", () => {
     assert.match(workflow, /runs-on:\s*ubuntu-latest/);
     assert.match(workflow, /registry-url:\s*https:\/\/registry\.npmjs\.org/);
     assert.match(workflow, /package-manager-cache:\s*false/);
+    assert.match(workflow, /uses: actions\/checkout@v7/);
+    assert.match(workflow, /uses: actions\/setup-node@v6/);
     assert.match(workflow, /node-version:\s*22\.14\.0/);
     assert.match(workflow, /npm install --global npm@11\.5\.1/);
     assert.match(workflow, /check_min_version "\$node_version" 22 14 0 Node/);

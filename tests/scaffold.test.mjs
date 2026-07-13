@@ -75,7 +75,7 @@ describe("monorepo scaffold", () => {
         assert.match(integrationDoc, /handlePromptScoutNetlifyEdgeRequest/);
         assert.match(integrationDoc, /context\.waitUntil/);
       } else if (provider === "wordpress") {
-        assert.match(integrationDoc, /wp_remote_post/);
+        assert.match(integrationDoc, /wp_safe_remote_post/);
         assert.match(integrationDoc, /brand-owned site source/);
       } else if (provider === "cloudflare-worker") {
         assert.match(integrationDoc, /wrangler/i);

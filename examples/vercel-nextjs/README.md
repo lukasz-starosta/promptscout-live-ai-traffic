@@ -13,13 +13,13 @@ You do not need to configure a separate brand ID or team-site ID in the app.
 Install the public package:
 
 ```bash
-npm install @promptscout/live-ai-traffic@0.1.2
+npm install @promptscout/live-ai-traffic@0.1.3
 ```
 
 For Yarn:
 
 ```bash
-yarn add @promptscout/live-ai-traffic@0.1.2
+yarn add @promptscout/live-ai-traffic@0.1.3
 ```
 
 The middleware helper is exposed through

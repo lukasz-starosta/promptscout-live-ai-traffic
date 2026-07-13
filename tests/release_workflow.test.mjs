@@ -145,7 +145,7 @@ describe("release workflow", () => {
       "./scripts/verify",
       "dry run",
       "tag",
-      "v0.1.2",
+      "v0.1.3",
       "GitHub Release",
       "npm environment",
       "0.1.0",
@@ -180,7 +180,7 @@ describe("release workflow", () => {
     const yarnrc = await readFile(".yarnrc.yml", "utf8");
 
     assert.equal(rootPackage.name, "@promptscout/live-ai-traffic");
-    assert.equal(rootPackage.version, "0.1.2");
+    assert.equal(rootPackage.version, "0.1.3");
     assert.notEqual(rootPackage.private, true);
     assert.deepEqual(rootPackage.repository, {
       type: "git",

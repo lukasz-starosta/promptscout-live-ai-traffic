@@ -11,8 +11,10 @@ example until a public collector subpath is added.
 
 Fastly JavaScript Compute dispatches incoming requests through a fetch event.
 The collector creates a PromptScout live AI traffic event from the original
-request headers and URL, schedules ingest delivery, and forwards the unchanged
-request to the configured customer origin backend.
+request headers and URL, starts ingest delivery concurrently, and forwards the
+unchanged request to the configured customer origin backend. Unknown traffic is
+skipped by default; `includeUnknown: true` is available only as a diagnostic
+override.
 
 ## Required backends
 
@@ -35,7 +37,7 @@ const handler = createFastlyComputeHandler({
 });
 ```
 
-## Request behavior
+## Request Behavior And Delivery Limit
 
 The handler forwards the original Compute `event.request` to the origin backend:
 
@@ -43,10 +45,19 @@ The handler forwards the original Compute `event.request` to the origin backend:
 return fetch(event.request, { backend: "origin" });
 ```
 
-PromptScout ingest is scheduled separately. If the fetch event exposes
-`waitUntil`, the collector registers the ingest promise there; otherwise it
-starts the ingest promise in the background and catches failures. Ingest errors
-do not replace the customer origin response.
+The handler starts the origin fetch before classification and starts classified
+PromptScout delivery concurrently. Fastly's documented JavaScript `FetchEvent`
+API uses `respondWith()` but does not document a `waitUntil()` lifecycle hook.
+The package accepts an optional `waitUntil` callback for compatible wrappers and
+tests, but the checked-in Fastly example does not claim that native Fastly
+provides one.
+
+Without such a lifecycle hook, direct backend delivery is best effort: it can
+run while the origin request is in flight, but Fastly may end the invocation
+after the origin response resolves. Ingest errors never replace the customer
+origin response. Deployments that require durable delivery should use a
+customer-owned Fastly real-time logging pipeline or another out-of-request-path
+collector instead of treating this direct example as lossless.
 
 ## Setup Probe
 

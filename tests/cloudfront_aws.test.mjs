@@ -185,6 +185,74 @@ describe("CloudFront AWS real-time log collector", () => {
     assert.equal(JSON.parse(calls[0].init.body).events.length, 1);
   });
 
+  it("skips unclassified log records and avoids empty ingest calls", async () => {
+    const { handlePromptScoutCloudFrontAwsKinesisEvent } =
+      await cloudFrontModule();
+    const recordFields = (
+      await readText("packages/cloudfront-aws/fixtures/realtime-log-record.tsv")
+    )
+      .trimEnd()
+      .split("\t");
+    recordFields[8] = "Mozilla/5.0";
+    recordFields[9] = "-";
+    recordFields[10] = "token=secret";
+    const record = `${recordFields.join("\t")}\n`;
+    let ingestCalls = 0;
+
+    const result = await handlePromptScoutCloudFrontAwsKinesisEvent(
+      {
+        Records: [
+          { kinesis: { data: Buffer.from(record).toString("base64") } },
+        ],
+      },
+      {
+        PROMPTSCOUT_INGEST_URL:
+          "https://promptscout.example/live-ai-traffic/ingest",
+        PROMPTSCOUT_INGEST_TOKEN: "test-ingest-token",
+      },
+      {
+        fetch: async () => {
+          ingestCalls += 1;
+          return { ok: true, status: 202 };
+        },
+      },
+    );
+
+    assert.equal(result.ok, true);
+    assert.equal(result.status, 204);
+    assert.equal(result.attempts, 0);
+    assert.equal(ingestCalls, 0);
+  });
+
+  it("throws after exhausted ingest delivery so Lambda retries the batch", async () => {
+    const { handlePromptScoutCloudFrontAwsKinesisEvent } =
+      await cloudFrontModule();
+    const fixture = await readJson(
+      "packages/cloudfront-aws/fixtures/kinesis-event.json",
+    );
+
+    await assert.rejects(
+      () =>
+        handlePromptScoutCloudFrontAwsKinesisEvent(
+          fixture,
+          {
+            PROMPTSCOUT_INGEST_URL:
+              "https://promptscout.example/live-ai-traffic/ingest",
+            PROMPTSCOUT_INGEST_TOKEN: "test-ingest-token",
+          },
+          {
+            fetch: async () => ({ ok: false, status: 503 }),
+            retry: { maxRetries: 0 },
+          },
+        ),
+      (error) => {
+        assert.equal(error.name, "PromptScoutCloudFrontAwsIngestError");
+        assert.equal(error.result.status, 503);
+        return true;
+      },
+    );
+  });
+
   it("rejects invalid-shape and malformed fixture input", async () => {
     const {
       buildPromptScoutCloudFrontAwsEventsFromKinesisEvent,

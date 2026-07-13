@@ -1,9 +1,9 @@
 # Fastly Compute Example
 
 This example shows the PromptScout collector shape for Fastly JavaScript
-Compute. It classifies each incoming request at the edge, schedules PromptScout
-ingest through a named Fastly backend, and forwards the original request to the
-customer origin backend.
+Compute. It classifies incoming requests at the edge, skips unknown traffic by
+default, starts PromptScout ingest through a named Fastly backend, and forwards
+the original request to the customer origin backend.
 
 This example depends on `promptscout-live-ai-traffic-fastly-compute`, a
 repo-local private workspace package. It is not published as a separate npm
@@ -59,3 +59,8 @@ fastly compute deploy
 
 After deployment, verify that requests still reach `origin` unchanged and that
 PromptScout receives events through the `promptscout_ingest` backend.
+
+Fastly's documented JavaScript `FetchEvent` does not expose `waitUntil`.
+Without a compatible wrapper, direct ingest is best effort while the origin
+fetch remains active. Use a customer-owned real-time logging pipeline when
+durable out-of-request-path delivery is required.

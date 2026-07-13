@@ -15,7 +15,7 @@ purposes.
 
 ## Sources
 
-- OpenAI crawler docs: https://platform.openai.com/docs/bots
+- OpenAI crawler docs: https://developers.openai.com/api/docs/bots
 - OpenAI ChatGPT generated links:
   https://help.openai.com/en/articles/10984597-chatgpt-generated-links
 - OpenAI ChatGPT shared links:
@@ -56,10 +56,14 @@ advisory referral signals. They can identify the source family when a browser
 omits `Referer`, but they do not prove the contents of an individual AI
 conversation.
 
-## High-Confidence Signals
+## Documented User-Agent Signals
 
-High-confidence signals are request user agents that match a documented crawler
-or user-fetch token. The fixture names in
+These signals are request user agents that match a documented crawler or
+user-fetch token. A user-agent match is strong classification evidence but is
+not proof that the sender is authentic because request headers can be spoofed.
+Where a provider publishes IP ranges or verification guidance, deployments that
+need verified-bot claims must validate those network signals separately. The
+fixture names in
 `packages/core/fixtures/classifier/known-user-agents.json` trace each signal to a
 source URL and the classifier rule that matched it.
 
@@ -90,7 +94,7 @@ cases reproducible while marking them as advisory.
 
 ## AI Referral Research Notes
 
-Last reviewed: 2026-05-27.
+Last reviewed: 2026-07-13.
 
 The AI referral rules intentionally match only provider-owned chat or answer
 surfaces with current public evidence:

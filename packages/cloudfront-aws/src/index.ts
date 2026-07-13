@@ -7,6 +7,7 @@ import {
   type LiveAiTrafficHttpMethod,
   type LiveAiTrafficIngestResult,
   type LiveAiTrafficPrivacyOptions,
+  type LiveAiTrafficRetryOptions,
   normalizeLiveAiTrafficEvent,
   parseLiveAiTrafficEvent,
   toLiveAiTrafficProviderClassification,
@@ -47,6 +48,7 @@ export type CloudFrontRealtimeLogParseOptions = {
 export type BuildPromptScoutCloudFrontAwsEventOptions =
   CloudFrontRealtimeLogParseOptions & {
     privacy?: LiveAiTrafficPrivacyOptions;
+    includeUnknown?: boolean;
   };
 
 export type PromptScoutCloudFrontAwsEnv = {
@@ -58,7 +60,21 @@ export type PromptScoutCloudFrontAwsEnv = {
 export type PromptScoutCloudFrontAwsKinesisHandlerOptions =
   BuildPromptScoutCloudFrontAwsEventOptions & {
     fetch?: LiveAiTrafficFetch;
+    retry?: LiveAiTrafficRetryOptions;
+    timeoutMs?: number;
   };
+
+export class PromptScoutCloudFrontAwsIngestError extends Error {
+  readonly result: Extract<LiveAiTrafficIngestResult, { ok: false }>;
+
+  constructor(result: Extract<LiveAiTrafficIngestResult, { ok: false }>) {
+    super(
+      `PromptScout CloudFront/AWS ingest failed after ${result.attempts} attempt(s)`,
+    );
+    this.name = "PromptScoutCloudFrontAwsIngestError";
+    this.result = result;
+  }
+}
 
 export type PromptScoutCloudFrontAwsKinesisEvent = {
   Records: readonly {
@@ -189,12 +205,17 @@ export async function buildPromptScoutCloudFrontAwsEventsFromKinesisEvent(
         continue;
       }
 
-      events.push(
+      const normalizedEvent =
         await buildPromptScoutCloudFrontAwsEventFromRealtimeLogRecord(
           line,
           options,
-        ),
-      );
+        );
+      if (
+        normalizedEvent.providerClassification.provider !== "other" ||
+        options.includeUnknown === true
+      ) {
+        events.push(normalizedEvent);
+      }
     }
   }
 
@@ -210,14 +231,31 @@ export async function handlePromptScoutCloudFrontAwsKinesisEvent(
     event,
     options,
   );
+  if (events.length === 0) {
+    return {
+      ok: true,
+      status: 204,
+      attempts: 0,
+      retryable: false,
+      authFailure: false,
+    };
+  }
+
   const client = createLiveAiTrafficIngestClient({
     endpoint: env.PROMPTSCOUT_INGEST_URL,
     ingestToken: env.PROMPTSCOUT_INGEST_TOKEN,
     siteId: env.PROMPTSCOUT_SITE_ID,
     fetch: options.fetch,
+    retry: options.retry,
+    timeoutMs: options.timeoutMs,
   });
 
-  return client.sendBatch(events);
+  const result = await client.sendBatch(events);
+  if (!result.ok) {
+    throw new PromptScoutCloudFrontAwsIngestError(result);
+  }
+
+  return result;
 }
 
 function requestUrlParts(record: CloudFrontRealtimeLogRecord): {

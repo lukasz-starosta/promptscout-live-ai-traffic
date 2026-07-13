@@ -242,7 +242,7 @@ type ClassificationRule = {
   patterns: readonly RegExp[];
 };
 
-const openAiBotsDocsUrl = "https://platform.openai.com/docs/bots";
+const openAiBotsDocsUrl = "https://developers.openai.com/api/docs/bots";
 const anthropicBotsDocsUrl =
   "https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler";
 const googleCommonCrawlersDocsUrl =
@@ -319,7 +319,7 @@ const userAgentRules: readonly ClassificationRule[] = [
     provider: "perplexitybot",
     agentType: "ai_search_crawler",
     confidence: 0.95,
-    docsUrl: "https://docs.perplexity.ai/guides/bots",
+    docsUrl: perplexityCrawlersDocsUrl,
     patterns: [/\bperplexitybot(?:\/|\b)/i],
   },
   {
@@ -327,7 +327,7 @@ const userAgentRules: readonly ClassificationRule[] = [
     provider: "perplexity_user",
     agentType: "ai_browser_user",
     confidence: 0.92,
-    docsUrl: "https://docs.perplexity.ai/guides/bots",
+    docsUrl: perplexityCrawlersDocsUrl,
     patterns: [/\bperplexity-user(?:\/|\b)/i],
   },
   {

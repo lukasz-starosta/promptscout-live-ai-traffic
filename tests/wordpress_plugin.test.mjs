@@ -72,7 +72,8 @@ describe("WordPress plugin collector", () => {
     );
 
     assert.match(pluginClass, /add_action\(\s*'template_redirect'/);
-    assert.match(pluginClass, /wp_remote_post\(/);
+    assert.match(pluginClass, /add_action\(\s*'shutdown'/);
+    assert.match(pluginClass, /wp_safe_remote_post\(/);
     assert.match(pluginClass, /'Authorization'\s*=>\s*'Bearer '\s*\./);
     assert.match(pluginClass, /'Content-Type'\s*=>\s*'application\/json'/);
     assert.match(pluginClass, /wp_json_encode\(/);

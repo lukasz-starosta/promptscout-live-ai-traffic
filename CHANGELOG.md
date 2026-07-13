@@ -6,6 +6,23 @@ This project publishes one public npm package. Internal provider workspaces and
 examples use the same version for traceability, but remain private and are not
 published.
 
+## 0.1.3
+
+- Bounded each shared ingest attempt to two seconds by default and stopped
+  buffering successful response bodies. The timeout also covers failure-body
+  reads so a stalled diagnostic response cannot hold an attempt open.
+- Skipped unclassified traffic by default in the Cloudflare, Netlify, Fastly,
+  and CloudFront collectors, matching the existing Vercel, Node, nginx, and
+  WordPress behavior.
+- Started origin or downstream work before collector delivery in the
+  Cloudflare, Netlify, and Fastly request-path adapters.
+- Made CloudFront/AWS ingest exhaustion fail the Lambda invocation so Kinesis
+  can retry instead of acknowledging dropped analytics.
+- Deferred WordPress delivery to `shutdown` and switched customer-configured
+  ingest URLs to `wp_safe_remote_post`.
+- Refreshed OpenAI and Perplexity classifier evidence links and clarified Fastly's
+  best-effort delivery limitation.
+
 ## 0.1.2
 
 - Released setup-probe-capable collectors for the one-install PromptScout setup

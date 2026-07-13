@@ -221,7 +221,12 @@ export function trackPromptScoutAiTraffic(
     retry: options.retry,
     now: options.now,
   });
-  const promise = sendTrackedEvent(request, normalizedRequest, options, client);
+  const promise = sendTrackedEvent(
+    normalizedRequest,
+    classification,
+    options,
+    client,
+  );
 
   if (eventOrContext?.waitUntil !== undefined) {
     eventOrContext.waitUntil(promise);
@@ -279,15 +284,15 @@ function createVercelSetupProbeEvent(
 }
 
 async function sendTrackedEvent(
-  request: PromptScoutVercelRequestLike,
   normalizedRequest: NormalizedVercelRequest,
+  classification: ReturnType<typeof classifyAiTraffic>,
   options: TrackPromptScoutAiTrafficOptions,
   client: ReturnType<typeof createLiveAiTrafficIngestClient>,
 ): Promise<LiveAiTrafficIngestResult> {
   try {
     const event = await buildEventFromNormalizedRequest(
-      request,
       normalizedRequest,
+      classification,
       options,
     );
     return client.send(event);
@@ -303,16 +308,10 @@ async function sendTrackedEvent(
 }
 
 async function buildEventFromNormalizedRequest(
-  request: PromptScoutVercelRequestLike,
   normalizedRequest: NormalizedVercelRequest,
+  classification: ReturnType<typeof classifyAiTraffic>,
   options: TrackPromptScoutAiTrafficOptions,
 ): Promise<LiveAiTrafficEvent> {
-  const classification = classifyAiTraffic({
-    userAgent: normalizedRequest.userAgent,
-    referer: normalizedRequest.referer,
-    search: normalizedRequest.search,
-    headers: request.headers,
-  });
   const event = createVercelEvent(
     normalizedRequest,
     classification,

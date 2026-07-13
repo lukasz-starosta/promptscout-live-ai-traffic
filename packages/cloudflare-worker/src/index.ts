@@ -27,6 +27,7 @@ export type PromptScoutCloudflareWorkerEnv = {
   PROMPTSCOUT_QUERY_ALLOWLIST?: string;
   PROMPTSCOUT_PATH_POLICY?: "keep" | "redact";
   PROMPTSCOUT_PATH_REPLACEMENT?: string;
+  PROMPTSCOUT_INCLUDE_UNKNOWN?: string | boolean;
   PROMPTSCOUT_DEBUG?: string | boolean;
 };
 
@@ -49,6 +50,7 @@ export async function handlePromptScoutCloudflareWorkerRequest(
   options: PromptScoutCloudflareWorkerOptions = {},
 ): Promise<Response> {
   ctx.passThroughOnException?.();
+  const originResponse = originFetch(options)(request);
 
   const observation = observeCloudflareWorkerRequest(
     request,
@@ -77,14 +79,14 @@ export async function handlePromptScoutCloudflareWorkerRequest(
     ctx.waitUntil(observation);
   }
 
-  return originFetch(options)(request);
+  return originResponse;
 }
 
 export async function observeCloudflareWorkerRequest(
   request: Request,
   env: PromptScoutCloudflareWorkerEnv,
   options: PromptScoutCloudflareWorkerOptions = {},
-): Promise<LiveAiTrafficIngestResult> {
+): Promise<LiveAiTrafficIngestResult | undefined> {
   const probe = createCloudflareWorkerSetupProbeEvent(request, options);
   if (probe !== undefined) {
     const client = createLiveAiTrafficSetupProbeClient({
@@ -97,6 +99,13 @@ export async function observeCloudflareWorkerRequest(
   }
 
   const event = await createCloudflareWorkerEvent(request, env, options);
+  if (
+    event.providerClassification.provider === "other" &&
+    !isEnabled(env.PROMPTSCOUT_INCLUDE_UNKNOWN)
+  ) {
+    return undefined;
+  }
+
   const client = createLiveAiTrafficIngestClient({
     endpoint: env.PROMPTSCOUT_INGEST_URL,
     ingestToken: env.PROMPTSCOUT_INGEST_TOKEN,
@@ -332,10 +341,12 @@ function splitCsv(value: string | undefined): string[] {
     .filter((item) => item.length > 0);
 }
 
-function isDebugEnabled(value: string | boolean | undefined): boolean {
+function isEnabled(value: string | boolean | undefined): boolean {
   if (typeof value === "boolean") {
     return value;
   }
 
   return value === "1" || value === "true" || value === "yes" || value === "on";
 }
+
+const isDebugEnabled = isEnabled;

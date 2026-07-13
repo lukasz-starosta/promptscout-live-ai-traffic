@@ -79,7 +79,7 @@ npm trust github @promptscout/live-ai-traffic \
 Stable releases are tag-based. Do not publish on every merge to `main`; most
 merges are not package releases, and npm package versions cannot be replaced
 after publication. A release is intentional only when a maintainer pushes a
-version tag such as `v0.1.2`.
+version tag such as `v0.1.3`.
 
 Use `main` as the stable release source. Prepare release changes in a normal PR,
 merge that PR to `main`, then tag the `main` commit. `develop` can be used for
@@ -148,8 +148,8 @@ workflow verifies the npm version and creates a GitHub Release for the tag.
    ```bash
    git checkout main
    git pull --ff-only origin main
-   git tag -a v0.1.2 -m "Release v0.1.2"
-   git push origin v0.1.2
+   git tag -a v0.1.3 -m "Release v0.1.3"
+   git push origin v0.1.3
    ```
 
 5. Approve the npm environment deployment in GitHub Actions if approval is
@@ -164,7 +164,7 @@ npm view @promptscout/live-ai-traffic version --registry=https://registry.npmjs.
 7. Smoke-test a clean consumer install:
 
 ```bash
-npm install @promptscout/live-ai-traffic@0.1.2
+npm install @promptscout/live-ai-traffic@0.1.3
 node --input-type=module -e "const m = await import('@promptscout/live-ai-traffic/vercel-middleware'); console.log(typeof m.trackPromptScoutAiTraffic)"
 ```
 
@@ -180,10 +180,10 @@ select a `v*` tag ref and set `dry_run: false`; the same tag guard still runs.
 If verification fails before `npm publish`, fix the release PR and move the tag:
 
 ```bash
-git tag -d v0.1.2
-git push origin :refs/tags/v0.1.2
-git tag -a v0.1.2 -m "Release v0.1.2"
-git push origin v0.1.2
+git tag -d v0.1.3
+git push origin :refs/tags/v0.1.3
+git tag -a v0.1.3 -m "Release v0.1.3"
+git push origin v0.1.3
 ```
 
 Only do this before publication. If `npm publish` succeeds, the version is
@@ -216,7 +216,7 @@ Install the public package from npm and pin the exact version in production
 apps:
 
 ```bash
-npm install @promptscout/live-ai-traffic@0.1.2
+npm install @promptscout/live-ai-traffic@0.1.3
 ```
 
 Use the Vercel helper through its subpath export:

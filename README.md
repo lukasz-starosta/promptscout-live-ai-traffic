@@ -8,7 +8,7 @@ and examples.
 This repo publishes one public npm package:
 
 ```bash
-npm install @promptscout/live-ai-traffic@0.1.2
+npm install @promptscout/live-ai-traffic@0.1.3
 ```
 
 The durable public import contract uses subpath exports from that package:
@@ -18,7 +18,7 @@ import { classifyAiTraffic } from "@promptscout/live-ai-traffic/core";
 import { trackPromptScoutAiTraffic } from "@promptscout/live-ai-traffic/vercel-middleware";
 ```
 
-The current package version is `0.1.2`. The first public version was `0.1.0`.
+The current package version is `0.1.3`. The first public version was `0.1.0`.
 
 Add the `proxy.ts` or `middleware.ts` shown in
 [docs/integrations/vercel.md](docs/integrations/vercel.md). Configure only the

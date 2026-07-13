@@ -208,6 +208,28 @@ describe("Netlify Edge collector", () => {
     assert.equal(ingestCalls.length, 1);
   });
 
+  it("skips unclassified requests before calling ingest by default", async () => {
+    const { observePromptScoutNetlifyEdgeRequest } = await netlifyEdgeModule();
+    let ingestCalls = 0;
+
+    const result = await observePromptScoutNetlifyEdgeRequest(
+      new Request("https://example.com/", {
+        headers: { "user-agent": "Mozilla/5.0" },
+      }),
+      { next: async () => new Response("origin") },
+      {
+        env: env(),
+        ingestFetch: async () => {
+          ingestCalls += 1;
+          return new Response("", { status: 202 });
+        },
+      },
+    );
+
+    assert.equal(result, undefined);
+    assert.equal(ingestCalls, 0);
+  });
+
   it("continues the Netlify request chain when collector configuration is unavailable", async () => {
     const { handlePromptScoutNetlifyEdgeRequest } = await netlifyEdgeModule();
     let nextCalls = 0;

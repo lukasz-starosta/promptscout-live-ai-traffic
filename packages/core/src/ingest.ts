@@ -14,10 +14,20 @@ export type LiveAiTrafficFetchResponse = {
   text?: () => Promise<string>;
 };
 
+export type LiveAiTrafficAbortSignal = {
+  readonly aborted: boolean;
+  addEventListener(
+    type: "abort",
+    listener: () => void,
+    options?: { once?: boolean },
+  ): void;
+};
+
 export type LiveAiTrafficFetchInit = {
   method: "POST";
   headers: Record<string, string>;
   body: string;
+  signal?: LiveAiTrafficAbortSignal;
 };
 
 export type LiveAiTrafficFetch = (
@@ -40,6 +50,7 @@ export type LiveAiTrafficIngestClientOptions = {
   fetch?: LiveAiTrafficFetch;
   crypto?: WebCryptoLike;
   retry?: LiveAiTrafficRetryOptions;
+  timeoutMs?: number;
   now?: () => Date;
 };
 
@@ -120,14 +131,9 @@ export function createLiveAiTrafficIngestClient(
     sleep: options.retry?.sleep ?? defaultSleep,
   };
   const fetch = options.fetch ?? defaultFetch();
+  const timeoutMs = options.timeoutMs ?? 2_000;
 
-  if (options.endpoint.length === 0) {
-    throw new Error("PromptScout live AI traffic ingest endpoint is required");
-  }
-
-  if (options.ingestToken.length === 0) {
-    throw new Error("PromptScout live AI traffic ingest token is required");
-  }
+  validateClientOptions(options, timeoutMs, "ingest");
 
   const sendBatch = async (
     events: readonly LiveAiTrafficEvent[],
@@ -137,7 +143,14 @@ export function createLiveAiTrafficIngestClient(
     });
     const headers = await ingestHeaders(options, body);
 
-    return postJsonWithRetry(options.endpoint, headers, body, fetch, retry);
+    return postJsonWithRetry(
+      options.endpoint,
+      headers,
+      body,
+      fetch,
+      retry,
+      timeoutMs,
+    );
   };
 
   return {
@@ -158,21 +171,23 @@ export function createLiveAiTrafficSetupProbeClient(
     sleep: options.retry?.sleep ?? defaultSleep,
   };
   const fetch = options.fetch ?? defaultFetch();
+  const timeoutMs = options.timeoutMs ?? 2_000;
 
-  if (options.endpoint.length === 0) {
-    throw new Error("PromptScout live AI traffic probe endpoint is required");
-  }
-
-  if (options.ingestToken.length === 0) {
-    throw new Error("PromptScout live AI traffic ingest token is required");
-  }
+  validateClientOptions(options, timeoutMs, "probe");
 
   return {
     async sendProbe(event) {
       const body = JSON.stringify({ probe: event });
       const headers = await ingestHeaders(options, body);
 
-      return postJsonWithRetry(options.endpoint, headers, body, fetch, retry);
+      return postJsonWithRetry(
+        options.endpoint,
+        headers,
+        body,
+        fetch,
+        retry,
+        timeoutMs,
+      );
     },
   };
 }
@@ -269,6 +284,7 @@ async function postJsonWithRetry(
   body: string,
   fetch: LiveAiTrafficFetch,
   retry: Required<LiveAiTrafficRetryOptions>,
+  timeoutMs: number,
 ): Promise<LiveAiTrafficIngestResult> {
   let attempts = 0;
   let lastError: Error | undefined;
@@ -277,12 +293,12 @@ async function postJsonWithRetry(
     attempts += 1;
 
     try {
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers,
-        body,
-      });
-      const responseBody = await readResponseBody(response);
+      const { response, responseBody } = await fetchWithTimeout(
+        fetch,
+        endpoint,
+        { method: "POST", headers, body },
+        timeoutMs,
+      );
       const authFailure = response.status === 401 || response.status === 403;
       const retryable = isRetryableStatus(response.status);
 
@@ -332,6 +348,48 @@ async function postJsonWithRetry(
   };
 }
 
+async function fetchWithTimeout(
+  fetch: LiveAiTrafficFetch,
+  endpoint: string,
+  init: LiveAiTrafficFetchInit,
+  timeoutMs: number,
+): Promise<{
+  response: LiveAiTrafficFetchResponse;
+  responseBody?: string;
+}> {
+  const controller = createAbortController();
+  const timer =
+    controller === undefined || timeoutMs === 0
+      ? undefined
+      : scheduleTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(endpoint, {
+      ...init,
+      ...(controller === undefined ? {} : { signal: controller.signal }),
+    });
+    if (response.ok) {
+      return { response };
+    }
+
+    try {
+      const responseBody = await readResponseBody(response);
+      return {
+        response,
+        ...(responseBody === undefined ? {} : { responseBody }),
+      };
+    } catch (error) {
+      if (controller?.signal.aborted === true) {
+        return { response };
+      }
+
+      throw error;
+    }
+  } finally {
+    cancelTimeout(timer);
+  }
+}
+
 function isRetryableStatus(status: number): boolean {
   return (
     status === 408 ||
@@ -368,6 +426,65 @@ function defaultFetch(): LiveAiTrafficFetch {
   }
 
   return fetch;
+}
+
+function validateClientOptions(
+  options: LiveAiTrafficIngestClientOptions,
+  timeoutMs: number,
+  kind: "ingest" | "probe",
+): void {
+  if (options.endpoint.length === 0) {
+    throw new Error(`PromptScout live AI traffic ${kind} endpoint is required`);
+  }
+
+  if (options.ingestToken.length === 0) {
+    throw new Error("PromptScout live AI traffic ingest token is required");
+  }
+
+  if (!Number.isFinite(timeoutMs) || timeoutMs < 0) {
+    throw new Error("timeoutMs must be a non-negative finite number");
+  }
+}
+
+function createAbortController():
+  | { signal: LiveAiTrafficAbortSignal; abort(): void }
+  | undefined {
+  const AbortControllerCtor = (
+    globalThis as {
+      AbortController?: new () => {
+        signal: LiveAiTrafficAbortSignal;
+        abort(): void;
+      };
+    }
+  ).AbortController;
+
+  return AbortControllerCtor === undefined
+    ? undefined
+    : new AbortControllerCtor();
+}
+
+function scheduleTimeout(
+  callback: () => void,
+  delayMs: number,
+): unknown | undefined {
+  const setTimeoutFn = (
+    globalThis as {
+      setTimeout?: (callback: () => void, delayMs: number) => unknown;
+    }
+  ).setTimeout;
+
+  return setTimeoutFn?.(callback, delayMs);
+}
+
+function cancelTimeout(timer: unknown | undefined): void {
+  if (timer === undefined) {
+    return;
+  }
+
+  const clearTimeoutFn = (
+    globalThis as { clearTimeout?: (timer: unknown) => void }
+  ).clearTimeout;
+  clearTimeoutFn?.(timer);
 }
 
 function defaultSleep(delayMs: number): Promise<void> {

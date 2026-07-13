@@ -147,8 +147,12 @@ origin response.
 
 Recommended behavior:
 
-- Vercel, Cloudflare, Netlify, Fastly, and CloudFront collectors should schedule
-  delivery with background or `waitUntil` behavior when available.
+- Vercel, Cloudflare, and Netlify collectors should use their documented
+  `waitUntil` lifecycle hooks. Fastly direct-backend delivery is best effort
+  because its documented JavaScript `FetchEvent` does not expose `waitUntil`;
+  use real-time logging when durable delivery is required. CloudFront delivery
+  runs out of band and must fail the Kinesis consumer invocation after retries
+  are exhausted so the stream can retry it.
 - Node/Express middleware should send in the background after classification and
   must continue the request even when ingest delivery fails.
 - nginx log forwarders should spool to the local forwarder/log pipeline and
@@ -156,10 +160,13 @@ Recommended behavior:
 - WordPress collectors should avoid blocking page rendering on ingest delivery.
 
 The ingest client retries retryable HTTP status codes and network failures with
-bounded backoff. Authentication failures are not retryable because they usually
-mean the token was revoked, rotated incorrectly, or attached to the wrong site
-source. Provider limits, including `429` responses, should be retried within the
-configured budget and then surfaced in provider logs or monitoring.
+bounded backoff. Each attempt has a two-second default timeout covering the
+request and any failure-body read, and successful response bodies are not
+buffered. Authentication failures are not retryable
+because they usually mean the token was revoked, rotated incorrectly, or
+attached to the wrong site source. Provider limits, including `429` responses,
+should be retried within the configured budget and then surfaced in provider
+logs or monitoring.
 
 ## Operational Ownership
 

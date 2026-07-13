@@ -199,7 +199,7 @@ if compgen -G "tests/*.test.mjs" >/dev/null; then
   fi
 
   echo "==> Running Node tests"
-  node --test tests/*.test.mjs
+  node --test --test-concurrency=1 tests/*.test.mjs
 fi
 
 if compgen -G "tests/*.sh" >/dev/null; then

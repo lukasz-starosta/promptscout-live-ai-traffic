@@ -5,10 +5,10 @@
     "provider": "openai_search_bot",
     "agentType": "ai_search_crawler",
     "matchedRule": "ua:openai:oai-searchbot",
-    "docsUrl": "https://platform.openai.com/docs/bots",
+    "docsUrl": "https://developers.openai.com/api/docs/bots",
     "confidenceLabel": "high",
     "signalSource": "user_agent",
-    "sourceUrl": "https://platform.openai.com/docs/bots"
+    "sourceUrl": "https://developers.openai.com/api/docs/bots"
   },
   {
     "name": "openai-gptbot",
@@ -16,10 +16,10 @@
     "provider": "openai_gptbot",
     "agentType": "ai_training_crawler",
     "matchedRule": "ua:openai:gptbot",
-    "docsUrl": "https://platform.openai.com/docs/bots",
+    "docsUrl": "https://developers.openai.com/api/docs/bots",
     "confidenceLabel": "high",
     "signalSource": "user_agent",
-    "sourceUrl": "https://platform.openai.com/docs/bots"
+    "sourceUrl": "https://developers.openai.com/api/docs/bots"
   },
   {
     "name": "openai-chatgpt-user",
@@ -27,10 +27,10 @@
     "provider": "openai_chatgpt_user",
     "agentType": "ai_browser_user",
     "matchedRule": "ua:openai:chatgpt-user",
-    "docsUrl": "https://platform.openai.com/docs/bots",
+    "docsUrl": "https://developers.openai.com/api/docs/bots",
     "confidenceLabel": "high",
     "signalSource": "user_agent",
-    "sourceUrl": "https://platform.openai.com/docs/bots"
+    "sourceUrl": "https://developers.openai.com/api/docs/bots"
   },
   {
     "name": "anthropic-claudebot",
@@ -70,7 +70,7 @@
     "matchedRule": "ua:perplexity:perplexitybot",
     "confidenceLabel": "high",
     "signalSource": "user_agent",
-    "sourceUrl": "https://docs.perplexity.ai/guides/bots"
+    "sourceUrl": "https://docs.perplexity.ai/docs/resources/perplexity-crawlers"
   },
   {
     "name": "perplexity-user",
@@ -80,7 +80,7 @@
     "matchedRule": "ua:perplexity:perplexity-user",
     "confidenceLabel": "high",
     "signalSource": "user_agent",
-    "sourceUrl": "https://docs.perplexity.ai/guides/bots"
+    "sourceUrl": "https://docs.perplexity.ai/docs/resources/perplexity-crawlers"
   },
   {
     "name": "googleother",

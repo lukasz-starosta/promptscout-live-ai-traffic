@@ -168,7 +168,10 @@ describe("AI traffic classifier", () => {
       evidence,
       /JavaScript pixels are not complete AI crawler tracking/i,
     );
-    assert.match(evidence, /https:\/\/platform\.openai\.com\/docs\/bots/);
+    assert.match(
+      evidence,
+      /https:\/\/developers\.openai\.com\/api\/docs\/bots/,
+    );
     assert.match(
       evidence,
       /https:\/\/help\.openai\.com\/en\/articles\/10984597-chatgpt-generated-links/,
@@ -186,7 +189,7 @@ describe("AI traffic classifier", () => {
       /https:\/\/vercel\.com\/blog\/the-rise-of-the-ai-crawler/,
     );
     assert.match(evidence, /https:\/\/vercel\.com\/i\/how-ai-is-changing-seo/);
-    assert.match(evidence, /High-confidence signals/i);
+    assert.match(evidence, /Documented User-Agent Signals/i);
     assert.match(evidence, /Weak or advisory signals/i);
     assert.match(evidence, /AI Referral Research Notes/i);
     assert.match(evidence, /Explicit non-goals/i);

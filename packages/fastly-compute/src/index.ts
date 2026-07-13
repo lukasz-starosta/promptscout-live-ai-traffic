@@ -56,11 +56,12 @@ export type FastlyComputeCollectorOptions<TResponse = unknown> = {
   fetch?: FastlyComputeFetch<TResponse>;
   retry?: LiveAiTrafficRetryOptions;
   now?: () => Date;
+  includeUnknown?: boolean;
 };
 
 export type FastlyComputeFetchEventLike = FastlyComputeRequestMetadata & {
   request: FastlyComputeRequestLike;
-  waitUntil?: (promise: Promise<LiveAiTrafficIngestResult>) => void;
+  waitUntil?: (promise: Promise<LiveAiTrafficIngestResult | undefined>) => void;
 };
 
 type ParsedUrl = {
@@ -233,6 +234,9 @@ export function createFastlyComputeHandler<TResponse = unknown>(
   });
 
   return async (event) => {
+    const originResponse = fetch(event.request, {
+      backend: options.originBackend,
+    });
     const metadata = {
       now: options.now,
       country: event.country,
@@ -243,21 +247,30 @@ export function createFastlyComputeHandler<TResponse = unknown>(
       event.request,
       metadata,
     );
-    const ingestPromise =
-      setupProbe === undefined
-        ? normalizeLiveAiTrafficEvent(
-            normalizeFastlyComputeRequest(event.request, metadata),
-            { query: { mode: "omit" } },
-          ).then((normalizedEvent) => ingestClient.send(normalizedEvent))
-        : probeClient.sendProbe(setupProbe);
-
-    if (event.waitUntil === undefined) {
-      void ingestPromise.catch(() => undefined);
+    let ingestPromise: Promise<LiveAiTrafficIngestResult> | undefined;
+    if (setupProbe !== undefined) {
+      ingestPromise = probeClient.sendProbe(setupProbe);
     } else {
-      event.waitUntil(ingestPromise);
+      const rawEvent = normalizeFastlyComputeRequest(event.request, metadata);
+      if (
+        rawEvent.providerClassification.provider !== "other" ||
+        options.includeUnknown === true
+      ) {
+        ingestPromise = normalizeLiveAiTrafficEvent(rawEvent, {
+          query: { mode: "omit" },
+        }).then((normalizedEvent) => ingestClient.send(normalizedEvent));
+      }
     }
 
-    return fetch(event.request, { backend: options.originBackend });
+    if (ingestPromise !== undefined) {
+      if (event.waitUntil === undefined) {
+        void ingestPromise.catch(() => undefined);
+      } else {
+        event.waitUntil(ingestPromise);
+      }
+    }
+
+    return originResponse;
   };
 }
 

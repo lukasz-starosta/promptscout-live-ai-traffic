@@ -230,6 +230,27 @@ describe("cloudflare worker collector", () => {
     assert.equal(JSON.stringify(event).includes("token=secret"), false);
   });
 
+  it("skips unclassified requests before calling ingest by default", async () => {
+    const { observeCloudflareWorkerRequest } = await cloudflareWorkerModule();
+    let ingestCalls = 0;
+
+    const result = await observeCloudflareWorkerRequest(
+      new Request("https://example.com/", {
+        headers: { "user-agent": "Mozilla/5.0" },
+      }),
+      env(),
+      {
+        ingestFetch: async () => {
+          ingestCalls += 1;
+          return new Response("", { status: 202 });
+        },
+      },
+    );
+
+    assert.equal(result, undefined);
+    assert.equal(ingestCalls, 0);
+  });
+
   it("falls back to background delivery when waitUntil is unavailable", async () => {
     const { handlePromptScoutCloudflareWorkerRequest } =
       await cloudflareWorkerModule();

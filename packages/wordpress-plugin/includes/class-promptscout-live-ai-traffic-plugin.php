@@ -8,6 +8,7 @@ class PromptScout_Live_AI_Traffic_Plugin {
 	private PromptScout_Live_AI_Traffic_Settings $settings;
 	private PromptScout_Live_AI_Traffic_Classifier $classifier;
 	private PromptScout_Live_AI_Traffic_Event_Builder $event_builder;
+	private ?array $pending_delivery = null;
 
 	public function __construct(
 		PromptScout_Live_AI_Traffic_Settings $settings,
@@ -22,6 +23,7 @@ class PromptScout_Live_AI_Traffic_Plugin {
 	public function register(): void {
 		$this->settings->register();
 		add_action( 'template_redirect', [ $this, 'track_request' ], 0 );
+		add_action( 'shutdown', [ $this, 'flush_pending_delivery' ], 0 );
 	}
 
 	public function track_request(): void {
@@ -47,11 +49,23 @@ class PromptScout_Live_AI_Traffic_Plugin {
 		}
 
 		$event = $this->event_builder->build( $_SERVER, $classification, $options['privacy_mode'] );
-		$this->send_event( $options, $event );
+		$this->pending_delivery = [
+			'options' => $options,
+			'event'   => $event,
+		];
 	}
 
-	private function send_event( array $options, array $event ): void {
-		$response = wp_remote_post(
+	public function flush_pending_delivery(): void {
+		if ( null === $this->pending_delivery ) {
+			return;
+		}
+
+		$delivery = $this->pending_delivery;
+		$this->pending_delivery = null;
+		$options = $delivery['options'];
+		$event   = $delivery['event'];
+
+		$response = wp_safe_remote_post(
 			$options['ingest_url'],
 			[
 				'headers'     => [

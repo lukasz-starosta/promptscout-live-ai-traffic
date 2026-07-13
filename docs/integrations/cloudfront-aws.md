@@ -37,8 +37,9 @@ operational blast radius.
 The package does not depend on the AWS SDK. It accepts the standard Lambda
 Kinesis event shape, decodes each base64 record, parses tab-delimited
 CloudFront real-time log records by configured field order, classifies AI
-traffic using the shared PromptScout rules, and sends normalized events through
-the shared ingest client.
+traffic using the shared PromptScout rules, skips unclassified records by
+default, and sends normalized events through the shared ingest client. Set
+`includeUnknown: true` only for a deliberate diagnostic capture.
 
 ## Consumer Sketch
 
@@ -65,6 +66,13 @@ export async function handler(event: unknown) {
   );
 }
 ```
+
+The helper throws `PromptScoutCloudFrontAwsIngestError` after delivery retries
+are exhausted. This is intentional: AWS Lambda only retries a Kinesis batch
+when the invocation fails. Returning a normal `{ ok: false }` value would
+acknowledge the invocation and lose the undelivered analytics. Configure the
+event source mapping's retry, maximum record age, on-failure destination, and
+monitoring policies for the desired at-least-once behavior.
 
 Use query omission by default. If a customer needs campaign attribution, prefer
 `query: { mode: "allowlist", allow: ["utm_source", "utm_medium", "utm_campaign"] }`.

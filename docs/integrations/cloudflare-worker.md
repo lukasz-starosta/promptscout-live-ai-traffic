@@ -42,6 +42,9 @@ Configure these bindings in Wrangler or the Cloudflare dashboard:
   `keep` and `redact`. Defaults to `keep`.
 - `PROMPTSCOUT_PATH_REPLACEMENT`: optional replacement path when paths are
   redacted. Defaults to `/_promptscout/redacted`.
+- `PROMPTSCOUT_INCLUDE_UNKNOWN`: optional diagnostic override. Unknown traffic
+  is skipped by default; set this only when intentionally measuring the full
+  matched route volume.
 - `PROMPTSCOUT_DEBUG`: optional debug logging flag. Use `true`, `1`, `yes`, or
   `on` to log ingest failures.
 
@@ -158,11 +161,11 @@ origin health first.
 
 ## Delivery Behavior
 
-The default handler calls `ctx.passThroughOnException()` when available, starts
-the PromptScout observation delivery, schedules it with `ctx.waitUntil()`, and
-returns the origin response from `fetch(request)`. In local tests or runtimes
-without `waitUntil`, delivery falls back to a background promise so origin
-traffic still flows.
+The default handler starts `fetch(request)` first, then classifies the request.
+Unknown traffic is skipped without an ingest call. Classified observations are
+scheduled with `ctx.waitUntil()` and the origin response remains independent of
+PromptScout delivery. In local tests or runtimes without `waitUntil`, delivery
+falls back to a best-effort background promise.
 
 The collector sends canonical request observation events with
 `sourceProvider: "cloudflare"` and `integration.name: "cloudflare-worker"`.

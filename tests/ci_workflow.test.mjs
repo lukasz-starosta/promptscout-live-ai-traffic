@@ -94,6 +94,23 @@ describe("GitHub Actions verification workflow", () => {
     assert.doesNotMatch(workflow, /cache:\s*yarn/);
   });
 
+  it("serializes test files that rebuild shared package artifacts", async () => {
+    const packageJson = JSON.parse(await readFile("package.json", "utf8"));
+    const docs = await readVerificationDocs();
+    const verifyScript = await readFile("scripts/verify", "utf8");
+
+    assert.equal(
+      packageJson.scripts.test,
+      "node --test --test-concurrency=1 tests/*.test.mjs",
+    );
+    assert.match(
+      verifyScript,
+      /node --test --test-concurrency=1 tests\/\*\.test\.mjs/,
+    );
+    assert.match(docs, /run\s+serially/i);
+    assert.match(docs, /must not race runtime-import tests/i);
+  });
+
   it("runs a required release-readiness package dry run after verification", async () => {
     const workflow = await readWorkflow();
     const releaseReadinessIndex = workflow.indexOf("  release-readiness:");

@@ -25,6 +25,9 @@ Configure these variables in Netlify with a Functions runtime scope:
   `keep` and `redact`. Defaults to `keep`.
 - `PROMPTSCOUT_PATH_REPLACEMENT`: optional replacement path when paths are
   redacted. Defaults to `/_promptscout/redacted`.
+- `PROMPTSCOUT_INCLUDE_UNKNOWN`: optional diagnostic override. Unknown traffic
+  is skipped by default; set this only when intentionally measuring the full
+  matched route volume.
 - `PROMPTSCOUT_DEBUG`: optional debug logging flag. Use `true`, `1`, `yes`, or
   `on` to log ingest failures.
 
@@ -61,10 +64,11 @@ export const config = {
 
 ## Delivery Behavior
 
-The default handler starts PromptScout observation delivery, schedules it with
-`context.waitUntil()` when available, and returns the response from
-`context.next()`. In local tests or runtimes without `waitUntil`, delivery falls
-back to a background promise so origin traffic still flows.
+The default handler starts `context.next()` before collector work. Unknown
+traffic is skipped without an ingest call. Classified observations are
+scheduled with `context.waitUntil()` and the downstream response remains
+independent of PromptScout delivery. In local tests or runtimes without
+`waitUntil`, delivery falls back to a best-effort background promise.
 
 The collector sends canonical request observation events with
 `sourceProvider: "netlify"` and `integration.name: "netlify-edge"`. Raw IP

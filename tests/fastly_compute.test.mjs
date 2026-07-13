@@ -212,7 +212,9 @@ describe("Fastly Compute collector", () => {
     });
 
     const response = await handler({
-      request: new Request("https://www.example.com/"),
+      request: new Request("https://www.example.com/", {
+        headers: { "user-agent": "GPTBot/1.0" },
+      }),
       waitUntil: (promise) => scheduled.push(promise),
     });
     const [ingestResult] = await Promise.all(scheduled);
@@ -221,5 +223,32 @@ describe("Fastly Compute collector", () => {
     assert.equal(ingestResult.ok, false);
     assert.equal(ingestResult.status, 503);
     assert.equal(ingestResult.retryable, true);
+  });
+
+  it("does not schedule ingest for unclassified requests by default", async () => {
+    const { createFastlyComputeHandler } = await fastlyComputeModule();
+    const fetchCalls = [];
+    const scheduled = [];
+    const handler = createFastlyComputeHandler({
+      originBackend: "customer_origin",
+      ingestBackend: "promptscout_ingest",
+      ingestEndpoint: "https://ingest.promptscout.com/live-ai-traffic",
+      ingestToken: "test-token",
+      fetch: async (resource, init) => {
+        fetchCalls.push({ resource, init });
+        return new Response("ok");
+      },
+    });
+
+    await handler({
+      request: new Request("https://www.example.com/", {
+        headers: { "user-agent": "Mozilla/5.0" },
+      }),
+      waitUntil: (promise) => scheduled.push(promise),
+    });
+
+    assert.equal(fetchCalls.length, 1);
+    assert.equal(fetchCalls[0].init.backend, "customer_origin");
+    assert.equal(scheduled.length, 0);
   });
 });

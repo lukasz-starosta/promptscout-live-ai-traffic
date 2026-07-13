@@ -110,6 +110,82 @@ describe("live AI traffic ingest client", () => {
     assert.equal(JSON.stringify(calls[0].init).includes("supabase"), false);
   });
 
+  it("does not buffer successful ingest response bodies", async () => {
+    const { createLiveAiTrafficIngestClient } = await coreModule();
+    let bodyReads = 0;
+    const client = createLiveAiTrafficIngestClient({
+      endpoint: "https://promptscout.example/ingest/live-ai-traffic",
+      ingestToken: TEST_INGEST_TOKEN,
+      fetch: async () => ({
+        ok: true,
+        status: 202,
+        text: async () => {
+          bodyReads += 1;
+          return "accepted";
+        },
+      }),
+    });
+
+    const result = await client.send(fixtureEvent());
+
+    assert.equal(result.ok, true);
+    assert.equal(result.responseBody, undefined);
+    assert.equal(bodyReads, 0);
+  });
+
+  it("aborts an ingest attempt after the configured timeout", async () => {
+    const { createLiveAiTrafficIngestClient } = await coreModule();
+    const client = createLiveAiTrafficIngestClient({
+      endpoint: "https://promptscout.example/ingest/live-ai-traffic",
+      ingestToken: TEST_INGEST_TOKEN,
+      fetch: async (_url, init) =>
+        new Promise((_resolve, reject) => {
+          init.signal.addEventListener(
+            "abort",
+            () => reject(new Error("ingest aborted")),
+            { once: true },
+          );
+        }),
+      retry: { maxRetries: 0 },
+      timeoutMs: 5,
+    });
+
+    const result = await client.send(fixtureEvent());
+
+    assert.equal(result.ok, false);
+    assert.equal(result.attempts, 1);
+    assert.equal(result.error.message, "ingest aborted");
+  });
+
+  it("bounds failure response body reads with the attempt timeout", async () => {
+    const { createLiveAiTrafficIngestClient } = await coreModule();
+    const client = createLiveAiTrafficIngestClient({
+      endpoint: "https://promptscout.example/ingest/live-ai-traffic",
+      ingestToken: TEST_INGEST_TOKEN,
+      fetch: async (_url, init) => ({
+        ok: false,
+        status: 503,
+        text: async () =>
+          new Promise((_resolve, reject) => {
+            init.signal.addEventListener(
+              "abort",
+              () => reject(new Error("response body aborted")),
+              { once: true },
+            );
+          }),
+      }),
+      retry: { maxRetries: 0 },
+      timeoutMs: 5,
+    });
+
+    const result = await client.send(fixtureEvent());
+
+    assert.equal(result.ok, false);
+    assert.equal(result.status, 503);
+    assert.equal(result.attempts, 1);
+    assert.equal(result.responseBody, undefined);
+  });
+
   it("removes raw query strings from AI referral visits before forwarding", async () => {
     const { createLiveAiTrafficIngestClient } = await coreModule();
     const calls = [];

@@ -37,8 +37,11 @@ the ingest token.
 
 The plugin hooks `template_redirect` for front-end requests, classifies the
 server-side `User-Agent` and `Referer` headers with the bundled classifier rules
-exported from `packages/core`, and posts normalized events using
-`wp_remote_post`.
+exported from `packages/core`. It queues a classified event until WordPress's
+`shutdown` hook, after page output is complete, then sends it with
+`wp_safe_remote_post` in non-blocking mode. This keeps the outbound connection
+out of template rendering and validates the admin-configured destination with
+WordPress's safe HTTP API.
 
 Unknown traffic is skipped by default to keep volume low. Classified events use
 the shared v1 contract with:

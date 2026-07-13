@@ -10,7 +10,7 @@ client-side analytics pixel.
 Current local or customer install paths:
 
 1. Vercel middleware for Next.js sites hosted on Vercel. Production apps should
-   install `@promptscout/live-ai-traffic@0.1.2` and import the Vercel helper
+   install `@promptscout/live-ai-traffic@0.1.3` and import the Vercel helper
    from `@promptscout/live-ai-traffic/vercel-middleware`; use a local checkout
    or generated tarballs only for repository development workflows.
 2. Cloudflare Worker for sites already proxied through Cloudflare.
@@ -48,14 +48,14 @@ Compute before any future placeholder adapter.
 
 | Install path | Status | Best fit | Reliability | Complexity | Why choose it |
 | --- | --- | --- | --- | --- | --- |
-| Vercel middleware | Current | Next.js sites on Vercel | High for routed page requests before the app route runs | Low | Run `npm install @promptscout/live-ai-traffic@0.1.2`, import `@promptscout/live-ai-traffic/vercel-middleware`, add one middleware or proxy helper, and use Vercel environment variables. Local checkout or tarballs are for repository development workflows only. |
+| Vercel middleware | Current | Next.js sites on Vercel | High for routed page requests before the app route runs | Low | Run `npm install @promptscout/live-ai-traffic@0.1.3`, import `@promptscout/live-ai-traffic/vercel-middleware`, add one middleware or proxy helper, and use Vercel environment variables. Local checkout or tarballs are for repository development workflows only. |
 | Cloudflare Worker | Current | Sites already proxied through Cloudflare | High at the edge for matched routes | Medium | Observe traffic before the origin while preserving normal Cloudflare routing. |
 | Netlify Edge | Current | Netlify-hosted sites using edge functions | High for matched edge routes | Low to medium | Add one edge function declaration and use Netlify environment variables. |
 | WordPress plugin | Current | WordPress sites managed by site owners or agencies | Medium to high for WordPress-rendered requests | Low | Install the implemented plugin collector and configure its site-scoped ingest token in WordPress admin. |
 | nginx logs | Current | Sites behind nginx, reverse proxies, or log pipelines | High when logs include user agent, referer, host, path, method, and timestamp | Medium to high | Run the log forwarder against access logs, batch classified AI traffic, and checkpoint processed bytes. |
 | Node/Express | Current local adapter | Custom Node servers that own routing | High for requests reaching the Node app | Medium | Use `packages/node-middleware` and `examples/express` for local middleware smoke checks. |
 | CloudFront/AWS | Current AWS path | AWS sites using CloudFront real-time access logs with Kinesis Data Streams and a regional Lambda or Kinesis consumer | High at the CDN log layer for configured cache behaviors, subject to best-effort log delivery | Medium to high | Avoids CloudFront Function outbound-network limits and does not require changing the origin application. |
-| Fastly Compute | Current local adapter | Sites already served through Fastly JavaScript Compute | High at the edge for configured services | Medium to high | Use `packages/fastly-compute` and `examples/fastly-compute` for local Compute wiring before broader packaging. |
+| Fastly Compute | Current local adapter | Sites already served through Fastly JavaScript Compute | High classification coverage at the edge, but direct ingest is best effort without a documented `waitUntil` hook | Medium to high | Use `packages/fastly-compute` for local wiring; use Fastly real-time logging when durable out-of-request-path delivery is required. |
 
 Reliability depends on route coverage. If the collector is attached only to
 HTML pages, it will not observe excluded assets, API routes, or unproxied

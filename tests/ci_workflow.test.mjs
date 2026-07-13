@@ -85,7 +85,11 @@ describe("GitHub Actions verification workflow", () => {
       assert.match(workflow, new RegExp(expected.replaceAll(".", "\\.")));
     }
 
-    const setupNodeIndex = workflow.indexOf("uses: actions/setup-node@v4");
+    assert.match(workflow, /uses: actions\/checkout@v7/);
+    assert.match(workflow, /uses: actions\/setup-node@v6/);
+    assert.doesNotMatch(workflow, /uses: actions\/(?:checkout|setup-node)@v4/);
+
+    const setupNodeIndex = workflow.indexOf("uses: actions/setup-node@v6");
     const corepackIndex = workflow.indexOf("run: corepack enable");
     const installIndex = workflow.indexOf("run: yarn install --immutable");
 

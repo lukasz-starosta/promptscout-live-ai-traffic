@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "verify": "./scripts/verify",
-    "test": "node --test tests/*.test.mjs",
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs",
     "build": "tsc -b && yarn build:package",
     "typecheck": "tsc -b",
     "lint": "biome check .",

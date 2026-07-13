@@ -17,7 +17,9 @@ worktrees. It currently runs:
 - monorepo scaffold checks for package, example, and docs surfaces;
 - Bash syntax checks for shell scripts;
 - focused Node tests under `tests/*.test.mjs`, including the core package
-  TypeScript build performed by the event contract test;
+  TypeScript build performed by the event contract test. Test files run
+  serially because package/install tests rebuild the shared root `dist`
+  directory and must not race runtime-import tests;
 - focused shell tests under `tests/*.sh`.
 
 The command scans tracked files and untracked, non-ignored files so newly added

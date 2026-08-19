@@ -46,9 +46,33 @@ function assertGuideShape(guide) {
   assert.match(guide.markdownPath, /^docs\/integrations\/[^/]+\.md$/);
   assert.match(guide.supportStatus, /^(current|preview|placeholder)$/);
   assert.equal(typeof guide.order, "number");
+
+  // Optional: only guides that configure the token through a named environment
+  // variable declare one. WordPress reads it from plugin settings and the
+  // Compute collector takes it as a code option, so they intentionally omit it.
+  if (guide.tokenEnvVar !== undefined) {
+    assert.equal(typeof guide.tokenEnvVar, "string");
+    assert.match(guide.tokenEnvVar, /^[A-Z][A-Z0-9_]*$/);
+  }
 }
 
 describe("docs manifest", () => {
+  it("declares the token variable each guide actually documents", async () => {
+    const manifest = await readManifest();
+
+    for (const guide of manifest.guides) {
+      if (guide.tokenEnvVar === undefined) {
+        continue;
+      }
+
+      const markdown = await readFile(guide.markdownPath, "utf8");
+      assert.ok(
+        markdown.includes(guide.tokenEnvVar),
+        `${guide.id} declares ${guide.tokenEnvVar} but ${guide.markdownPath} never mentions it`,
+      );
+    }
+  });
+
   it("publishes stable metadata for every integration guide", async () => {
     const manifest = await readManifest();
     const packageJson = JSON.parse(await readFile("package.json", "utf8"));
@@ -114,7 +138,7 @@ describe("docs manifest", () => {
         },
       );
 
-      const tarball = join(tempRoot, "promptscout-live-ai-traffic-0.1.3.tgz");
+      const tarball = join(tempRoot, "promptscout-live-ai-traffic-0.2.0.tgz");
       const packedFiles = execFileSync("tar", ["-tzf", tarball], {
         stdio: "pipe",
       })

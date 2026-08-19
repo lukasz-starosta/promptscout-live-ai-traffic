@@ -21,14 +21,14 @@ describe("cloudflare worker example", () => {
       await file("examples/cloudflare-worker/package.json"),
     );
     assert.equal(
-      packageJson.dependencies["promptscout-live-ai-traffic-cloudflare-worker"],
+      packageJson.dependencies["@promptscout/live-ai-traffic"],
       "workspace:*",
     );
     assert.match(packageJson.scripts.dev, /wrangler(?:@latest)? dev/);
     assert.match(packageJson.scripts.deploy, /wrangler(?:@latest)? deploy/);
 
     const source = await file("examples/cloudflare-worker/src/index.ts");
-    assert.match(source, /promptscout-live-ai-traffic-cloudflare-worker/);
+    assert.match(source, /@promptscout\/live-ai-traffic\/cloudflare-worker/);
     assert.match(source, /export default worker/);
 
     const wranglerToml = await file("examples/cloudflare-worker/wrangler.toml");

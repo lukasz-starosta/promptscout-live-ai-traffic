@@ -30,7 +30,7 @@ describe("public package install path", () => {
       const packedFiles = await readdir(tempRoot);
       const tarballs = packedFiles.filter((file) => file.endsWith(".tgz"));
 
-      assert.deepEqual(tarballs, ["promptscout-live-ai-traffic-0.1.3.tgz"]);
+      assert.deepEqual(tarballs, ["promptscout-live-ai-traffic-0.2.0.tgz"]);
 
       await mkdir(projectDir);
       await writeFile(
@@ -129,13 +129,11 @@ describe("public package install path", () => {
 
   it("marks non-Vercel collector imports as repo-local private workspace examples", async () => {
     const repoLocalImportDocs = [
-      "docs/integrations/cloudflare-worker.md",
       "docs/integrations/cloudfront-aws.md",
       "docs/integrations/express.md",
       "docs/integrations/fastly-compute.md",
       "docs/integrations/netlify-edge.md",
       "docs/integrations/nginx-log-forwarder.md",
-      "examples/cloudflare-worker/README.md",
       "examples/fastly-compute/README.md",
     ];
 
@@ -145,7 +143,7 @@ describe("public package install path", () => {
       assert.match(contents, /repo-local\s+private workspace/i, path);
       assert.doesNotMatch(
         contents,
-        /@promptscout\/live-ai-traffic\/(?:cloudflare|cloudflare-worker|cloudfront|cloudfront-aws|express|fastly|fastly-compute|netlify|netlify-edge|nginx-log-forwarder|node-middleware)/,
+        /@promptscout\/live-ai-traffic\/(?:cloudflare(?!-worker)|cloudfront-aws|cloudfront|express|fastly-compute|fastly|netlify-edge|netlify|nginx-log-forwarder|node-middleware)/,
         path,
       );
     }

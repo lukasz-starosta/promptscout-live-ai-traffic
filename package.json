@@ -1,6 +1,6 @@
 {
   "name": "@promptscout/live-ai-traffic",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "PromptScout live AI traffic event contracts, classifiers, and runtime collectors.",
   "license": "Apache-2.0",
   "type": "module",
@@ -43,7 +43,12 @@
       "types": "./dist/packages/vercel-middleware/src/index.d.ts",
       "default": "./dist/packages/vercel-middleware/src/index.js"
     },
+    "./cloudflare-worker": {
+      "types": "./dist/packages/cloudflare-worker/src/index.d.ts",
+      "default": "./dist/packages/cloudflare-worker/src/index.js"
+    },
     "./docs-manifest.json": "./docs-manifest.json",
+    "./docs/*": "./docs/*",
     "./package.json": "./package.json"
   },
   "files": [

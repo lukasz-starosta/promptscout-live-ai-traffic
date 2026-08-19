@@ -93,7 +93,22 @@ JSON
 }
 JSON
     printf '{ "extends": "../../tsconfig.base.json" }\n' >"$repo/packages/$provider/tsconfig.json"
-    cat >"$repo/examples/$provider/package.json" <<JSON
+    if [[ "$provider" == "cloudflare-worker" ]]; then
+      # Publicly exported collectors install through the root package plus its
+      # subpath export, the same way a customer installs them.
+      cat >"$repo/examples/$provider/package.json" <<JSON
+{
+  "name": "promptscout-live-ai-traffic-example-$provider",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@promptscout/live-ai-traffic": "workspace:*"
+  }
+}
+JSON
+      printf 'import "@promptscout/live-ai-traffic/%s";\n' "$provider" >"$repo/examples/$provider/src/index.ts"
+    else
+      cat >"$repo/examples/$provider/package.json" <<JSON
 {
   "name": "promptscout-live-ai-traffic-example-$provider",
   "version": "0.1.0",
@@ -103,7 +118,8 @@ JSON
   }
 }
 JSON
-    printf 'import "promptscout-live-ai-traffic-%s";\n' "$provider" >"$repo/examples/$provider/src/index.ts"
+      printf 'import "promptscout-live-ai-traffic-%s";\n' "$provider" >"$repo/examples/$provider/src/index.ts"
+    fi
     printf '{ "extends": "../../tsconfig.base.json" }\n' >"$repo/examples/$provider/tsconfig.json"
     printf '# %s example\n' "$provider" >"$repo/examples/$provider/README.md"
     printf '# %s integration\n' "$provider" >"$repo/docs/integrations/$provider.md"

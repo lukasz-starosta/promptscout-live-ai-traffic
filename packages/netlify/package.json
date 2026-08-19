@@ -1,6 +1,6 @@
 {
   "name": "promptscout-live-ai-traffic-netlify",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "Placeholder Netlify integration for PromptScout live AI traffic.",
   "license": "Apache-2.0",
   "type": "module",

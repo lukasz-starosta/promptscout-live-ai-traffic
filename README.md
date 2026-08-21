@@ -33,6 +33,15 @@ PromptScout ingest URL and site-scoped ingest token in server-side or Vercel
 environment variables. The token resolves the PromptScout site source; do not
 add a separate brand ID or team-site ID to the dogfood app.
 
+Cloudflare users can deploy the isolated Worker starter from the Cloudflare
+dashboard:
+
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/lukasz-starosta/promptscout-live-ai-traffic/tree/main/templates/cloudflare-worker)
+
+The guided deployment asks for the PromptScout install token and ingest URL.
+After deployment, add the website route in Cloudflare and run the PromptScout
+setup check.
+
 ## Workspace Layout
 
 This repository uses Yarn workspaces:
@@ -56,6 +65,8 @@ This repository uses Yarn workspaces:
   example under `examples/express`.
 - `examples/cloudflare-worker` contains the runnable Wrangler example for the
   customer-owned Cloudflare Worker collector.
+- `templates/cloudflare-worker` is an isolated public starter for Cloudflare's
+  dashboard-based deployment flow.
 - `examples/cloudfront-aws` contains the AWS CloudFront real-time logs through
   Kinesis example notes.
 - `examples/netlify-edge` contains the Netlify Edge Function example and

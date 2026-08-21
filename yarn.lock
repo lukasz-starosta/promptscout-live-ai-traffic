@@ -105,7 +105,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"promptscout-live-ai-traffic-cloudflare-worker@workspace:*, promptscout-live-ai-traffic-cloudflare-worker@workspace:packages/cloudflare-worker":
+"promptscout-live-ai-traffic-cloudflare-worker@workspace:packages/cloudflare-worker":
   version: 0.0.0-use.local
   resolution: "promptscout-live-ai-traffic-cloudflare-worker@workspace:packages/cloudflare-worker"
   dependencies:
@@ -139,7 +139,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "promptscout-live-ai-traffic-example-cloudflare-worker@workspace:examples/cloudflare-worker"
   dependencies:
-    promptscout-live-ai-traffic-cloudflare-worker: "workspace:*"
+    "@promptscout/live-ai-traffic": "workspace:*"
   languageName: unknown
   linkType: soft
 

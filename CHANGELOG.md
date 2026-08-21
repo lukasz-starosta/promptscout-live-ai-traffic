@@ -6,6 +6,33 @@ This project publishes one public npm package. Internal provider workspaces and
 examples use the same version for traceability, but remain private and are not
 published.
 
+## 0.2.0
+
+### Added
+
+- Publish the Cloudflare Worker collector as the
+  `@promptscout/live-ai-traffic/cloudflare-worker` subpath export. It was
+  previously a repo-local private workspace package with no public install path.
+- Export the shipped integration guides as `./docs/*` so consumers can render
+  the published markdown instead of transcribing it.
+- Declare `tokenEnvVar` per guide in `docs-manifest.json`. The Vercel collector
+  reads `PROMPTSCOUT_LIVE_AI_TRAFFIC_TOKEN`; the Cloudflare, Netlify Edge,
+  CloudFront, and Node/Express collectors read `PROMPTSCOUT_INGEST_TOKEN`.
+  Guides that configure the token elsewhere omit the field.
+
+### Changed
+
+- Rewrite the Cloudflare Worker guide with zone setup, DNS and mail safety, SSL
+  mode, hostname matching, and an install verification/troubleshooting section.
+- Point `examples/cloudflare-worker` at the public subpath export so the example
+  performs the same install a customer performs.
+
+### Fixed
+
+- Replace the incorrect `api.promptscout.com/live-ai-traffic/ingest` ingest URL
+  in the Cloudflare Worker example and guide with a dashboard-sourced
+  placeholder.
+
 ## 0.1.3
 
 - Bounded each shared ingest attempt to two seconds by default and stopped

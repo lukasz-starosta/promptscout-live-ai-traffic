@@ -11,6 +11,7 @@
       "platform": "Vercel",
       "packageName": "@promptscout/live-ai-traffic",
       "packageExports": ["./vercel-middleware"],
+      "tokenEnvVar": "PROMPTSCOUT_LIVE_AI_TRAFFIC_TOKEN",
       "markdownPath": "docs/integrations/vercel.md",
       "supportStatus": "current",
       "order": 10
@@ -23,6 +24,7 @@
       "platform": "Cloudflare",
       "packageName": "promptscout-live-ai-traffic-cloudflare-worker",
       "packageExports": [],
+      "tokenEnvVar": "PROMPTSCOUT_INGEST_TOKEN",
       "markdownPath": "docs/integrations/cloudflare-worker.md",
       "supportStatus": "preview",
       "order": 20
@@ -35,6 +37,7 @@
       "platform": "Netlify",
       "packageName": "promptscout-live-ai-traffic-netlify-edge",
       "packageExports": [],
+      "tokenEnvVar": "PROMPTSCOUT_INGEST_TOKEN",
       "markdownPath": "docs/integrations/netlify-edge.md",
       "supportStatus": "preview",
       "order": 30
@@ -71,6 +74,7 @@
       "platform": "Node / Express",
       "packageName": "promptscout-live-ai-traffic-node-middleware",
       "packageExports": [],
+      "tokenEnvVar": "PROMPTSCOUT_INGEST_TOKEN",
       "markdownPath": "docs/integrations/express.md",
       "supportStatus": "preview",
       "order": 60
@@ -83,6 +87,7 @@
       "platform": "AWS CloudFront",
       "packageName": "promptscout-live-ai-traffic-cloudfront-aws",
       "packageExports": [],
+      "tokenEnvVar": "PROMPTSCOUT_INGEST_TOKEN",
       "markdownPath": "docs/integrations/cloudfront-aws.md",
       "supportStatus": "preview",
       "order": 70

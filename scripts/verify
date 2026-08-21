@@ -152,6 +152,22 @@ require_path packages/core/package.json
 require_path packages/core/tsconfig.json
 require_path packages/core/src/index.ts
 
+# Collectors reachable from the published package as a subpath export.
+PUBLICLY_EXPORTED_PROVIDERS=(
+  cloudflare-worker
+)
+
+is_publicly_exported_provider() {
+  local candidate="$1"
+  local provider
+  for provider in "${PUBLICLY_EXPORTED_PROVIDERS[@]}"; do
+    if [[ "$provider" == "$candidate" ]]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
 for provider in "${PROVIDERS[@]}"; do
   require_path "packages/$provider/package.json"
   require_path "packages/$provider/tsconfig.json"
@@ -160,8 +176,15 @@ for provider in "${PROVIDERS[@]}"; do
 
   require_path "examples/$provider/package.json"
   require_path "examples/$provider/tsconfig.json"
-  require_file_contains "examples/$provider/src/index.ts" "promptscout-live-ai-traffic-$provider"
-  require_file_contains "examples/$provider/package.json" "\"promptscout-live-ai-traffic-$provider\": \"workspace:*\""
+  if is_publicly_exported_provider "$provider"; then
+    # Publicly exported collectors install the way a customer installs them:
+    # the root package plus its subpath export.
+    require_file_contains "examples/$provider/src/index.ts" "@promptscout/live-ai-traffic/$provider"
+    require_file_contains "examples/$provider/package.json" "\"@promptscout/live-ai-traffic\": \"workspace:*\""
+  else
+    require_file_contains "examples/$provider/src/index.ts" "promptscout-live-ai-traffic-$provider"
+    require_file_contains "examples/$provider/package.json" "\"promptscout-live-ai-traffic-$provider\": \"workspace:*\""
+  fi
   require_path "examples/$provider/README.md"
 
   require_path "docs/integrations/$provider.md"

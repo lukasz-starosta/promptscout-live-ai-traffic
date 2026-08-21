@@ -46,6 +46,9 @@ describe("monorepo scaffold", () => {
     }
   });
 
+  // Collectors reachable from the published package as a subpath export.
+  const publiclyExportedProviders = new Set(["cloudflare-worker"]);
+
   it("keeps one workspace example and docs placeholder per provider", async () => {
     for (const provider of providers) {
       const examplePackage = await readJson(
@@ -60,14 +63,29 @@ describe("monorepo scaffold", () => {
         "utf8",
       );
 
-      assert.equal(
-        examplePackage.dependencies[`promptscout-live-ai-traffic-${provider}`],
-        "workspace:*",
-      );
-      assert.match(
-        source,
-        new RegExp(`promptscout-live-ai-traffic-${provider}`),
-      );
+      if (publiclyExportedProviders.has(provider)) {
+        // Publicly exported collectors are installed the way a customer
+        // installs them: the root package plus its subpath export.
+        assert.equal(
+          examplePackage.dependencies["@promptscout/live-ai-traffic"],
+          "workspace:*",
+        );
+        assert.match(
+          source,
+          new RegExp(`@promptscout/live-ai-traffic/${provider}`),
+        );
+      } else {
+        assert.equal(
+          examplePackage.dependencies[
+            `promptscout-live-ai-traffic-${provider}`
+          ],
+          "workspace:*",
+        );
+        assert.match(
+          source,
+          new RegExp(`promptscout-live-ai-traffic-${provider}`),
+        );
+      }
       if (provider === "vercel") {
         assert.match(integrationDoc, /trackPromptScoutAiTraffic/);
         assert.match(integrationDoc, /matcher/i);

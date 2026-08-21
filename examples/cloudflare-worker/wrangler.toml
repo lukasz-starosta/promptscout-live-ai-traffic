@@ -9,7 +9,9 @@ routes = [
 ]
 
 [vars]
-PROMPTSCOUT_INGEST_URL = "https://api.promptscout.com/live-ai-traffic/ingest"
+# Copy this from Integrations -> Traffic in your PromptScout dashboard. It is
+# the ingest URL for your own PromptScout deployment; do not guess it.
+PROMPTSCOUT_INGEST_URL = "https://<your-promptscout-host>/api/ingest/live-ai-traffic"
 PROMPTSCOUT_QUERY_POLICY = "omit"
 PROMPTSCOUT_PATH_POLICY = "keep"
 PROMPTSCOUT_DEBUG = "false"

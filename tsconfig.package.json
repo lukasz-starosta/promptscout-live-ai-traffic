@@ -3,10 +3,15 @@
   "compilerOptions": {
     "composite": false,
     "rootDir": ".",
-    "outDir": "dist"
+    "outDir": "dist",
+    // The Cloudflare Worker collector needs the Workers globals. Per-package
+    // `tsc -b` still compiles core against `lib: ["ES2022"]` only, so core
+    // keeps its runtime-agnostic discipline; this project only emits.
+    "lib": ["ES2022", "WebWorker", "WebWorker.Iterable"]
   },
   "include": [
     "packages/core/src/**/*.ts",
-    "packages/vercel-middleware/src/**/*.ts"
+    "packages/vercel-middleware/src/**/*.ts",
+    "packages/cloudflare-worker/src/**/*.ts"
   ]
 }

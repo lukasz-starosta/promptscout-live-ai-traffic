@@ -5,7 +5,7 @@ This repository uses Yarn workspaces with packages under `packages/*` and runnab
 The public install contract is one npm package with subpath exports:
 
 ```bash
-npm install @promptscout/live-ai-traffic@0.1.3
+npm install @promptscout/live-ai-traffic@0.2.0
 ```
 
 Then copy the `proxy.ts` or `middleware.ts` setup from

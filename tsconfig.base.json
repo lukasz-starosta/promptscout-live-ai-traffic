@@ -19,6 +19,9 @@
       "@promptscout/live-ai-traffic/vercel-middleware": [
         "packages/vercel-middleware/src/index.ts"
       ],
+      "@promptscout/live-ai-traffic/cloudflare-worker": [
+        "packages/cloudflare-worker/src/index.ts"
+      ],
       "promptscout-live-ai-traffic-*": ["packages/*/src/index.ts"]
     }
   }

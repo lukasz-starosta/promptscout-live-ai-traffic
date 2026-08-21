@@ -1,6 +1,6 @@
 {
   "name": "@promptscout/live-ai-traffic",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "PromptScout live AI traffic event contracts, classifiers, and runtime collectors.",
   "license": "Apache-2.0",
   "type": "module",
@@ -21,7 +21,7 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "dogfood:vercel": "yarn tsc -b packages/vercel-middleware && node examples/vercel-nextjs/dogfood-promptscout.mjs",
-    "build:package": "rm -rf dist && tsc -p tsconfig.package.json",
+    "build:package": "rm -rf dist && tsc -p tsconfig.package.json && node scripts/build-docs-content.mjs",
     "prepack": "yarn build:package"
   },
   "devDependencies": {
@@ -46,6 +46,10 @@
     "./cloudflare-worker": {
       "types": "./dist/packages/cloudflare-worker/src/index.d.ts",
       "default": "./dist/packages/cloudflare-worker/src/index.js"
+    },
+    "./docs-content": {
+      "types": "./dist/docs-content.d.ts",
+      "default": "./dist/docs-content.js"
     },
     "./docs-manifest.json": "./docs-manifest.json",
     "./docs/*": "./docs/*",

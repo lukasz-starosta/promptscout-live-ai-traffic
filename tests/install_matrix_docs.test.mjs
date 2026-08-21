@@ -95,7 +95,7 @@ describe("install matrix docs", () => {
   it("points Vercel customers at the public package and subpath export", async () => {
     const guide = await readFile(guidePath, "utf8");
 
-    assert.match(guide, /npm install @promptscout\/live-ai-traffic@0\.2\.0/);
+    assert.match(guide, /npm install @promptscout\/live-ai-traffic@0\.2\.1/);
     assert.match(guide, /@promptscout\/live-ai-traffic\/vercel-middleware/);
     assert.doesNotMatch(
       guide,

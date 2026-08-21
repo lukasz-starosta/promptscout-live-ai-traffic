@@ -148,6 +148,8 @@ require_path tsconfig.base.json
 require_path tsconfig.package.json
 require_path docs/getting-started.md
 require_path docs/integrations
+require_path scripts/build-docs-content.mjs
+require_file_contains package.json '"./docs-content"'
 require_path packages/core/package.json
 require_path packages/core/tsconfig.json
 require_path packages/core/src/index.ts

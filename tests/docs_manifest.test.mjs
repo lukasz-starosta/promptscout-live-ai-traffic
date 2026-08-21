@@ -82,6 +82,10 @@ describe("docs manifest", () => {
       packageJson.exports["./docs-manifest.json"],
       "./docs-manifest.json",
     );
+    assert.deepEqual(packageJson.exports["./docs-content"], {
+      types: "./dist/docs-content.d.ts",
+      default: "./dist/docs-content.js",
+    });
     assert.match(manifest.betaNotice, /support@promptscout\.app/);
     assert.ok(Array.isArray(manifest.guides));
 
@@ -113,6 +117,38 @@ describe("docs manifest", () => {
     );
   });
 
+  it("builds one JavaScript export from the manifest and source markdown", async () => {
+    const manifest = await readManifest();
+    const { liveAiTrafficDocs } = await import("../dist/docs-content.js");
+
+    assert.deepEqual(
+      liveAiTrafficDocs.guides.map(
+        ({ markdown: _markdown, ...guide }) => guide,
+      ),
+      manifest.guides,
+    );
+    assert.deepEqual(
+      {
+        betaNotice: liveAiTrafficDocs.betaNotice,
+        packageName: liveAiTrafficDocs.packageName,
+        schemaVersion: liveAiTrafficDocs.schemaVersion,
+      },
+      {
+        betaNotice: manifest.betaNotice,
+        packageName: manifest.packageName,
+        schemaVersion: manifest.schemaVersion,
+      },
+    );
+
+    for (const guide of liveAiTrafficDocs.guides) {
+      assert.equal(
+        guide.markdown,
+        await readFile(guide.markdownPath, "utf8"),
+        guide.id,
+      );
+    }
+  });
+
   it("points every manifest entry at an existing markdown file", async () => {
     const manifest = await readManifest();
 
@@ -138,7 +174,7 @@ describe("docs manifest", () => {
         },
       );
 
-      const tarball = join(tempRoot, "promptscout-live-ai-traffic-0.2.0.tgz");
+      const tarball = join(tempRoot, "promptscout-live-ai-traffic-0.2.1.tgz");
       const packedFiles = execFileSync("tar", ["-tzf", tarball], {
         stdio: "pipe",
       })

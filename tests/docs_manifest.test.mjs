@@ -174,7 +174,7 @@ describe("docs manifest", () => {
         },
       );
 
-      const tarball = join(tempRoot, "promptscout-live-ai-traffic-0.2.1.tgz");
+      const tarball = join(tempRoot, "promptscout-live-ai-traffic-0.2.2.tgz");
       const packedFiles = execFileSync("tar", ["-tzf", tarball], {
         stdio: "pipe",
       })

@@ -6,7 +6,7 @@ This project publishes one public npm package. Internal provider workspaces and
 examples use the same version for traceability, but remain private and are not
 published.
 
-## Unreleased
+## 0.2.2
 
 ### Fixed
 

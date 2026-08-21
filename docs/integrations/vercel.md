@@ -9,13 +9,13 @@ runs.
 Install the public package from npm:
 
 ```bash
-npm install @promptscout/live-ai-traffic@0.2.1
+npm install @promptscout/live-ai-traffic@0.2.2
 ```
 
 For Yarn:
 
 ```bash
-yarn add @promptscout/live-ai-traffic@0.2.1
+yarn add @promptscout/live-ai-traffic@0.2.2
 ```
 
 Pin exact versions in production apps. The Vercel collector is imported from

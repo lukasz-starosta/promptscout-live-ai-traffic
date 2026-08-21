@@ -1,6 +1,6 @@
 {
   "name": "promptscout-live-ai-traffic-cloudflare-worker",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Cloudflare Worker collector for PromptScout live AI traffic.",
   "license": "Apache-2.0",
   "type": "module",

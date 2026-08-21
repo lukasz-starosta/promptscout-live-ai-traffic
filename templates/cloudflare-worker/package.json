@@ -1,0 +1,26 @@
+{
+  "name": "promptscout-cloudflare-worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev"
+  },
+  "dependencies": {
+    "@promptscout/live-ai-traffic": "0.2.1"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  },
+  "cloudflare": {
+    "bindings": {
+      "PROMPTSCOUT_INGEST_TOKEN": {
+        "description": "Paste the install token from PromptScout. Cloudflare stores this value as a secret."
+      },
+      "PROMPTSCOUT_INGEST_URL": {
+        "description": "Paste the ingest URL shown next to the install token in PromptScout."
+      }
+    }
+  }
+}

@@ -171,6 +171,37 @@ describe("cloudflare worker collector", () => {
     assert.equal(JSON.stringify(body).includes("203.0.113.42"), false);
   });
 
+  it("returns an explicit 502 when the origin fetch fails", async () => {
+    const { handlePromptScoutCloudflareWorkerRequest } =
+      await cloudflareWorkerModule();
+    const waitUntilPromises = [];
+    let originCalls = 0;
+
+    const response = await handlePromptScoutCloudflareWorkerRequest(
+      new Request("https://example.com/pricing", {
+        headers: { "user-agent": "ClaudeBot/1.0" },
+      }),
+      env(),
+      {
+        passThroughOnException: () => {},
+        waitUntil: (promise) => waitUntilPromises.push(promise),
+      },
+      {
+        originFetch: async () => {
+          originCalls += 1;
+          throw new Error("origin unavailable");
+        },
+        ingestFetch: async () => new Response("", { status: 202 }),
+      },
+    );
+
+    assert.equal(response.status, 502);
+    assert.equal(await response.text(), "Bad Gateway");
+    assert.equal(originCalls, 1);
+    assert.equal(waitUntilPromises.length, 1);
+    await waitUntilPromises[0];
+  });
+
   it("keeps query strings only when explicitly configured", async () => {
     const { observeCloudflareWorkerRequest } = await cloudflareWorkerModule();
     const ingestCalls = [];

@@ -50,7 +50,7 @@ export async function handlePromptScoutCloudflareWorkerRequest(
   options: PromptScoutCloudflareWorkerOptions = {},
 ): Promise<Response> {
   ctx.passThroughOnException?.();
-  const originResponse = originFetch(options)(request);
+  const originResponse = fetchCloudflareOrigin(request, env, options);
 
   const observation = observeCloudflareWorkerRequest(
     request,
@@ -80,6 +80,25 @@ export async function handlePromptScoutCloudflareWorkerRequest(
   }
 
   return originResponse;
+}
+
+async function fetchCloudflareOrigin(
+  request: Request,
+  env: PromptScoutCloudflareWorkerEnv,
+  options: PromptScoutCloudflareWorkerOptions,
+) {
+  try {
+    return await originFetch(options)(request);
+  } catch (error) {
+    if (isDebugEnabled(env.PROMPTSCOUT_DEBUG)) {
+      (options.logger ?? console).error(
+        "PromptScout Cloudflare Worker origin request failed",
+        error,
+      );
+    }
+
+    return new Response("Bad Gateway", { status: 502 });
+  }
 }
 
 export async function observeCloudflareWorkerRequest(

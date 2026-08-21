@@ -38,12 +38,19 @@ write_minimal_scaffold() {
 {
   "name": "@promptscout/live-ai-traffic",
   "version": "0.1.0",
+  "exports": {
+    "./docs-content": {
+      "default": "./dist/docs-content.js"
+    }
+  },
   "workspaces": [
     "packages/*",
     "examples/*"
   ]
 }
 JSON
+  mkdir -p "$repo/scripts"
+  printf 'export default {};\n' >"$repo/scripts/build-docs-content.mjs"
   cat >"$repo/tsconfig.json" <<'JSON'
 {
   "files": []

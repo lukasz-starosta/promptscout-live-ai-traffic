@@ -6,6 +6,19 @@ This project publishes one public npm package. Internal provider workspaces and
 examples use the same version for traceability, but remain private and are not
 published.
 
+## 0.2.1
+
+### Added
+
+- Export integration metadata and markdown together through the typed
+  `@promptscout/live-ai-traffic/docs-content` JavaScript subpath. Consumers no
+  longer need bundler-specific markdown loaders.
+
+### Fixed
+
+- Describe the Cloudflare Worker guide as the public
+  `@promptscout/live-ai-traffic/cloudflare-worker` subpath in the docs manifest.
+
 ## 0.2.0
 
 ### Added

@@ -1,6 +1,6 @@
 {
   "name": "promptscout-live-ai-traffic-wordpress",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Placeholder WordPress integration for PromptScout live AI traffic.",
   "license": "Apache-2.0",
   "type": "module",

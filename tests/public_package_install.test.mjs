@@ -30,7 +30,7 @@ describe("public package install path", () => {
       const packedFiles = await readdir(tempRoot);
       const tarballs = packedFiles.filter((file) => file.endsWith(".tgz"));
 
-      assert.deepEqual(tarballs, ["promptscout-live-ai-traffic-0.2.0.tgz"]);
+      assert.deepEqual(tarballs, ["promptscout-live-ai-traffic-0.2.1.tgz"]);
 
       await mkdir(projectDir);
       await writeFile(
@@ -82,8 +82,10 @@ describe("public package install path", () => {
           [
             "const middleware = await import('@promptscout/live-ai-traffic/vercel-middleware');",
             "const core = await import('@promptscout/live-ai-traffic/core');",
+            "const { liveAiTrafficDocs } = await import('@promptscout/live-ai-traffic/docs-content');",
             "console.log(typeof middleware.trackPromptScoutAiTraffic);",
             "console.log(core.LIVE_AI_TRAFFIC_EVENT_SCHEMA_VERSION);",
+            "console.log(liveAiTrafficDocs.guides.find((guide) => guide.id === 'cloudflare-worker').markdown.includes('Put Your Site Behind Cloudflare'));",
           ].join(""),
         ],
         {
@@ -92,7 +94,7 @@ describe("public package install path", () => {
         },
       ).toString();
 
-      assert.equal(importOutput, "function\n1\n");
+      assert.equal(importOutput, "function\n1\ntrue\n");
     } finally {
       await rm(tempRoot, { force: true, recursive: true });
     }

@@ -132,7 +132,8 @@ export default worker;
 
 Attach the Worker to Cloudflare routes for the proxied hostnames you want to
 observe, for example `example.com/*`. The Worker forwards requests to the origin
-and does not require PromptScout to proxy customer traffic.
+and does not require PromptScout to proxy customer traffic. If Cloudflare cannot
+reach the origin, the Worker returns an explicit `502 Bad Gateway` response.
 
 The route must match an orange-cloud proxied DNS record. Gray-cloud DNS records
 send traffic directly to the origin and bypass the Worker.

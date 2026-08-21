@@ -6,6 +6,14 @@ This project publishes one public npm package. Internal provider workspaces and
 examples use the same version for traceability, but remain private and are not
 published.
 
+## Unreleased
+
+### Fixed
+
+- Return an explicit `502 Bad Gateway` response when the Cloudflare Worker
+  cannot reach the customer origin, while keeping PromptScout delivery
+  fail-open and scheduled through `waitUntil`.
+
 ## 0.2.1
 
 ### Added

@@ -15,11 +15,9 @@ test("the Cloudflare dashboard template is an isolated deployable project", asyn
       read("README.md"),
     ]);
 
-  // Keep the template installable while the next package version is being
-  // released. A follow-up release commit advances this pin and lockfile.
   assert.equal(
     templatePackage.dependencies["@promptscout/live-ai-traffic"],
-    "0.2.2",
+    "0.3.0",
   );
   assert.equal(
     templatePackage.dependencies["@promptscout/live-ai-traffic"].includes(

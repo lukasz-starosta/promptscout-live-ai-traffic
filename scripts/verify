@@ -217,6 +217,16 @@ if node -e 'process.exit(require("./package.json").scripts?.build ? 0 : 1)' >/de
   yarn build
 fi
 
+if node -e 'process.exit(require("./package.json").scripts?.["test:cloudflare-runtime"] ? 0 : 1)' >/dev/null 2>&1; then
+  echo "==> Running Cloudflare Workers runtime tests"
+  yarn test:cloudflare-runtime
+fi
+
+if node -e 'process.exit(require("./package.json").scripts?.["test:cloudflare-harness"] ? 0 : 1)' >/dev/null 2>&1; then
+  echo "==> Running Cloudflare Workers integration harness"
+  yarn test:cloudflare-harness
+fi
+
 if compgen -G "tests/*.test.mjs" >/dev/null; then
   if ! command -v node >/dev/null 2>&1; then
     echo "node is required to run Node tests" >&2

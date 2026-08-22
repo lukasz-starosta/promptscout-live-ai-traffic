@@ -18,6 +18,35 @@ cache behavior, or origin uptime.
 Use [`../../examples/cloudflare-worker`](../../examples/cloudflare-worker) for the
 runnable Wrangler example.
 
+## Managed Deployment Artifact
+
+The canonical Worker source stays in
+`packages/cloudflare-worker/src/index.ts`. The package build bundles that source
+and its core dependencies into one standalone ES module for managed installs.
+PromptScout imports the generated deployment contract from:
+
+```ts
+import {
+  cloudflareWorkerManifest,
+  cloudflareWorkerScript,
+} from "@promptscout/live-ai-traffic/cloudflare-deploy";
+```
+
+The manifest records the package version, compatibility date, main module,
+byte length, and SHA-256 checksum. The script contains no unresolved npm
+imports. PromptScout uploads this exact script to a dedicated Worker in the
+customer's Cloudflare account. PromptScout does not copy the collector source
+into the dashboard application and does not require a raw-file bundler loader.
+
+Managed installation must stop when an incompatible Worker already owns the
+selected route. PromptScout must not overwrite or delete that Worker. Customers
+with an existing Worker can compose the public
+`@promptscout/live-ai-traffic/cloudflare-worker` export into their own Worker.
+
+The managed installer records the deployed package version and checksum. A
+rollback uploads a previously published immutable artifact. It does not rebuild
+older source with newer dependencies.
+
 ## Install
 
 The collector ships in the public package as a subpath export:
@@ -265,11 +294,11 @@ The collector sends canonical request observation events with
 Raw IP addresses are not collected by default; the event records
 `ipHash.algorithm: "none"` with `originalIpRetention: "not_collected"`.
 
-## Future One-Click Install
+## Managed One-Click Install
 
-This manual setup is the stable target for a future one-click/OAuth Cloudflare
-installer. The installer should collect the zone and route, create or update the
-Worker, write non-secret vars, store the ingest token as a Cloudflare secret,
-and make the same ownership model explicit: Cloudflare remains the front door,
-the customer's origin remains customer-owned, and PromptScout is not responsible
-for DNS/origin failures.
+The manual setup is the fallback for the managed OAuth installer. The installer
+collects the granted zone and route, creates one dedicated PromptScout Worker,
+writes non-secret vars, and stores the ingest token as a Cloudflare secret. It
+must preserve the same ownership model: Cloudflare remains the front door, the
+customer's origin remains customer-owned, and PromptScout does not repair
+DNS/origin failures.

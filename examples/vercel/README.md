@@ -6,7 +6,7 @@ The Vercel runtime implementation lives in
 Install the public package from npm:
 
 ```bash
-npm install @promptscout/live-ai-traffic@0.2.2
+npm install @promptscout/live-ai-traffic@0.3.0
 ```
 
 See `docs/integrations/vercel.md` for the full Vercel integration guide.

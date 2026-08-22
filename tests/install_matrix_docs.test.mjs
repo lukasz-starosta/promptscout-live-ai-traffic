@@ -93,9 +93,17 @@ describe("install matrix docs", () => {
   });
 
   it("points Vercel customers at the public package and subpath export", async () => {
-    const guide = await readFile(guidePath, "utf8");
+    const [guide, rootPackage] = await Promise.all([
+      readFile(guidePath, "utf8"),
+      readFile("package.json", "utf8").then(JSON.parse),
+    ]);
 
-    assert.match(guide, /npm install @promptscout\/live-ai-traffic@0\.2\.2/);
+    assert.match(
+      guide,
+      new RegExp(
+        `npm install @promptscout/live-ai-traffic@${rootPackage.version.replaceAll(".", "\\.")}`,
+      ),
+    );
     assert.match(guide, /@promptscout\/live-ai-traffic\/vercel-middleware/);
     assert.doesNotMatch(
       guide,

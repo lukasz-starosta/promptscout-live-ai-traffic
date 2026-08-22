@@ -8,7 +8,7 @@ and examples.
 This repo publishes one public npm package:
 
 ```bash
-npm install @promptscout/live-ai-traffic@0.2.2
+npm install @promptscout/live-ai-traffic@0.3.0
 ```
 
 The durable public import contract uses subpath exports from that package:
@@ -18,7 +18,7 @@ import { classifyAiTraffic } from "@promptscout/live-ai-traffic/core";
 import { trackPromptScoutAiTraffic } from "@promptscout/live-ai-traffic/vercel-middleware";
 ```
 
-The current package version is `0.2.2`. The first public version was `0.1.0`.
+The current package version is `0.3.0`. The first public version was `0.1.0`.
 
 Applications that render the package guides can import typed metadata and
 markdown without a bundler loader:

@@ -182,7 +182,7 @@ describe("release workflow", () => {
     const yarnrc = await readFile(".yarnrc.yml", "utf8");
 
     assert.equal(rootPackage.name, "@promptscout/live-ai-traffic");
-    assert.equal(rootPackage.version, "0.2.2");
+    assert.equal(rootPackage.version, "0.3.0");
     assert.notEqual(rootPackage.private, true);
     assert.deepEqual(rootPackage.repository, {
       type: "git",
@@ -216,6 +216,12 @@ describe("release workflow", () => {
         types: "./dist/packages/cloudflare-worker/src/index.d.ts",
         default: "./dist/packages/cloudflare-worker/src/index.js",
       },
+      "./cloudflare-deploy": {
+        types: "./dist/cloudflare-deploy/index.d.ts",
+        default: "./dist/cloudflare-deploy/index.js",
+      },
+      "./cloudflare-deploy/manifest.json":
+        "./dist/cloudflare-deploy/manifest.json",
       "./docs-content": {
         types: "./dist/docs-content.d.ts",
         default: "./dist/docs-content.js",

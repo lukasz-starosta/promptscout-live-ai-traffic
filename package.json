@@ -1,6 +1,6 @@
 {
   "name": "@promptscout/live-ai-traffic",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "PromptScout live AI traffic event contracts, classifiers, and runtime collectors.",
   "license": "Apache-2.0",
   "type": "module",
@@ -16,17 +16,27 @@
   "scripts": {
     "verify": "./scripts/verify",
     "test": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "test:cloudflare-runtime": "WRANGLER_WRITE_LOGS=false vitest run --config vitest.cloudflare.config.ts",
+    "test:cloudflare-harness": "WRANGLER_WRITE_LOGS=false vitest run --config vitest.harness.config.ts",
     "build": "tsc -b && yarn build:package",
     "typecheck": "tsc -b",
     "lint": "biome check .",
     "format": "biome format --write .",
     "dogfood:vercel": "yarn tsc -b packages/vercel-middleware && node examples/vercel-nextjs/dogfood-promptscout.mjs",
-    "build:package": "rm -rf dist && tsc -p tsconfig.package.json && node scripts/build-docs-content.mjs",
+    "build:package": "rm -rf dist && tsc -p tsconfig.package.json && node scripts/build-cloudflare-deploy.mjs && node scripts/build-docs-content.mjs",
     "prepack": "yarn build:package"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.11",
-    "typescript": "5.8.3"
+    "@cloudflare/vitest-plugin": "1.0.0",
+    "@msw/cloudflare": "0.0.1",
+    "@vitest/runner": "4.1.11",
+    "@vitest/snapshot": "4.1.11",
+    "esbuild": "0.28.2",
+    "msw": "2.15.0",
+    "typescript": "5.8.3",
+    "vitest": "4.1.11",
+    "wrangler": "4.125.0"
   },
   "main": "./dist/packages/core/src/index.js",
   "types": "./dist/packages/core/src/index.d.ts",
@@ -47,6 +57,11 @@
       "types": "./dist/packages/cloudflare-worker/src/index.d.ts",
       "default": "./dist/packages/cloudflare-worker/src/index.js"
     },
+    "./cloudflare-deploy": {
+      "types": "./dist/cloudflare-deploy/index.d.ts",
+      "default": "./dist/cloudflare-deploy/index.js"
+    },
+    "./cloudflare-deploy/manifest.json": "./dist/cloudflare-deploy/manifest.json",
     "./docs-content": {
       "types": "./dist/docs-content.d.ts",
       "default": "./dist/docs-content.js"

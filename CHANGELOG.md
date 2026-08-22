@@ -6,6 +6,23 @@ This project publishes one public npm package. Internal provider workspaces and
 examples use the same version for traceability, but remain private and are not
 published.
 
+## 0.3.0
+
+### Added
+
+- Publish a deterministic, standalone Cloudflare Worker script and typed
+  checksum manifest through
+  `@promptscout/live-ai-traffic/cloudflare-deploy` for managed OAuth installs.
+- Run Cloudflare's Vitest integration inside `workerd` and Wrangler's local
+  integration harness against the exact generated production artifact.
+- Reject unhandled network calls in local Worker tests and replace the customer
+  origin and PromptScout ingest endpoints with explicit fixtures.
+
+### Changed
+
+- Document the dedicated managed-Worker ownership model, immutable artifact
+  rollback, and manual composition path for customers with an existing Worker.
+
 ## 0.2.2
 
 ### Fixed

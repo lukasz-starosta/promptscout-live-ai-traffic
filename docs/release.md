@@ -10,6 +10,7 @@ The public import contract uses subpath exports from that single package:
 - `@promptscout/live-ai-traffic/core`
 - `@promptscout/live-ai-traffic/vercel-middleware`
 - `@promptscout/live-ai-traffic/cloudflare-worker`
+- `@promptscout/live-ai-traffic/cloudflare-deploy`
 - `@promptscout/live-ai-traffic/docs-content`
 
 Internal workspace packages remain private implementation units. They are not
@@ -208,8 +209,10 @@ The public package manifest allows only these package contents:
 
 The `exports` map points `.` and `./core` to the compiled shared core entrypoint,
 `./vercel-middleware` to the compiled Next.js/Vercel collector, and
-`./cloudflare-worker` to the Worker collector. The generated `./docs-content`
-module contains typed guide metadata and markdown from the package sources, so
+`./cloudflare-worker` to the customer-composable Worker collector. The generated
+`./cloudflare-deploy` module contains the standalone managed-install script and
+its versioned checksum manifest. The generated `./docs-content` module contains
+typed guide metadata and markdown from the package sources, so
 consumers do not need bundler-specific markdown loaders. The raw
 `./docs-manifest.json` and `./docs/*` paths remain available for non-JavaScript
 consumers. Examples, tests, fixtures, local environment files, and secrets are

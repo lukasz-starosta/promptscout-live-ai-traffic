@@ -16,6 +16,10 @@ worktrees. It currently runs:
   final newline;
 - monorepo scaffold checks for package, example, and docs surfaces;
 - Bash syntax checks for shell scripts;
+- a Cloudflare Workers Vitest suite that executes the generated artifact inside
+  `workerd` with outbound origin and ingest requests intercepted locally;
+- Wrangler's integration test harness against the production bundle, with MSW
+  rejecting unhandled network requests;
 - focused Node tests under `tests/*.test.mjs`, including the core package
   TypeScript build performed by the event contract test. Test files run
   serially because package/install tests rebuild the shared root `dist`
@@ -27,10 +31,11 @@ source files are checked before they are committed.
 
 ## What It Does Not Cover
 
-This repository does not have an application stack yet, so the verifier does
-not run repo-wide TypeScript builds, package builds, browser tests, live
-provider calls, or API E2E checks. Those checks should be added behind the same
-`./scripts/verify` entry point when the relevant stack lands in later issues.
+This repository does not have an application stack, so the verifier does not
+run browser tests, live provider calls, or PromptScout API E2E checks. The
+Cloudflare suites use local runtime and HTTP fixtures. A separate credentialed
+smoke against a PromptScout-owned Cloudflare zone remains a release gate for
+the managed installer.
 
 ## CI Contract
 

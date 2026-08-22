@@ -1,0 +1,11 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "promptscout-cloudflare-runtime-test",
+  "main": "../../dist/cloudflare-deploy/promptscout-traffic-worker.mjs",
+  "compatibility_date": "2026-08-21",
+  "vars": {
+    "PROMPTSCOUT_INGEST_TOKEN": "local-site-token",
+    "PROMPTSCOUT_INGEST_URL": "https://promptscout.test/ingest/live-ai-traffic",
+    "PROMPTSCOUT_PROBE_URL": "https://promptscout.test/ingest/live-ai-traffic/probe"
+  }
+}

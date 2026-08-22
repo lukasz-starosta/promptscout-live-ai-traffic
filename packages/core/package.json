@@ -1,6 +1,6 @@
 {
   "name": "promptscout-live-ai-traffic-core",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Shared event, privacy, and ingest helpers for PromptScout live AI traffic integrations.",
   "license": "Apache-2.0",
   "type": "module",

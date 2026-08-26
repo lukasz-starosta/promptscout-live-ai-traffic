@@ -6,6 +6,14 @@ This project publishes one public npm package. Internal provider workspaces and
 examples use the same version for traceability, but remain private and are not
 published.
 
+## 0.3.1
+
+### Fixed
+
+- Answer managed setup probes directly from the Cloudflare Worker without
+  requesting the customer origin. Verification now remains available when the
+  origin is slow, unavailable, or does not define the setup path.
+
 ## 0.3.0
 
 ### Added

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: PromptScout Live AI Traffic
  * Description: Server-side AI crawler and assistant referral tracking for PromptScout.
- * Version: 0.3.0
+ * Version: 0.3.1
  * Author: PromptScout
  * License: Apache-2.0
  * Requires PHP: 7.4

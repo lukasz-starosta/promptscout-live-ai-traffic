@@ -50,13 +50,38 @@ export async function handlePromptScoutCloudflareWorkerRequest(
   options: PromptScoutCloudflareWorkerOptions = {},
 ): Promise<Response> {
   ctx.passThroughOnException?.();
-  const originResponse = fetchCloudflareOrigin(request, env, options);
+  const setupProbe = createCloudflareWorkerSetupProbeEvent(request, options);
+  if (setupProbe !== undefined) {
+    scheduleObservation(
+      sendCloudflareWorkerSetupProbe(setupProbe, env, options),
+      ctx,
+      env,
+      options,
+    );
 
-  const observation = observeCloudflareWorkerRequest(
-    request,
+    return new Response(null, {
+      headers: { "cache-control": "no-store" },
+      status: 204,
+    });
+  }
+
+  scheduleObservation(
+    observeCloudflareWorkerRequest(request, env, options),
+    ctx,
     env,
     options,
-  ).catch((error) => {
+  );
+
+  return fetchCloudflareOrigin(request, env, options);
+}
+
+function scheduleObservation(
+  observation: Promise<LiveAiTrafficIngestResult | undefined>,
+  ctx: PromptScoutCloudflareWorkerContext,
+  env: PromptScoutCloudflareWorkerEnv,
+  options: PromptScoutCloudflareWorkerOptions,
+) {
+  const safeObservation = observation.catch((error) => {
     if (isDebugEnabled(env.PROMPTSCOUT_DEBUG)) {
       (options.logger ?? console).error(
         "PromptScout Cloudflare Worker ingest failed",
@@ -74,12 +99,10 @@ export async function handlePromptScoutCloudflareWorkerRequest(
   });
 
   if (ctx.waitUntil === undefined) {
-    void observation;
+    void safeObservation;
   } else {
-    ctx.waitUntil(observation);
+    ctx.waitUntil(safeObservation);
   }
-
-  return originResponse;
 }
 
 async function fetchCloudflareOrigin(
@@ -108,13 +131,7 @@ export async function observeCloudflareWorkerRequest(
 ): Promise<LiveAiTrafficIngestResult | undefined> {
   const probe = createCloudflareWorkerSetupProbeEvent(request, options);
   if (probe !== undefined) {
-    const client = createLiveAiTrafficSetupProbeClient({
-      endpoint: env.PROMPTSCOUT_PROBE_URL ?? env.PROMPTSCOUT_INGEST_URL,
-      ingestToken: env.PROMPTSCOUT_INGEST_TOKEN,
-      fetch: options.ingestFetch,
-    });
-
-    return client.sendProbe(probe);
+    return sendCloudflareWorkerSetupProbe(probe, env, options);
   }
 
   const event = await createCloudflareWorkerEvent(request, env, options);
@@ -132,6 +149,20 @@ export async function observeCloudflareWorkerRequest(
   });
 
   return client.send(event);
+}
+
+function sendCloudflareWorkerSetupProbe(
+  probe: NonNullable<ReturnType<typeof createLiveAiTrafficSetupProbeEvent>>,
+  env: PromptScoutCloudflareWorkerEnv,
+  options: PromptScoutCloudflareWorkerOptions,
+) {
+  const client = createLiveAiTrafficSetupProbeClient({
+    endpoint: env.PROMPTSCOUT_PROBE_URL ?? env.PROMPTSCOUT_INGEST_URL,
+    ingestToken: env.PROMPTSCOUT_INGEST_TOKEN,
+    fetch: options.ingestFetch,
+  });
+
+  return client.sendProbe(probe);
 }
 
 export function createCloudflareWorkerSetupProbeEvent(

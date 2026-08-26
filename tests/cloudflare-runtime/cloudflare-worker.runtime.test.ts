@@ -17,6 +17,36 @@ declare module "cloudflare:workers" {
 }
 
 describe("generated Cloudflare Worker artifact", () => {
+  it("verifies setup without contacting the customer origin", async () => {
+    const probes: unknown[] = [];
+    network.use(
+      http.get("https://customer.example/__promptscout/setup-probe", () => {
+        throw new Error("Setup probes must not reach the customer origin");
+      }),
+      http.post(env.PROMPTSCOUT_PROBE_URL, async ({ request }) => {
+        probes.push(await request.json());
+        return new HttpResponse(null, { status: 202 });
+      }),
+    );
+
+    const context = createExecutionContext();
+    const response = await worker.fetch(
+      new Request("https://customer.example/__promptscout/setup-probe", {
+        headers: {
+          "x-promptscout-setup-probe": "1",
+          "x-promptscout-probe-id": "probe_123",
+          "x-promptscout-probe-token": "probe-token-123",
+        },
+      }),
+      env,
+      context,
+    );
+
+    expect(response.status).toBe(204);
+    await waitOnExecutionContext(context);
+    expect(probes).toHaveLength(1);
+  });
+
   it("passes through origin traffic and sends a private background observation", async () => {
     const observations: unknown[] = [];
     network.use(

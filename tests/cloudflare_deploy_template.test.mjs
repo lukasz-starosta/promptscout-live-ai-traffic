@@ -17,7 +17,7 @@ test("the Cloudflare dashboard template is an isolated deployable project", asyn
 
   assert.equal(
     templatePackage.dependencies["@promptscout/live-ai-traffic"],
-    "0.3.0",
+    "0.3.1",
   );
   assert.equal(
     templatePackage.dependencies["@promptscout/live-ai-traffic"].includes(

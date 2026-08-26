@@ -182,7 +182,7 @@ describe("release workflow", () => {
     const yarnrc = await readFile(".yarnrc.yml", "utf8");
 
     assert.equal(rootPackage.name, "@promptscout/live-ai-traffic");
-    assert.equal(rootPackage.version, "0.3.0");
+    assert.equal(rootPackage.version, "0.3.1");
     assert.notEqual(rootPackage.private, true);
     assert.deepEqual(rootPackage.repository, {
       type: "git",

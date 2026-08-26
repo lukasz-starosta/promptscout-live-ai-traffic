@@ -30,6 +30,46 @@ function env(overrides = {}) {
 }
 
 describe("cloudflare worker collector", () => {
+  it("answers setup probes without requesting the customer origin", async () => {
+    const { handlePromptScoutCloudflareWorkerRequest } =
+      await cloudflareWorkerModule();
+    const ingestCalls = [];
+    const waitUntilPromises = [];
+    let originCalls = 0;
+
+    const response = await handlePromptScoutCloudflareWorkerRequest(
+      new Request("https://example.com/__promptscout/setup-probe", {
+        headers: {
+          "x-promptscout-setup-probe": "1",
+          "x-promptscout-probe-id": "probe_123",
+          "x-promptscout-probe-token": "probe-token-123",
+        },
+      }),
+      env({
+        PROMPTSCOUT_PROBE_URL:
+          "https://promptscout.example/ingest/live-ai-traffic/probe",
+      }),
+      { waitUntil: (promise) => waitUntilPromises.push(promise) },
+      {
+        originFetch: async () => {
+          originCalls += 1;
+          return new Response("origin response");
+        },
+        ingestFetch: async (url, init) => {
+          ingestCalls.push({ url, init });
+          return new Response(null, { status: 202 });
+        },
+      },
+    );
+
+    assert.equal(response.status, 204);
+    assert.equal(response.headers.get("cache-control"), "no-store");
+    assert.equal(originCalls, 0);
+    assert.equal(waitUntilPromises.length, 1);
+    await waitUntilPromises[0];
+    assert.equal(ingestCalls.length, 1);
+  });
+
   it("sends setup probes to the probe endpoint without AI classification", async () => {
     const { observeCloudflareWorkerRequest } = await cloudflareWorkerModule();
     const ingestCalls = [];
